@@ -1,27 +1,28 @@
 import { Link } from "expo-router"
-import { Text, View, StyleSheet } from "react-native"
+import { StyleSheet, Text, View } from "react-native"
 
-export default function Index() {
+const SessionsScreen = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Ashel-Gym App</Text>
-      <Link href="/sessions" style={styles.button}>
-        Go to Sessions screen
+      <Text style={styles.text}>Sessions screen</Text>
+      <Link href="/(tabs)" style={styles.button}>
+        Go to Home screen
       </Link>
     </View>
   )
 }
 
+export default SessionsScreen
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#25292e",
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#25292e",
   },
   text: {
-    color: "#9e9e9e",
-    fontSize: 24,
+    color: "#fff",
   },
   button: {
     fontSize: 20,
