@@ -1,28 +1,27 @@
 import { Link } from "expo-router"
-import { StyleSheet, Text, View } from "react-native"
+import { Text, View, StyleSheet } from "react-native"
 
-const SessionsScreen = () => {
+export default function CalendarScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Sessions screen</Text>
-      <Link href="/(tabs)" style={styles.button}>
-        Go to Home screen
+      <Text style={styles.text}>Calendar</Text>
+      <Link href="/(tabs)/profile" style={styles.button}>
+        Go to profile screen
       </Link>
     </View>
   )
 }
 
-export default SessionsScreen
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#25292e",
   },
   text: {
-    color: "#fff",
+    color: "#9e9e9e",
+    fontSize: 24,
   },
   button: {
     fontSize: 20,

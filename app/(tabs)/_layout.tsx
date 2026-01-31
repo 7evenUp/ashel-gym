@@ -1,16 +1,42 @@
-import { NativeTabs, Label, Icon } from "expo-router/unstable-native-tabs"
+import { Tabs } from "expo-router"
+import { Calendar, UserRound, Dumbbell } from "lucide-react-native"
 
 export default function TabLayout() {
   return (
-    <NativeTabs backgroundColor="#161a1f">
-      <NativeTabs.Trigger name="index">
-        <Label>Home</Label>
-        <Icon src={require("../../assets/icons/home.png")} />
-      </NativeTabs.Trigger>
-      <NativeTabs.Trigger name="sessions">
-        <Label>Sessions</Label>
-        <Icon src={require("../../assets/icons/dumbbell.png")} />
-      </NativeTabs.Trigger>
-    </NativeTabs>
+    <Tabs
+      screenOptions={{
+        tabBarActiveTintColor: "#ffd33d",
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: "#25292e",
+          borderColor: "#55595e",
+        },
+      }}
+      initialRouteName="profile"
+    >
+      <Tabs.Screen
+        name="calendar"
+        options={{
+          title: "Calendar",
+          tabBarIcon: ({ color }) => <Calendar color={color} size={24} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="index"
+        options={{
+          title: "Training",
+          tabBarIcon: ({ color }) => <Dumbbell color={color} size={24} />,
+        }}
+      />
+
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: ({ color }) => <UserRound color={color} size={24} />,
+        }}
+      />
+    </Tabs>
   )
 }

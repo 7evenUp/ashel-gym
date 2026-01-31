@@ -1,0 +1,1 @@
+ALTER TABLE `muscle_group` DROP COLUMN `image`;

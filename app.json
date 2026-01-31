@@ -38,6 +38,14 @@
             "backgroundColor": "#000000"
           }
         }
+      ],
+      [
+        "expo-sqlite",
+        {
+          "enableFTS": true,
+          "useSQLCipher": false
+        }
+
       ]
     ],
     "experiments": {
