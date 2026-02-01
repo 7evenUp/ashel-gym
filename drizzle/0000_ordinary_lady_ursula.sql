@@ -19,8 +19,7 @@ CREATE TABLE `exercise` (
 --> statement-breakpoint
 CREATE TABLE `muscle_group` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`name` text NOT NULL,
-	`image` text NOT NULL
+	`name` text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE `stats_history` (
