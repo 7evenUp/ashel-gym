@@ -14,6 +14,11 @@ import { MuscleGroup, muscleGroupTable } from "@/db/schema"
 import { logger } from "@/utils/logger"
 
 const BackImage = require("@/assets/images/back_gradient.png")
+const ChestImage = require("@/assets/images/chest_gradient.png")
+const BicepsImage = require("@/assets/images/biceps_gradient.png")
+const TricepsImage = require("@/assets/images/triceps_gradient.png")
+const LegsImage = require("@/assets/images/legs_gradient.png")
+const ShouldersImage = require("@/assets/images/shoulders_gradient.png")
 
 export default function Index() {
   const router = useRouter()
@@ -40,20 +45,18 @@ export default function Index() {
           style={{ width: "100%" }}
           contentContainerStyle={{
             padding: 16,
-            backgroundColor: "green",
             flex: 1,
           }}
           numColumns={2}
           renderItem={({ item, index }) => {
-            const marginLeft = index % 2 === 0 ? 0 : 4
-            const marginRight = index % 2 === 0 ? 4 : 0
+            const marginLeft = index % 2 === 0 ? 0 : 6
+            const marginRight = index % 2 === 0 ? 6 : 0
 
             return (
               <Link href={`/(tabs)/profile/${item.id}`} asChild>
                 <Pressable
                   style={{
                     aspectRatio: 1 / 1,
-                    backgroundColor: "white",
                     borderRadius: 20,
                     marginLeft,
                     marginRight,
@@ -61,6 +64,16 @@ export default function Index() {
                 >
                   {item.name === "back" ? (
                     <Image source={BackImage} style={styles.image} />
+                  ) : item.name === "chest" ? (
+                    <Image source={ChestImage} style={styles.image} />
+                  ) : item.name === "biceps" ? (
+                    <Image source={BicepsImage} style={styles.image} />
+                  ) : item.name === "triceps" ? (
+                    <Image source={TricepsImage} style={styles.image} />
+                  ) : item.name === "legs" ? (
+                    <Image source={LegsImage} style={styles.image} />
+                  ) : item.name === "shoulders" ? (
+                    <Image source={ShouldersImage} style={styles.image} />
                   ) : (
                     <Text style={{ color: "black" }}>Name: {item.name}</Text>
                   )}
@@ -68,7 +81,7 @@ export default function Index() {
               </Link>
             )
           }}
-          ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
+          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         />
       )}
       <View style={styles.buttonContainer}>
