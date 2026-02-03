@@ -1,26 +1,25 @@
 import { useEffect, useState } from "react"
-import { Text, View, StyleSheet, Pressable } from "react-native"
+import { View, StyleSheet, Pressable } from "react-native"
+
 import { Image } from "expo-image"
-import { Dumbbell } from "lucide-react-native"
 import { Link, useRouter } from "expo-router"
 import { useSQLiteContext } from "expo-sqlite"
+
+import { Dumbbell } from "lucide-react-native"
+
 import { drizzle } from "drizzle-orm/expo-sqlite"
+
 import { FlashList } from "@shopify/flash-list"
 
 import Button from "@/components/Button"
 
 import { MuscleGroup, muscleGroupTable } from "@/db/schema"
 
+import { muscleGroupImages } from "@/constants/muscleGroupImages"
+
 import { logger } from "@/utils/logger"
 
-const BackImage = require("@/assets/images/back_gradient.png")
-const ChestImage = require("@/assets/images/chest_gradient.png")
-const BicepsImage = require("@/assets/images/biceps_gradient.png")
-const TricepsImage = require("@/assets/images/triceps_gradient.png")
-const LegsImage = require("@/assets/images/legs_gradient.png")
-const ShouldersImage = require("@/assets/images/shoulders_gradient.png")
-
-export default function Index() {
+export default function ProfileScreen() {
   const router = useRouter()
 
   const [muscleGroups, setMuscleGroups] = useState<MuscleGroup[] | null>(null)
@@ -62,21 +61,14 @@ export default function Index() {
                     marginRight,
                   }}
                 >
-                  {item.name === "back" ? (
-                    <Image source={BackImage} style={styles.image} />
-                  ) : item.name === "chest" ? (
-                    <Image source={ChestImage} style={styles.image} />
-                  ) : item.name === "biceps" ? (
-                    <Image source={BicepsImage} style={styles.image} />
-                  ) : item.name === "triceps" ? (
-                    <Image source={TricepsImage} style={styles.image} />
-                  ) : item.name === "legs" ? (
-                    <Image source={LegsImage} style={styles.image} />
-                  ) : item.name === "shoulders" ? (
-                    <Image source={ShouldersImage} style={styles.image} />
-                  ) : (
-                    <Text style={{ color: "black" }}>Name: {item.name}</Text>
-                  )}
+                  <Image
+                    style={styles.image}
+                    source={muscleGroupImages[item.name].img}
+                    placeholder={{
+                      blurhash: muscleGroupImages[item.name].blurhash,
+                    }}
+                    transition={250}
+                  />
                 </Pressable>
               </Link>
             )

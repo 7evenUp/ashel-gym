@@ -50,6 +50,17 @@ const Layout = () => {
             sheetAllowedDetents: "fitToContents",
           }}
         />
+        <Stack.Screen
+          name="stats-modal"
+          options={{
+            presentation: "formSheet",
+            sheetAllowedDetents: [0.75],
+            sheetInitialDetentIndex: 0,
+            sheetGrabberVisible: true,
+            sheetCornerRadius: 24,
+            headerShown: false,
+          }}
+        />
       </Stack>
       <StatusBar style="light" />
     </>
