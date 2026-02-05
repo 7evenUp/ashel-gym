@@ -31,7 +31,7 @@ export const statsHistoryTable = createTable("stats_history", {
   id: int().primaryKey({ autoIncrement: true }),
   type: text({ enum: ["max", "work"] }).notNull(),
   value: real().notNull(),
-  changed_at: text().notNull(),
+  changed_at: int().notNull(),
   exercise_id: int()
     .notNull()
     .references(() => exerciseTable.id),

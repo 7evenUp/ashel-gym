@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "30836e9b-f351-4347-afd3-f1f0efc22060",
+  "id": "ecf39915-7f3c-4f59-9d93-f20d6095b5b9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "exercise_set": {
@@ -185,7 +185,7 @@
         },
         "changed_at": {
           "name": "changed_at",
-          "type": "text",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false

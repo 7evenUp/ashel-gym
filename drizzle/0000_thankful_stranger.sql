@@ -26,7 +26,7 @@ CREATE TABLE `stats_history` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`type` text NOT NULL,
 	`value` real NOT NULL,
-	`changed_at` text NOT NULL,
+	`changed_at` integer NOT NULL,
 	`exercise_id` integer NOT NULL,
 	FOREIGN KEY (`exercise_id`) REFERENCES `exercise`(`id`) ON UPDATE no action ON DELETE no action
 );
