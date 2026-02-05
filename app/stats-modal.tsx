@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 import { StyleSheet, Text, View, TextInput, Keyboard } from "react-native"
+import { useRouter } from "expo-router"
 import { useSQLiteContext } from "expo-sqlite"
 import { drizzle } from "drizzle-orm/expo-sqlite"
 import { eq } from "drizzle-orm"
 
 import { useSelectedExercise } from "@/store/useSelectedExercise"
 
-import { StatsHistory, statsHistoryTable, statsTable } from "@/db/schema"
+import { statsHistoryTable, statsTable } from "@/db/schema"
 
 import Button from "@/components/Button"
 
@@ -16,9 +17,10 @@ const StatsModal = () => {
   const expoDb = useSQLiteContext()
   const db = drizzle(expoDb)
 
+  const router = useRouter()
+
   const exercise = useSelectedExercise((state) => state.exercise)
 
-  const [statsHistory, setStatsHistory] = useState<StatsHistory[] | null>(null)
   const [isLocked, setIsLocked] = useState(false)
   const [initialWorkWeight, setInitialWorkWeight] = useState("")
   const [initialMaxWeight, setInitialMaxWeight] = useState("")
@@ -29,8 +31,6 @@ const StatsModal = () => {
     if (exercise === null) return
 
     const getData = async () => {
-      const statsHistory = await db.select().from(statsHistoryTable)
-      setStatsHistory(statsHistory)
       const [stats] = await db
         .select()
         .from(statsTable)
@@ -93,7 +93,7 @@ const StatsModal = () => {
       }
 
       // Inserting stats update history
-      const currentDate = new Date().toISOString()
+      const currentDate = new Date().getTime()
       if (workWeight && initialWorkWeight !== workWeight) {
         await db.insert(statsHistoryTable).values({
           exercise_id: exercise.id,
@@ -102,6 +102,7 @@ const StatsModal = () => {
           changed_at: currentDate,
         })
         console.log("workWeight stats update inserted")
+        setInitialWorkWeight(workWeight)
       }
       if (maxWeight && initialMaxWeight !== maxWeight) {
         await db.insert(statsHistoryTable).values({
@@ -111,6 +112,7 @@ const StatsModal = () => {
           changed_at: currentDate,
         })
         console.log("maxWeight stats update inserted")
+        setInitialMaxWeight(maxWeight)
       }
     } catch (error) {
       logger("Error happened while saving stats: ", error)
@@ -148,17 +150,15 @@ const StatsModal = () => {
           />
         </View>
       </View>
-      {statsHistory &&
-        statsHistory.length > 0 &&
-        statsHistory.map((el) => (
-          <Text key={el.id}>
-            {el.type}:{el.value}:{new Date(el.changed_at).toLocaleTimeString()}
-          </Text>
-        ))}
+      <Button
+        label="История изменений"
+        style={{ marginTop: 40 }}
+        onPress={() => router.navigate("/stats-history-modal")}
+      />
       <Button
         label="Сохранить"
         isLoading={isLocked}
-        style={{ marginTop: 40 }}
+        style={{ marginTop: 8 }}
         onPress={onSaveClick}
       />
     </View>
@@ -173,6 +173,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingInline: 16,
     paddingBlock: 24,
+    // height: 440,
   },
   title: {
     fontSize: 24,

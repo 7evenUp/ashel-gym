@@ -15,7 +15,7 @@ import migrations from "@/drizzle/migrations"
 import { logger } from "@/utils/logger"
 import { populateDb } from "@/utils/populateDb"
 
-const DATABASE_NAME = "test1.db"
+const DATABASE_NAME = "test2.db"
 const expoDB = openDatabaseSync(DATABASE_NAME)
 const db = drizzle(expoDB)
 
@@ -52,6 +52,17 @@ const Layout = () => {
         />
         <Stack.Screen
           name="stats-modal"
+          options={{
+            presentation: "formSheet",
+            sheetAllowedDetents: [0.75],
+            sheetInitialDetentIndex: 0,
+            sheetGrabberVisible: true,
+            sheetCornerRadius: 24,
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen
+          name="stats-history-modal"
           options={{
             presentation: "formSheet",
             sheetAllowedDetents: [0.75],
