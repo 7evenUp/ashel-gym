@@ -44,7 +44,6 @@ export default function ProfileScreen() {
           style={{ width: "100%" }}
           contentContainerStyle={{
             padding: 16,
-            flex: 1,
           }}
           numColumns={2}
           renderItem={({ item, index }) => {

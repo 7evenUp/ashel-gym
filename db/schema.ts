@@ -15,7 +15,7 @@ export const muscleGroupTable = createTable("muscle_group", {
 export const exerciseTable = createTable("exercise", {
   id: int().primaryKey({ autoIncrement: true }),
   name: text().notNull(),
-  image: text(),
+  image: text().notNull(),
   muscle_group_id: int()
     .notNull()
     .references(() => muscleGroupTable.id),
@@ -73,11 +73,11 @@ export type Workout = typeof workoutTable.$inferSelect
 export type ExerciseSet = typeof exerciseSetTable.$inferSelect
 export type WorkoutMuscleGroup = typeof workoutMuscleGroupTable.$inferSelect
 
-export type InstertMuscleGroup = typeof muscleGroupTable.$inferInsert
-export type InstertExercise = typeof exerciseTable.$inferInsert
-export type InstertStats = typeof statsTable.$inferInsert
-export type InstertStatsHistory = typeof statsHistoryTable.$inferInsert
-export type InstertWorkout = typeof workoutTable.$inferInsert
-export type InstertExerciseSet = typeof exerciseSetTable.$inferInsert
-export type InstertWorkoutMuscleGroup =
+export type InsertMuscleGroup = typeof muscleGroupTable.$inferInsert
+export type InsertExercise = typeof exerciseTable.$inferInsert
+export type InsertStats = typeof statsTable.$inferInsert
+export type InsertStatsHistory = typeof statsHistoryTable.$inferInsert
+export type InsertWorkout = typeof workoutTable.$inferInsert
+export type InsertExerciseSet = typeof exerciseSetTable.$inferInsert
+export type InsertWorkoutMuscleGroup =
   typeof workoutMuscleGroupTable.$inferInsert

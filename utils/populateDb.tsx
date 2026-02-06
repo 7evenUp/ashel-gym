@@ -2,6 +2,7 @@ import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite"
 import { SQLiteDatabase } from "expo-sqlite"
 
 import { exerciseTable, muscleGroupTable } from "@/db/schema"
+
 import { logger } from "./logger"
 
 export const populateDb = async (
@@ -36,10 +37,58 @@ export const populateDb = async (
     return
   }
 
+  // Back
   await db.insert(exerciseTable).values([
     {
       muscle_group_id: back.id,
+      name: "Становая",
+      image: "deadlift",
+    },
+  ])
+  // Chest
+  await db.insert(exerciseTable).values([
+    {
+      muscle_group_id: chest.id,
       name: "Жим лёжа",
+      image: "bench_press",
+    },
+  ])
+  // Biceps
+  await db.insert(exerciseTable).values([
+    {
+      muscle_group_id: biceps.id,
+      name: "Barbell curl",
+      image: "barbell_curl",
+    },
+    {
+      muscle_group_id: biceps.id,
+      name: "DB curl",
+      image: "dumbbell_curl",
+    },
+    {
+      muscle_group_id: biceps.id,
+      name: "DB preacher curl",
+      image: "dumbbell_preacher_curl",
+    },
+    {
+      muscle_group_id: biceps.id,
+      name: "DB incline curl",
+      image: "dumbbell_incline_curl",
+    },
+    {
+      muscle_group_id: biceps.id,
+      name: "Machine preacher curl",
+      image: "machine_preacher_curl",
+    },
+    {
+      muscle_group_id: biceps.id,
+      name: "Hammer preacher curl",
+      image: "hammer_preacher_curl",
+    },
+    {
+      muscle_group_id: biceps.id,
+      name: "Faceaway bayesian cable curl",
+      image: "faceaway_bayesian_cable_curl",
     },
   ])
   console.log("After inserting into exercises")
