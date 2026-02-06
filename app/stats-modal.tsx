@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react"
-import { StyleSheet, Text, View, TextInput, Keyboard } from "react-native"
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Keyboard,
+  Pressable,
+} from "react-native"
 import { useRouter } from "expo-router"
 import { useSQLiteContext } from "expo-sqlite"
 import { drizzle } from "drizzle-orm/expo-sqlite"
 import { eq } from "drizzle-orm"
+import { HistoryIcon } from "lucide-react-native"
 
 import { useSelectedExercise } from "@/store/useSelectedExercise"
 
@@ -124,9 +132,17 @@ const StatsModal = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>
-        {exercise.name}: {exercise.id}
-      </Text>
+      <View style={styles.header}>
+        <Text style={styles.title}>
+          {exercise.name}: {exercise.id}
+        </Text>
+        <Pressable
+          style={styles.history}
+          onPress={() => router.navigate("/stats-history-modal")}
+        >
+          <HistoryIcon size={24} color="black" />
+        </Pressable>
+      </View>
       <Text style={styles.description}>👇 Прогресс? Запиши 👇</Text>
       <View style={styles.stats}>
         <View style={styles.stat}>
@@ -151,14 +167,9 @@ const StatsModal = () => {
         </View>
       </View>
       <Button
-        label="История изменений"
-        style={{ marginTop: 40 }}
-        onPress={() => router.navigate("/stats-history-modal")}
-      />
-      <Button
         label="Сохранить"
         isLoading={isLocked}
-        style={{ marginTop: 8 }}
+        style={{ marginTop: 40 }}
         onPress={onSaveClick}
       />
     </View>
@@ -175,10 +186,27 @@ const styles = StyleSheet.create({
     paddingBlock: 24,
     // height: 440,
   },
+  header: {
+    position: "relative",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    marginBottom: 64,
+  },
   title: {
     fontSize: 24,
     fontWeight: "500",
-    marginBottom: 64,
+  },
+  history: {
+    position: "absolute",
+    width: 40,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.1)",
+    borderRadius: 12,
+    right: 0,
   },
   description: {
     fontSize: 18,
