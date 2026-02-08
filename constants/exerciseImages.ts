@@ -4,6 +4,12 @@ export const exerciseImages: Record<
 > = {
   back: {
     deadlift: require("../assets/images/exercises/back/deadlift.png"),
+    barbell_row: require("../assets/images/exercises/back/barbell_row.png"),
+    cable_row: require("../assets/images/exercises/back/cable_row.png"),
+    lat_pullover: require("../assets/images/exercises/back/lat_pullover.png"),
+    neutral_grip_lat_pulldown: require("../assets/images/exercises/back/neutral_grip_lat_pulldown.png"),
+    one_arm_dumbbell_row: require("../assets/images/exercises/back/one_arm_dumbbell_row.png"),
+    wide_grip_lat_pulldown: require("../assets/images/exercises/back/wide_grip_lat_pulldown.png"),
   },
   chest: {
     bench_press: require("../assets/images/exercises/chest/bench_press.png"),

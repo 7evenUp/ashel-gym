@@ -44,6 +44,36 @@ export const populateDb = async (
       name: "Становая",
       image: "deadlift",
     },
+    {
+      muscle_group_id: back.id,
+      name: "Wide-Grip Lat Pulldown",
+      image: "wide_grip_lat_pulldown",
+    },
+    {
+      muscle_group_id: back.id,
+      name: "Neutral-Grip Lat Pulldown",
+      image: "neutral_grip_lat_pulldown",
+    },
+    {
+      muscle_group_id: back.id,
+      name: "Barbell Row",
+      image: "barbell_row",
+    },
+    {
+      muscle_group_id: back.id,
+      name: "One-Arm Dumbbell Row",
+      image: "one_arm_dumbbell_row",
+    },
+    {
+      muscle_group_id: back.id,
+      name: "Cable Row",
+      image: "cable_row",
+    },
+    {
+      muscle_group_id: back.id,
+      name: "Lat Pullover",
+      image: "lat_pullover",
+    },
   ])
   // Chest
   await db.insert(exerciseTable).values([
@@ -57,37 +87,37 @@ export const populateDb = async (
   await db.insert(exerciseTable).values([
     {
       muscle_group_id: biceps.id,
-      name: "Barbell curl",
+      name: "Barbell Curl",
       image: "barbell_curl",
     },
     {
       muscle_group_id: biceps.id,
-      name: "DB curl",
+      name: "DB Curl",
       image: "dumbbell_curl",
     },
     {
       muscle_group_id: biceps.id,
-      name: "DB preacher curl",
+      name: "DB Preacher Curl",
       image: "dumbbell_preacher_curl",
     },
     {
       muscle_group_id: biceps.id,
-      name: "DB incline curl",
+      name: "DB Incline Curl",
       image: "dumbbell_incline_curl",
     },
     {
       muscle_group_id: biceps.id,
-      name: "Machine preacher curl",
+      name: "Machine Preacher Curl",
       image: "machine_preacher_curl",
     },
     {
       muscle_group_id: biceps.id,
-      name: "Hammer preacher curl",
+      name: "Hammer Preacher Curl",
       image: "hammer_preacher_curl",
     },
     {
       muscle_group_id: biceps.id,
-      name: "Faceaway bayesian cable curl",
+      name: "Faceaway Bayesian Cable Curl",
       image: "faceaway_bayesian_cable_curl",
     },
   ])
