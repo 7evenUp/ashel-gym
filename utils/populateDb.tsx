@@ -1,7 +1,12 @@
 import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite"
 import { SQLiteDatabase } from "expo-sqlite"
 
-import { exerciseTable, muscleGroupTable } from "@/db/schema"
+import {
+  exerciseTable,
+  muscleGroupTable,
+  statsHistoryTable,
+  statsTable,
+} from "@/db/schema"
 
 import { logger } from "./logger"
 
@@ -9,8 +14,16 @@ export const populateDb = async (
   db: ExpoSQLiteDatabase<Record<string, never>> & {
     $client: SQLiteDatabase
   },
+  isPopulateNeeded = false,
 ) => {
+  const initialData = await db.select().from(muscleGroupTable)
+
+  if (initialData.length > 0 && !isPopulateNeeded) return
+
   await db.delete(muscleGroupTable)
+  await db.delete(exerciseTable)
+  await db.delete(statsTable)
+  await db.delete(statsHistoryTable)
 
   await db
     .insert(muscleGroupTable)
@@ -121,5 +134,4 @@ export const populateDb = async (
       image: "faceaway_bayesian_cable_curl",
     },
   ])
-  console.log("After inserting into exercises")
 }

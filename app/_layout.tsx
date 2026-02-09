@@ -82,9 +82,8 @@ export default function RootLayout() {
   const { success, error } = useMigrations(db, migrations)
 
   useEffect(() => {
-    logger("Success: ", success, ". |=====| Error: ", error)
     if (success) logger("Migrations applied successfully")
-    if (error) logger("Migrations failed")
+    if (error) logger("Migrations failed: ", error)
   }, [success, error])
 
   useEffect(() => {
