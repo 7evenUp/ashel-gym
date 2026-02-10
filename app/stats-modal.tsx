@@ -197,6 +197,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "500",
+    width: "80%",
+    textAlign: "center",
   },
   history: {
     position: "absolute",

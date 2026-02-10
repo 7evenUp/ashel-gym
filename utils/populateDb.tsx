@@ -155,13 +155,33 @@ export const populateDb = async (
     },
   ])
   // Triceps
-  // await db.insert(exerciseTable).values([
-  //   {
-  //     muscle_group_id: triceps.id,
-  //     name: "",
-  //     image: "",
-  //   },
-  // ])
+  await db.insert(exerciseTable).values([
+    {
+      muscle_group_id: triceps.id,
+      name: "Triceps Pushdown",
+      image: "triceps_pushdown",
+    },
+    {
+      muscle_group_id: triceps.id,
+      name: "Overhead Cable Extension",
+      image: "overhead_cable_extension",
+    },
+    {
+      muscle_group_id: triceps.id,
+      name: "Dumbbell French Press",
+      image: "db_french_press",
+    },
+    {
+      muscle_group_id: triceps.id,
+      name: "Cable Triceps Kickback",
+      image: "cable_kickback",
+    },
+    {
+      muscle_group_id: triceps.id,
+      name: "Machine Dips",
+      image: "machine_dips",
+    },
+  ])
   // Legs
 
   // Shoulders

@@ -27,8 +27,13 @@ export const exerciseImages: Record<
     hammer_preacher_curl: require("../assets/images/exercises/biceps/hammer_preacher_curl.png"),
     machine_preacher_curl: require("../assets/images/exercises/biceps/machine_preacher_curl.png"),
   },
-
-  triceps: {},
+  triceps: {
+    triceps_pushdown: require("../assets/images/exercises/triceps/triceps_pushdown.png"),
+    overhead_cable_extension: require("../assets/images/exercises/triceps/overhead_cable_extension.png"),
+    db_french_press: require("../assets/images/exercises/triceps/db_french_press.png"),
+    cable_kickback: require("../assets/images/exercises/triceps/cable_kickback.png"),
+    machine_dips: require("../assets/images/exercises/triceps/machine_dips.png"),
+  },
   shoulders: {},
   legs: {},
 }
