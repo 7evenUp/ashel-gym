@@ -95,6 +95,26 @@ export const populateDb = async (
       name: "Жим лёжа",
       image: "bench_press",
     },
+    {
+      muscle_group_id: chest.id,
+      name: "Жим лёжа в наклоне",
+      image: "incline_bench_press",
+    },
+    {
+      muscle_group_id: chest.id,
+      name: "Жим гантелей",
+      image: "dumbbell_press",
+    },
+    {
+      muscle_group_id: chest.id,
+      name: "Pec Fly",
+      image: "pec_fly",
+    },
+    {
+      muscle_group_id: chest.id,
+      name: "Machine Chest Press",
+      image: "machine_chest_press",
+    },
   ])
   // Biceps
   await db.insert(exerciseTable).values([
@@ -134,4 +154,15 @@ export const populateDb = async (
       image: "faceaway_bayesian_cable_curl",
     },
   ])
+  // Triceps
+  // await db.insert(exerciseTable).values([
+  //   {
+  //     muscle_group_id: triceps.id,
+  //     name: "",
+  //     image: "",
+  //   },
+  // ])
+  // Legs
+
+  // Shoulders
 }

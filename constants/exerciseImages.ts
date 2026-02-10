@@ -13,6 +13,10 @@ export const exerciseImages: Record<
   },
   chest: {
     bench_press: require("../assets/images/exercises/chest/bench_press.png"),
+    incline_bench_press: require("../assets/images/exercises/chest/incline_bench_press.png"),
+    dumbbell_press: require("../assets/images/exercises/chest/dumbbell_press.png"),
+    pec_fly: require("../assets/images/exercises/chest/pec_fly.png"),
+    machine_chest_press: require("../assets/images/exercises/chest/machine_chest_press.png"),
   },
   biceps: {
     barbell_curl: require("../assets/images/exercises/biceps/barbell_curl.png"),
