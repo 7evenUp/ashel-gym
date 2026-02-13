@@ -5,11 +5,12 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#ffd33d",
+        tabBarActiveTintColor: "#b861c8",
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#25292e",
-          borderColor: "#55595e",
+          backgroundColor: "#211e27",
+          borderColor: "#383342",
+          paddingTop: 4,
         },
       }}
       initialRouteName="profile"

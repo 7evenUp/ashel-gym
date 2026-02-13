@@ -35,8 +35,8 @@ const Layout = () => {
             },
             headerTintColor: "#fff",
             headerRight: () => (
-              <Link href="/modal">
-                <Info color="white" size={24} />
+              <Link href="/modal" style={{ padding: 6 }}>
+                <Info color="rgba(255,255,255,0.6)" size={24} />
               </Link>
             ),
           }}

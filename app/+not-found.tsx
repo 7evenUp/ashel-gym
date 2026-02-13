@@ -1,5 +1,5 @@
-import { StyleSheet, View } from "react-native"
 import { Link, Stack } from "expo-router"
+import { StyleSheet, View } from "react-native"
 
 const NotFoundScreen = () => {
   return (
@@ -19,7 +19,7 @@ export default NotFoundScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
+    backgroundColor: "#211e27",
     justifyContent: "center",
     alignItems: "center",
   },

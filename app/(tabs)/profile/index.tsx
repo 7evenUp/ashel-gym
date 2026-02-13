@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { View, StyleSheet, Pressable } from "react-native"
+import { Pressable, StyleSheet, View } from "react-native"
 
 import { Image } from "expo-image"
 import { Link, useRouter } from "expo-router"
@@ -91,7 +91,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
+    backgroundColor: "#211e27",
     alignItems: "center",
   },
   buttonContainer: {

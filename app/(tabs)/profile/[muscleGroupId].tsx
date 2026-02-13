@@ -1,13 +1,13 @@
+import { FlashList } from "@shopify/flash-list"
 import React, { useEffect, useMemo, useState } from "react"
 import { Pressable, StyleSheet, Text, View } from "react-native"
-import { FlashList } from "@shopify/flash-list"
 
 import { Image } from "expo-image"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useSQLiteContext } from "expo-sqlite"
 
-import { drizzle } from "drizzle-orm/expo-sqlite"
 import { eq } from "drizzle-orm"
+import { drizzle } from "drizzle-orm/expo-sqlite"
 
 import { logger } from "@/utils/logger"
 
@@ -18,8 +18,8 @@ import {
   muscleGroupTable,
 } from "@/db/schema"
 
-import LoadingScreen from "@/components/LoadingScreen"
 import EmptyScreen from "@/components/EmptyScreen"
+import LoadingScreen from "@/components/LoadingScreen"
 
 import { useSelectedExercise } from "@/store/useSelectedExercise"
 
@@ -130,7 +130,7 @@ export default MuscleGroupScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#25292e",
+    backgroundColor: "#211e27",
     alignItems: "center",
   },
   title: {
