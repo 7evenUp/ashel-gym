@@ -225,6 +225,47 @@ export const populateDb = async (
       image: "hip_abductions",
     },
   ])
-
   // Shoulders
+  await db.insert(exerciseTable).values([
+    {
+      muscle_group_id: shoulders.id,
+      name: "Dumbbell Lateral Raise",
+      image: "db_lateral_raise",
+    },
+    {
+      muscle_group_id: shoulders.id,
+      name: "Overhead Press",
+      image: "overhead_press",
+    },
+    {
+      muscle_group_id: shoulders.id,
+      name: "Dumbbell Overhead Press",
+      image: "db_overhead_press",
+    },
+    {
+      muscle_group_id: shoulders.id,
+      name: "Machine Shoulder Press",
+      image: "machine_shoulder_press",
+    },
+    {
+      muscle_group_id: shoulders.id,
+      name: "Standing Machine Lateral Raise",
+      image: "standing_machine_lateral_raise",
+    },
+    {
+      muscle_group_id: shoulders.id,
+      name: "Cable Lateral Raise",
+      image: "cable_lateral_raise",
+    },
+    {
+      muscle_group_id: shoulders.id,
+      name: "Reverse Pec Dec",
+      image: "reverse_pec_dec",
+    },
+    {
+      muscle_group_id: shoulders.id,
+      name: "Rope Face Pull",
+      image: "rope_face_pull",
+    },
+  ])
 }

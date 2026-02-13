@@ -34,7 +34,16 @@ export const exerciseImages: Record<
     cable_kickback: require("../assets/images/exercises/triceps/cable_kickback.png"),
     machine_dips: require("../assets/images/exercises/triceps/machine_dips.png"),
   },
-  shoulders: {},
+  shoulders: {
+    db_lateral_raise: require("../assets/images/exercises/shoulders/db_lateral_raise.png"),
+    overhead_press: require("../assets/images/exercises/shoulders/overhead_press.png"),
+    db_overhead_press: require("../assets/images/exercises/shoulders/db_overhead_press.png"),
+    machine_shoulder_press: require("../assets/images/exercises/shoulders/machine_shoulder_press.png"),
+    standing_machine_lateral_raise: require("../assets/images/exercises/shoulders/standing_machine_lateral_raise.png"),
+    cable_lateral_raise: require("../assets/images/exercises/shoulders/cable_lateral_raise.png"),
+    reverse_pec_dec: require("../assets/images/exercises/shoulders/reverse_pec_dec.png"),
+    rope_face_pull: require("../assets/images/exercises/shoulders/rope_face_pull.png"),
+  },
   legs: {
     squats: require("../assets/images/exercises/legs/squats.png"),
     smith_machine_squat: require("../assets/images/exercises/legs/smith_machine_squat.png"),
