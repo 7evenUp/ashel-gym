@@ -183,6 +183,48 @@ export const populateDb = async (
     },
   ])
   // Legs
+  await db.insert(exerciseTable).values([
+    {
+      muscle_group_id: legs.id,
+      name: "Приседание со штангой",
+      image: "squats",
+    },
+    {
+      muscle_group_id: legs.id,
+      name: "Присед в Smith Machine",
+      image: "smith_machine_squat",
+    },
+    {
+      muscle_group_id: legs.id,
+      name: "45 Degree Leg Press",
+      image: "degree_45_leg_press",
+    },
+    {
+      muscle_group_id: legs.id,
+      name: "Leg Extension",
+      image: "leg_extension",
+    },
+    {
+      muscle_group_id: legs.id,
+      name: "Romanian Deadlift",
+      image: "romanian_deadlift",
+    },
+    {
+      muscle_group_id: legs.id,
+      name: "Seated Leg Curl",
+      image: "seated_leg_curl",
+    },
+    {
+      muscle_group_id: legs.id,
+      name: "Hip Adductions",
+      image: "hip_adductions",
+    },
+    {
+      muscle_group_id: legs.id,
+      name: "Hip Abductions",
+      image: "hip_abductions",
+    },
+  ])
 
   // Shoulders
 }

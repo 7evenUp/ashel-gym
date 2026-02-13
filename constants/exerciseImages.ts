@@ -35,5 +35,14 @@ export const exerciseImages: Record<
     machine_dips: require("../assets/images/exercises/triceps/machine_dips.png"),
   },
   shoulders: {},
-  legs: {},
+  legs: {
+    squats: require("../assets/images/exercises/legs/squats.png"),
+    smith_machine_squat: require("../assets/images/exercises/legs/smith_machine_squat.png"),
+    degree_45_leg_press: require("../assets/images/exercises/legs/degree_45_leg_press.png"),
+    leg_extension: require("../assets/images/exercises/legs/leg_extension.png"),
+    romanian_deadlift: require("../assets/images/exercises/legs/romanian_deadlift.png"),
+    seated_leg_curl: require("../assets/images/exercises/legs/seated_leg_curl.png"),
+    hip_adductions: require("../assets/images/exercises/legs/hip_adductions.png"),
+    hip_abductions: require("../assets/images/exercises/legs/hip_abductions.png"),
+  },
 }
