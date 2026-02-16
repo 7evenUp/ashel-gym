@@ -1,13 +1,26 @@
-import { Link } from "expo-router"
-import { Text, View, StyleSheet } from "react-native"
+import { StyleSheet, View } from "react-native"
+
+import IdleStep from "@/components/workout-creation/IdleStep"
+import SelectMuscleGroup from "@/components/workout-creation/SelectMuscleGroup"
+import SelectExercise from "@/components/workout-creation/SelectExercise"
+import CreateSet from "@/components/workout-creation/CreateSet"
+
+import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 export default function TrainingScreen() {
+  const { currentStep } = useWorkoutCreation()
+
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Training</Text>
-      <Link href="/(tabs)/profile" style={styles.button}>
-        Go to profile screen
-      </Link>
+      {currentStep === "idle" ? (
+        <IdleStep />
+      ) : currentStep === "select-muscle-group" ? (
+        <SelectMuscleGroup />
+      ) : currentStep === "select-exercise" ? (
+        <SelectExercise />
+      ) : (
+        currentStep === "create-set" && <CreateSet />
+      )}
     </View>
   )
 }
@@ -15,18 +28,8 @@ export default function TrainingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#211e27",
-    paddingInline: 16,
-  },
-  text: {
-    color: "#9e9e9e",
-    fontSize: 24,
-  },
-  button: {
-    fontSize: 20,
-    textDecorationLine: "underline",
-    color: "#fff",
+    padding: 16,
   },
 })

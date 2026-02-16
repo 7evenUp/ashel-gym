@@ -1,38 +1,21 @@
-import { useEffect, useState } from "react"
 import { Pressable, StyleSheet, View } from "react-native"
-
 import { Image } from "expo-image"
 import { Link, useRouter } from "expo-router"
-import { useSQLiteContext } from "expo-sqlite"
-
-import { Dumbbell } from "lucide-react-native"
-
-import { drizzle } from "drizzle-orm/expo-sqlite"
-
 import { FlashList } from "@shopify/flash-list"
+import { Dumbbell } from "lucide-react-native"
 
 import Button from "@/components/Button"
 
-import { MuscleGroup, muscleGroupTable } from "@/db/schema"
-
 import { muscleGroupImages } from "@/constants/muscleGroupImages"
+
+import useMuscleGroups from "@/hooks/useMuscleGroups"
 
 import { logger } from "@/utils/logger"
 
 export default function ProfileScreen() {
   const router = useRouter()
 
-  const [muscleGroups, setMuscleGroups] = useState<MuscleGroup[] | null>(null)
-
-  const expoDB = useSQLiteContext()
-  const db = drizzle(expoDB)
-
-  useEffect(() => {
-    ;(async () => {
-      const muscleGroups = await db.select().from(muscleGroupTable)
-      setMuscleGroups(muscleGroups)
-    })()
-  }, [])
+  const muscleGroups = useMuscleGroups()
 
   logger("MuscleGroups: ", muscleGroups)
 

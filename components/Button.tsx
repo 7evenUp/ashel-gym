@@ -1,10 +1,5 @@
 import { ComponentProps, useEffect } from "react"
-import {
-  StyleSheet,
-  Pressable,
-  Text,
-  PressableStateCallbackType,
-} from "react-native"
+import { StyleSheet, Pressable, Text } from "react-native"
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -49,7 +44,7 @@ export default function Button({
 
   return (
     <Pressable
-      style={(state: PressableStateCallbackType) => [
+      style={(state) => [
         styles.pressable,
         state.pressed && styles.pressable_pressed,
         typeof style === "function" ? style(state) : style,

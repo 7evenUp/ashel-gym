@@ -1,10 +1,8 @@
 import { Suspense, useEffect } from "react"
 import { ActivityIndicator } from "react-native"
-import { Link, Stack } from "expo-router"
+import { Stack } from "expo-router"
 import { openDatabaseSync, SQLiteProvider } from "expo-sqlite"
 import { StatusBar } from "expo-status-bar"
-
-import { Info } from "lucide-react-native"
 
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin"
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
@@ -15,12 +13,19 @@ import migrations from "@/drizzle/migrations"
 import { logger } from "@/utils/logger"
 import { populateDb } from "@/utils/populateDb"
 
+import { useWorkoutCreation } from "@/store/useWorkoutCreation"
+
+import HeaderLeft from "@/components/header-buttons/HeaderLeft"
+import HeaderRight from "@/components/header-buttons/HeaderRight"
+
 const DATABASE_NAME = "test2.db"
 const expoDB = openDatabaseSync(DATABASE_NAME)
 const db = drizzle(expoDB)
 
 const Layout = () => {
   useDrizzleStudio(expoDB)
+
+  const { currentStep, createdWorkoutId } = useWorkoutCreation()
 
   return (
     <>
@@ -34,20 +39,10 @@ const Layout = () => {
               backgroundColor: "#211e27",
             },
             headerTintColor: "#fff",
-            headerRight: () => (
-              <Link href="/modal" style={{ padding: 6 }}>
-                <Info color="rgba(255,255,255,0.6)" size={24} />
-              </Link>
-            ),
-          }}
-        />
-        <Stack.Screen
-          name="modal"
-          options={{
-            presentation: "formSheet",
-            sheetGrabberVisible: true,
-            sheetCornerRadius: 24,
-            sheetAllowedDetents: "fitToContents",
+            headerLeft:
+              currentStep !== "idle" ? () => <HeaderLeft /> : undefined,
+            headerRight:
+              createdWorkoutId !== null ? () => <HeaderRight /> : undefined,
           }}
         />
         <Stack.Screen
