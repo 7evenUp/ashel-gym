@@ -28,9 +28,7 @@ const IdleStep = () => {
 
   return (
     <>
-      <Text style={{ color: "white", marginTop: 20 }}>
-        Запишем тренировочку?
-      </Text>
+      <Text style={styles.title}>Запишем тренировочку?</Text>
       <Button
         style={{ marginTop: "auto" }}
         label="Записать"
@@ -42,4 +40,11 @@ const IdleStep = () => {
 
 export default IdleStep
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  title: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: 600,
+    marginTop: 20,
+  },
+})

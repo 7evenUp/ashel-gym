@@ -23,9 +23,7 @@ const SelectMuscleGroup = () => {
 
   return (
     <>
-      <Text style={{ color: "white", marginTop: 20 }}>
-        Что сегодня тренировал?
-      </Text>
+      <Text style={styles.title}>Что сегодня тренировал?</Text>
       {muscleGroups && (
         <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
           {muscleGroups.map((muscle) => (
@@ -53,9 +51,15 @@ const SelectMuscleGroup = () => {
 export default SelectMuscleGroup
 
 const styles = StyleSheet.create({
+  title: {
+    color: "white",
+    fontSize: 24,
+    fontWeight: 600,
+    marginVertical: 12,
+  },
   imageContainer: {
     aspectRatio: 1 / 1,
-    width: "33.33%",
+    width: "50%",
     height: "100%",
     borderLeftWidth: 3,
     borderRightWidth: 3,

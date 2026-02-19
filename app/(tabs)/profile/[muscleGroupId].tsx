@@ -1,8 +1,6 @@
-import { FlashList } from "@shopify/flash-list"
 import React, { useEffect, useMemo, useState } from "react"
-import { Pressable, StyleSheet, Text, View } from "react-native"
+import { StyleSheet, Text, View } from "react-native"
 
-import { Image } from "expo-image"
 import { useLocalSearchParams, useRouter } from "expo-router"
 import { useSQLiteContext } from "expo-sqlite"
 
@@ -20,10 +18,9 @@ import {
 
 import EmptyScreen from "@/components/EmptyScreen"
 import LoadingScreen from "@/components/LoadingScreen"
+import ExercisesGrid from "@/components/ExercisesGrid"
 
 import { useSelectedExercise } from "@/store/useSelectedExercise"
-
-import { exerciseImages } from "@/constants/exerciseImages"
 
 const MuscleGroupScreen = () => {
   const { muscleGroupId } = useLocalSearchParams()
@@ -69,56 +66,19 @@ const MuscleGroupScreen = () => {
 
   if (exercises.length === 0) return <EmptyScreen />
 
-  const renderFlashListItem = ({
-    item,
-    index,
-  }: {
-    item: Exercise
-    index: number
-  }) => {
-    const marginLeft = index % 2 === 0 ? 0 : 6
-    const marginRight = index % 2 === 0 ? 6 : 0
-
-    return (
-      <Pressable
-        key={item.id}
-        onPress={() => {
-          setExercise(item)
-          router.navigate("/stats-modal")
-        }}
-        style={{
-          alignItems: "center",
-          marginLeft,
-          marginRight,
-          paddingBottom: 8,
-          gap: 8,
-        }}
-      >
-        <Image
-          style={styles.image}
-          source={exerciseImages[muscleGroup.name][item.image]}
-          transition={250}
-        />
-        <Text style={styles.exercise_name}>{item.name}</Text>
-      </Pressable>
-    )
-  }
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>
         {muscleGroup.name}: {muscleGroupId}
       </Text>
       {exercises && exercises.length > 0 && (
-        <FlashList
-          data={exercises}
-          style={{ width: "100%" }}
-          contentContainerStyle={{
-            padding: 16,
+        <ExercisesGrid
+          exercises={exercises}
+          muscleGroup={muscleGroup}
+          onExercisePress={(exercise) => {
+            setExercise(exercise)
+            router.navigate("/stats-modal")
           }}
-          numColumns={2}
-          renderItem={renderFlashListItem}
-          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
         />
       )}
     </View>
