@@ -7,10 +7,15 @@ import useExercises from "@/hooks/useExercises"
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 import { Exercise } from "@/db/schema"
+import { createExerciseSet, getExerciseSets } from "@/db/prepared-statements"
 
 const SelectExercise = () => {
-  const { selectedMuscleGroup, setSelectedExercise, setCurrentStep } =
-    useWorkoutCreation()
+  const {
+    selectedMuscleGroup,
+    setSelectedExercise,
+    setCurrentStep,
+    createdWorkoutId,
+  } = useWorkoutCreation()
 
   const exercises = useExercises({
     neededMuscleGroupId: selectedMuscleGroup ? selectedMuscleGroup.id : null,
@@ -19,13 +24,27 @@ const SelectExercise = () => {
   if (
     exercises === null ||
     exercises.length === 0 ||
-    selectedMuscleGroup === null
+    selectedMuscleGroup === null ||
+    createdWorkoutId === null
   )
     return
 
-  const onExercisePress = (exercise: Exercise) => {
+  const onExercisePress = async (exercise: Exercise) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
     setSelectedExercise(exercise)
+    const sets = await getExerciseSets({
+      exercise_id: exercise.id,
+      workout_id: createdWorkoutId,
+    })
+    if (sets.length === 0) {
+      createExerciseSet({
+        exercise_id: exercise.id,
+        workout_id: createdWorkoutId,
+        order: 0,
+        reps: 1,
+        weight: 2,
+      })
+    }
     setCurrentStep("create-set")
   }
 

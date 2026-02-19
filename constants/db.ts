@@ -1,0 +1,1 @@
+export const DATABASE_NAME = "test2.db"

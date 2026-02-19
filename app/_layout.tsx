@@ -18,7 +18,8 @@ import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 import HeaderLeft from "@/components/header-buttons/HeaderLeft"
 import HeaderRight from "@/components/header-buttons/HeaderRight"
 
-const DATABASE_NAME = "test2.db"
+import { DATABASE_NAME } from "@/constants/db"
+
 const expoDB = openDatabaseSync(DATABASE_NAME)
 const db = drizzle(expoDB)
 
