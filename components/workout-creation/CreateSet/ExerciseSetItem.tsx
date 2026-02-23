@@ -72,7 +72,7 @@ const ExerciseSetItem = ({
 
         <View style={styles.right}>
           <View style={styles.col}>
-            <Text style={styles.col_title}>Вес</Text>
+            <Text style={styles.col_title}>Вес, кг</Text>
             <TextInput
               style={styles.col_input}
               placeholder="Введите вес"
@@ -168,6 +168,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     height: 32,
     minWidth: 110,
+    fontSize: 16,
+    includeFontPadding: false,
+    textAlignVertical: "center",
   },
   counter_wrapper: {
     backgroundColor: "hsl(0, 0%, 20%)",

@@ -41,8 +41,8 @@ const SelectExercise = () => {
         exercise_id: exercise.id,
         workout_id: createdWorkoutId,
         order: 0,
-        reps: 1,
-        weight: 2,
+        reps: 0,
+        weight: 0,
       })
     }
     setCurrentStep("create-set")
