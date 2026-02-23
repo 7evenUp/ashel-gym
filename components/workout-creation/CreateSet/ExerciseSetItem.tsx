@@ -1,5 +1,12 @@
 import { useState } from "react"
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native"
+import {
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native"
 import { MinusIcon, PlusIcon } from "lucide-react-native"
 
 import AnimatedColorButton from "./AnimatedButton"
@@ -14,9 +21,16 @@ const ExerciseSetItem = ({
   reps: outerReps,
   weight: outerWeight,
   id,
+  isFirst,
   isLast,
   refetchSets,
-}: ExerciseSet & { isLast: boolean; refetchSets: VoidFunction }) => {
+  onSetAdded,
+}: ExerciseSet & {
+  isFirst: boolean
+  isLast: boolean
+  refetchSets: VoidFunction
+  onSetAdded: VoidFunction
+}) => {
   const [reps, setReps] = useState(outerReps)
   const [weight, setWeight] = useState(outerWeight.toString())
 
@@ -61,11 +75,12 @@ const ExerciseSetItem = ({
     })
 
     refetchSets()
+    onSetAdded()
   }
 
   return (
     <>
-      <View style={styles.set_item}>
+      <View style={[styles.set_item, { marginTop: isFirst ? 0 : 8 }]}>
         <View style={styles.left}>
           <Text style={styles.order}>Подход №{order + 1}</Text>
         </View>
@@ -169,8 +184,13 @@ const styles = StyleSheet.create({
     height: 32,
     minWidth: 110,
     fontSize: 16,
-    includeFontPadding: false,
-    textAlignVertical: "center",
+    ...Platform.select({
+      android: {
+        includeFontPadding: false,
+        textAlignVertical: "center",
+        paddingVertical: 0,
+      },
+    }),
   },
   counter_wrapper: {
     backgroundColor: "hsl(0, 0%, 20%)",
