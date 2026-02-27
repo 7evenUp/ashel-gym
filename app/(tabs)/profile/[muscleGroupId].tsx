@@ -2,10 +2,8 @@ import React, { useEffect, useMemo, useState } from "react"
 import { StyleSheet, Text, View } from "react-native"
 
 import { useLocalSearchParams, useRouter } from "expo-router"
-import { useSQLiteContext } from "expo-sqlite"
 
 import { eq } from "drizzle-orm"
-import { drizzle } from "drizzle-orm/expo-sqlite"
 
 import { logger } from "@/utils/logger"
 
@@ -22,6 +20,8 @@ import ExercisesGrid from "@/components/ExercisesGrid"
 
 import { useSelectedExercise } from "@/store/useSelectedExercise"
 
+import useDb from "@/hooks/useDb"
+
 const MuscleGroupScreen = () => {
   const { muscleGroupId } = useLocalSearchParams()
 
@@ -32,8 +32,7 @@ const MuscleGroupScreen = () => {
   const [muscleGroup, setMuscleGroup] = useState<MuscleGroup | null>(null)
   const [exercises, setExercises] = useState<Exercise[] | null>(null)
 
-  const expoDB = useSQLiteContext()
-  const db = drizzle(expoDB)
+  const db = useDb()
 
   const neededMuscleGroupId = useMemo(() => {
     return Array.isArray(muscleGroupId)

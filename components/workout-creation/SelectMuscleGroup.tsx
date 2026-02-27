@@ -3,33 +3,48 @@ import { Image } from "expo-image"
 import * as Haptics from "expo-haptics"
 
 import { MuscleGroup } from "@/db/schema"
+import { createWorkoutMuscleGroupIfNotExist } from "@/db/prepared-statements/workoutMuscleGroup"
 
 import { muscleGroupImages } from "@/constants/muscleGroupImages"
 
 import useMuscleGroups from "@/hooks/useMuscleGroups"
+import useDb from "@/hooks/useDb"
 
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 const SelectMuscleGroup = () => {
   const muscleGroups = useMuscleGroups()
+  const db = useDb()
 
-  const { setSelectedMuscleGroup, setCurrentStep } = useWorkoutCreation()
+  const { createdWorkoutId, setSelectedMuscleGroup, goToExerciseSelection } =
+    useWorkoutCreation()
 
-  const onMuscleGroupPress = (muscle: MuscleGroup) => {
+  const onMuscleGroupPress = async (muscle: MuscleGroup) => {
+    if (createdWorkoutId === null) return
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+
+    await createWorkoutMuscleGroupIfNotExist(
+      {
+        muscle_group_id: muscle.id,
+        workout_id: createdWorkoutId,
+      },
+      db,
+    )
+
     setSelectedMuscleGroup(muscle)
-    setCurrentStep("select-exercise")
+    goToExerciseSelection()
   }
 
   return (
     <>
       <Text style={styles.title}>Что сегодня тренировал?</Text>
       {muscleGroups && (
-        <View style={{ flexWrap: "wrap", flexDirection: "row" }}>
+        <View style={styles.wrapper}>
           {muscleGroups.map((muscle) => (
             <Pressable
               key={muscle.id}
-              style={styles.imageContainer}
+              style={styles.image_container}
               onPress={() => onMuscleGroupPress(muscle)}
             >
               <Image
@@ -57,7 +72,11 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     marginVertical: 12,
   },
-  imageContainer: {
+  wrapper: {
+    flexWrap: "wrap",
+    flexDirection: "row",
+  },
+  image_container: {
     aspectRatio: 1 / 1,
     width: "50%",
     height: "100%",

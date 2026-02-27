@@ -1,23 +1,37 @@
 import { useEffect, useRef, useState } from "react"
 import { ScrollView, StyleSheet, Text, View } from "react-native"
 import { Image } from "expo-image"
+import { eq } from "drizzle-orm"
 
 import ExerciseSetItem from "./ExerciseSetItem"
+import Button from "@/components/Button"
 
 import { exerciseImages } from "@/constants/exerciseImages"
 
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 import useSets from "@/hooks/useSets"
+import useDb from "@/hooks/useDb"
+
+import { workoutTable } from "@/db/schema"
 
 const CreateSet = () => {
   const scrollViewRef = useRef<ScrollView>(null)
   const prevSetsLengthRef = useRef(0)
 
   const [shouldScrollToEnd, setShouldScrollToEnd] = useState(false)
+  const [isFinishing, setIsFinishing] = useState(false)
 
-  const { selectedExercise, selectedMuscleGroup, createdWorkoutId } =
-    useWorkoutCreation()
+  const db = useDb()
+
+  const {
+    selectedExercise,
+    selectedMuscleGroup,
+    createdWorkoutId,
+    goToExerciseSelection,
+    goToMuscleGroupSelection,
+    resetWorkoutCreation,
+  } = useWorkoutCreation()
 
   const { sets, refetch } = useSets({
     exerciseId: selectedExercise ? selectedExercise.id : null,
@@ -43,6 +57,23 @@ const CreateSet = () => {
   if (selectedExercise === null) return
   if (selectedMuscleGroup === null) return
   if (sets === null) return
+
+  const onFinishWorkout = async () => {
+    if (createdWorkoutId === null || isFinishing) return
+
+    setIsFinishing(true)
+
+    try {
+      await db
+        .update(workoutTable)
+        .set({ finished_at: new Date().getTime() })
+        .where(eq(workoutTable.id, createdWorkoutId))
+
+      resetWorkoutCreation()
+    } finally {
+      setIsFinishing(false)
+    }
+  }
 
   return (
     <ScrollView
@@ -72,6 +103,16 @@ const CreateSet = () => {
           onSetAdded={() => setShouldScrollToEnd(true)}
         />
       ))}
+
+      <View style={styles.actions}>
+        <Button label="Другое упражнение" onPress={goToExerciseSelection} />
+        <Button label="Другая группа" onPress={goToMuscleGroupSelection} />
+        <Button
+          label="Завершить тренировку"
+          onPress={onFinishWorkout}
+          isLoading={isFinishing}
+        />
+      </View>
     </ScrollView>
   )
 }
@@ -85,6 +126,12 @@ const styles = StyleSheet.create({
   scroll_view_container: {
     alignItems: "center",
     paddingBottom: 40,
+  },
+  actions: {
+    marginTop: 24,
+    width: "100%",
+    gap: 12,
+    paddingHorizontal: 8,
   },
   title: {
     color: "white",

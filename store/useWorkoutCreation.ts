@@ -10,24 +10,54 @@ export type CurrentStep =
 
 interface WorkoutCreationState {
   currentStep: CurrentStep
-  setCurrentStep: (currentStep: CurrentStep) => void
   createdWorkoutId: number | null
-  setCreatedWorkoutId: (id: number | null) => void
   selectedMuscleGroup: MuscleGroup | null
   setSelectedMuscleGroup: (muscleGroup: MuscleGroup | null) => void
   selectedExercise: Exercise | null
   setSelectedExercise: (exercise: Exercise | null) => void
+  startWorkout: (workoutId: number) => void
+  goToMuscleGroupSelection: () => void
+  goToExerciseSelection: () => void
+  goToSetCreation: () => void
+  resetWorkoutCreation: () => void
 }
 
 export const useWorkoutCreation = create<WorkoutCreationState>((set) => ({
   currentStep: "idle",
-  setCurrentStep: (currentStep) => set(() => ({ currentStep })),
   createdWorkoutId: null,
-  setCreatedWorkoutId: (id) => set({ createdWorkoutId: id }),
   selectedMuscleGroup: null,
   setSelectedMuscleGroup: (muscleGroup) =>
     set(() => ({ selectedMuscleGroup: muscleGroup })),
   selectedExercise: null,
   setSelectedExercise: (exercise) =>
     set(() => ({ selectedExercise: exercise })),
+  startWorkout: (workoutId) =>
+    set(() => ({
+      currentStep: "select-muscle-group",
+      createdWorkoutId: workoutId,
+      selectedMuscleGroup: null,
+      selectedExercise: null,
+    })),
+  goToMuscleGroupSelection: () =>
+    set(() => ({
+      currentStep: "select-muscle-group",
+      selectedMuscleGroup: null,
+      selectedExercise: null,
+    })),
+  goToExerciseSelection: () =>
+    set(() => ({
+      currentStep: "select-exercise",
+      selectedExercise: null,
+    })),
+  goToSetCreation: () =>
+    set(() => ({
+      currentStep: "create-set",
+    })),
+  resetWorkoutCreation: () =>
+    set(() => ({
+      currentStep: "idle",
+      createdWorkoutId: null,
+      selectedMuscleGroup: null,
+      selectedExercise: null,
+    })),
 }))

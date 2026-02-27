@@ -13,7 +13,7 @@ const SelectExercise = () => {
   const {
     selectedMuscleGroup,
     setSelectedExercise,
-    setCurrentStep,
+    goToSetCreation,
     createdWorkoutId,
   } = useWorkoutCreation()
 
@@ -37,7 +37,7 @@ const SelectExercise = () => {
       workout_id: createdWorkoutId,
     })
     if (sets.length === 0) {
-      createExerciseSet({
+      await createExerciseSet({
         exercise_id: exercise.id,
         workout_id: createdWorkoutId,
         order: 0,
@@ -45,7 +45,7 @@ const SelectExercise = () => {
         weight: 0,
       })
     }
-    setCurrentStep("create-set")
+    goToSetCreation()
   }
 
   return (

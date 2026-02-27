@@ -40,6 +40,7 @@ export const statsHistoryTable = createTable("stats_history", {
 export const workoutTable = createTable("workout", {
   id: int().primaryKey({ autoIncrement: true }),
   created_at: int().notNull(),
+  finished_at: int(),
 })
 
 export const exerciseSetTable = createTable("exercise_set", {

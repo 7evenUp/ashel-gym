@@ -8,8 +8,6 @@ import {
   Pressable,
 } from "react-native"
 import { useRouter } from "expo-router"
-import { useSQLiteContext } from "expo-sqlite"
-import { drizzle } from "drizzle-orm/expo-sqlite"
 import { eq } from "drizzle-orm"
 import { HistoryIcon } from "lucide-react-native"
 
@@ -19,11 +17,12 @@ import { statsHistoryTable, statsTable } from "@/db/schema"
 
 import Button from "@/components/Button"
 
+import useDb from "@/hooks/useDb"
+
 import { logger } from "@/utils/logger"
 
 const StatsModal = () => {
-  const expoDb = useSQLiteContext()
-  const db = drizzle(expoDb)
+  const db = useDb()
 
   const router = useRouter()
 

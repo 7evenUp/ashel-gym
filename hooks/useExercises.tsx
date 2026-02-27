@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react"
-import { useSQLiteContext } from "expo-sqlite"
-import { drizzle } from "drizzle-orm/expo-sqlite"
 import { eq } from "drizzle-orm"
 
 import { Exercise, exerciseTable } from "@/db/schema"
+
+import useDb from "./useDb"
 
 const useExercises = ({
   neededMuscleGroupId,
@@ -12,8 +12,7 @@ const useExercises = ({
 }) => {
   const [exercises, setExercises] = useState<Exercise[] | null>(null)
 
-  const expoDB = useSQLiteContext()
-  const db = drizzle(expoDB)
+  const db = useDb()
 
   useEffect(() => {
     ;(async () => {

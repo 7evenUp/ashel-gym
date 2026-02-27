@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react"
-import { useSQLiteContext } from "expo-sqlite"
-import { drizzle } from "drizzle-orm/expo-sqlite"
 
 import { MuscleGroup, muscleGroupTable } from "@/db/schema"
+
+import useDb from "./useDb"
 
 const useMuscleGroups = () => {
   const [muscleGroups, setMuscleGroups] = useState<MuscleGroup[] | null>(null)
 
-  const expoDB = useSQLiteContext()
-  const db = drizzle(expoDB)
+  const db = useDb()
 
   useEffect(() => {
     ;(async () => {

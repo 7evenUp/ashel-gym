@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react"
 import { StyleSheet, Text, View } from "react-native"
-import { useSQLiteContext } from "expo-sqlite"
-import { drizzle } from "drizzle-orm/expo-sqlite"
 import { desc, eq } from "drizzle-orm"
 
 import { useSelectedExercise } from "@/store/useSelectedExercise"
 
 import { StatsHistory, statsHistoryTable } from "@/db/schema"
 
+import useDb from "@/hooks/useDb"
+
 import { logger } from "@/utils/logger"
 
 const StatsHistoryModal = () => {
-  const expoDb = useSQLiteContext()
-  const db = drizzle(expoDb)
+  const db = useDb()
 
   const exercise = useSelectedExercise((state) => state.exercise)
 

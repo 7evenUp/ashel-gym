@@ -1,33 +1,23 @@
 import { Pressable, StyleSheet } from "react-native"
 import { XIcon } from "lucide-react-native"
 import { eq } from "drizzle-orm"
-import { useSQLiteContext } from "expo-sqlite"
-import { drizzle } from "drizzle-orm/expo-sqlite"
 
 import { workoutTable } from "@/db/schema"
 
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
-const HeaderRight = () => {
-  const expoDb = useSQLiteContext()
-  const db = drizzle(expoDb)
+import useDb from "@/hooks/useDb"
 
-  const {
-    createdWorkoutId,
-    setCurrentStep,
-    setCreatedWorkoutId,
-    setSelectedMuscleGroup,
-    setSelectedExercise,
-  } = useWorkoutCreation()
+const HeaderRight = () => {
+  const db = useDb()
+
+  const { createdWorkoutId, resetWorkoutCreation } = useWorkoutCreation()
 
   const onCancelPress = async () => {
     if (createdWorkoutId === null) return
 
     await db.delete(workoutTable).where(eq(workoutTable.id, createdWorkoutId))
-    setCurrentStep("idle")
-    setCreatedWorkoutId(null)
-    setSelectedMuscleGroup(null)
-    setSelectedExercise(null)
+    resetWorkoutCreation()
   }
 
   return (

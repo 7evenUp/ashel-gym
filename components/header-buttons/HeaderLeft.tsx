@@ -5,26 +5,24 @@ import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 const HeaderLeft = () => {
   const {
     currentStep,
-    setCurrentStep,
-    setSelectedMuscleGroup,
-    setSelectedExercise,
+    resetWorkoutCreation,
+    goToMuscleGroupSelection,
+    goToExerciseSelection,
   } = useWorkoutCreation()
 
   const onBackPress = () => {
     if (currentStep === "select-muscle-group") {
-      setCurrentStep("idle")
+      resetWorkoutCreation()
       return
     }
 
     if (currentStep === "select-exercise") {
-      setCurrentStep("select-muscle-group")
-      setSelectedMuscleGroup(null)
+      goToMuscleGroupSelection()
       return
     }
 
     if (currentStep === "create-set") {
-      setCurrentStep("select-exercise")
-      setSelectedExercise(null)
+      goToExerciseSelection()
       return
     }
   }

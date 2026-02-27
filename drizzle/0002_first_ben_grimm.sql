@@ -1,0 +1,1 @@
+ALTER TABLE `workout` ADD `finished_at` integer;

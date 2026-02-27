@@ -1,6 +1,4 @@
 import { StyleSheet, Text } from "react-native"
-import { useSQLiteContext } from "expo-sqlite"
-import { drizzle } from "drizzle-orm/expo-sqlite"
 
 import Button from "../Button"
 
@@ -8,11 +6,12 @@ import { workoutTable } from "@/db/schema"
 
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
-const IdleStep = () => {
-  const expoDb = useSQLiteContext()
-  const db = drizzle(expoDb)
+import useDb from "@/hooks/useDb"
 
-  const { setCreatedWorkoutId, setCurrentStep } = useWorkoutCreation()
+const IdleStep = () => {
+  const db = useDb()
+
+  const { startWorkout } = useWorkoutCreation()
 
   const onCreateWorkoutClick = async () => {
     const [createdWorkout] = await db
@@ -22,8 +21,7 @@ const IdleStep = () => {
       })
       .returning()
 
-    setCreatedWorkoutId(createdWorkout.id)
-    setCurrentStep("select-muscle-group")
+    startWorkout(createdWorkout.id)
   }
 
   return (
