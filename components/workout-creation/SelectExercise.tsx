@@ -31,11 +31,14 @@ const SelectExercise = () => {
 
   const onExercisePress = async (exercise: Exercise) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+
     setSelectedExercise(exercise)
+
     const sets = await getExerciseSets({
       exercise_id: exercise.id,
       workout_id: createdWorkoutId,
     })
+
     if (sets.length === 0) {
       await createExerciseSet({
         exercise_id: exercise.id,

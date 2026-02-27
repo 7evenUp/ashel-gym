@@ -43,6 +43,19 @@ const ExerciseSetItem = ({
 
   const isConfirmDisabled = reps === 0 || !parseFloat(weight)
 
+  const onWeightChange = async (text: string) => {
+    const replacedText = text.replaceAll(",", ".")
+    const parsedText = parseFloat(replacedText)
+
+    await updateExerciseSet({
+      order,
+      reps,
+      weight: parsedText ? parsedText : 0,
+      id,
+    })
+    setWeight(replacedText)
+  }
+
   const onDecreaseRepsPress = async () => {
     await updateExerciseSet({
       order,
@@ -96,7 +109,7 @@ const ExerciseSetItem = ({
               keyboardAppearance="dark"
               returnKeyType="done"
               value={weight}
-              onChangeText={(text) => setWeight(text.replaceAll(",", "."))}
+              onChangeText={onWeightChange}
             />
           </View>
           <View style={styles.col}>
