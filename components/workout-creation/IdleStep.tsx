@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { StyleSheet, Text, View } from "react-native"
 import { and, desc, gte, lt } from "drizzle-orm"
 

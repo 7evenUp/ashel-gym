@@ -1,17 +1,21 @@
 import { Pressable, StyleSheet, View, Text } from "react-native"
 import { FlashList } from "@shopify/flash-list"
-import { Exercise, MuscleGroup } from "@/db/schema"
 import { Image } from "expo-image"
+
+import { Exercise, MuscleGroup } from "@/db/schema"
+
 import { exerciseImages } from "@/constants/exerciseImages"
 
 const ExercisesGrid = ({
   exercises,
   muscleGroup,
   onExercisePress,
+  highlightedExerciseIds = [],
 }: {
   exercises: Exercise[]
   muscleGroup: MuscleGroup
   onExercisePress: (exercise: Exercise) => void
+  highlightedExerciseIds?: number[]
 }) => {
   const renderFlashListItem = ({
     item,
@@ -23,18 +27,31 @@ const ExercisesGrid = ({
     const marginLeft = index % 2 === 0 ? 0 : 6
     const marginRight = index % 2 === 0 ? 6 : 0
 
+    const isHighlighted = highlightedExerciseIds.includes(item.id)
+
     return (
       <Pressable
         key={item.id}
         onPress={() => onExercisePress(item)}
-        style={[styles.pressable, { marginLeft, marginRight }]}
+        style={[
+          styles.pressable,
+          { marginLeft, marginRight },
+          isHighlighted && styles.pressable_highlighted,
+        ]}
       >
         <Image
-          style={styles.image}
+          style={[styles.image, isHighlighted && styles.image_highlighted]}
           source={exerciseImages[muscleGroup.name][item.image]}
           transition={250}
         />
-        <Text style={styles.exercise_name}>{item.name}</Text>
+        <Text
+          style={[
+            styles.exercise_name,
+            isHighlighted && styles.exercise_name_highlighted,
+          ]}
+        >
+          {item.name}
+        </Text>
       </Pressable>
     )
   }
@@ -60,16 +77,28 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingBottom: 8,
     gap: 8,
+    flex: 1,
+  },
+  pressable_highlighted: {
+    backgroundColor: "rgba(184, 97, 200, 0.1)",
+    borderRadius: 24,
   },
   image: {
     aspectRatio: 1 / 1,
     width: "100%",
     borderRadius: 24,
   },
+  image_highlighted: {
+    borderWidth: 1,
+    borderColor: "rgba(184, 97, 200, 0.5)",
+  },
   exercise_name: {
     fontSize: 14,
     color: "rgba(255,255,255,0.8)",
     paddingHorizontal: 8,
     textAlign: "center",
+  },
+  exercise_name_highlighted: {
+    color: "#b861c8",
   },
 })

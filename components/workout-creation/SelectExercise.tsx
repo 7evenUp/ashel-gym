@@ -1,15 +1,20 @@
+import { useEffect, useState } from "react"
 import * as Haptics from "expo-haptics"
+import { eq } from "drizzle-orm"
 
 import ExercisesGrid from "../ExercisesGrid"
 
 import useExercises from "@/hooks/useExercises"
+import useDb from "@/hooks/useDb"
 
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
-import { Exercise } from "@/db/schema"
+import { Exercise, exerciseSetTable } from "@/db/schema"
 import { createExerciseSet, getExerciseSets } from "@/db/prepared-statements"
 
 const SelectExercise = () => {
+  const db = useDb()
+
   const {
     selectedMuscleGroup,
     setSelectedExercise,
@@ -17,9 +22,45 @@ const SelectExercise = () => {
     createdWorkoutId,
   } = useWorkoutCreation()
 
+  const [highlightedExerciseIds, setHighlightedExerciseIds] = useState<
+    number[]
+  >([])
+
   const exercises = useExercises({
     neededMuscleGroupId: selectedMuscleGroup ? selectedMuscleGroup.id : null,
   })
+
+  useEffect(() => {
+    const loadHighlightedExerciseIds = async () => {
+      if (createdWorkoutId === null || exercises === null) return
+
+      const workoutSets = await db
+        .select()
+        .from(exerciseSetTable)
+        .where(eq(exerciseSetTable.workout_id, createdWorkoutId))
+
+      const exerciseIdsInCurrentGroup = new Set(
+        exercises.map((item) => item.id),
+      )
+
+      const highlightedIds = Array.from(
+        new Set(
+          workoutSets
+            .filter(
+              (set) =>
+                exerciseIdsInCurrentGroup.has(set.exercise_id) &&
+                set.reps > 0 &&
+                set.weight > 0,
+            )
+            .map((set) => set.exercise_id),
+        ),
+      )
+
+      setHighlightedExerciseIds(highlightedIds)
+    }
+
+    loadHighlightedExerciseIds()
+  }, [createdWorkoutId, db, exercises])
 
   if (
     exercises === null ||
@@ -48,6 +89,7 @@ const SelectExercise = () => {
         weight: 0,
       })
     }
+
     goToSetCreation()
   }
 
@@ -55,6 +97,7 @@ const SelectExercise = () => {
     <ExercisesGrid
       exercises={exercises}
       muscleGroup={selectedMuscleGroup}
+      highlightedExerciseIds={highlightedExerciseIds}
       onExercisePress={(exercise) => onExercisePress(exercise)}
     />
   )
