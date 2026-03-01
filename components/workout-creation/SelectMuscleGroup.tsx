@@ -1,8 +1,11 @@
+import { useEffect, useState } from "react"
 import { Pressable, StyleSheet, Text, View } from "react-native"
 import { Image } from "expo-image"
 import * as Haptics from "expo-haptics"
+import { eq, inArray } from "drizzle-orm"
+import { CheckIcon } from "lucide-react-native"
 
-import { MuscleGroup } from "@/db/schema"
+import { MuscleGroup, exerciseSetTable, exerciseTable } from "@/db/schema"
 import { createWorkoutMuscleGroupIfNotExist } from "@/db/prepared-statements/workoutMuscleGroup"
 
 import { muscleGroupImages } from "@/constants/muscleGroupImages"
@@ -13,11 +16,60 @@ import useDb from "@/hooks/useDb"
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 const SelectMuscleGroup = () => {
-  const muscleGroups = useMuscleGroups()
   const db = useDb()
+
+  const muscleGroups = useMuscleGroups()
+
+  const [highlightedMuscleGroupIds, setHighlightedMuscleGroupIds] = useState<
+    number[]
+  >([])
 
   const { createdWorkoutId, setSelectedMuscleGroup, goToExerciseSelection } =
     useWorkoutCreation()
+
+  useEffect(() => {
+    const loadHighlightedMuscleGroups = async () => {
+      if (createdWorkoutId === null) {
+        setHighlightedMuscleGroupIds([])
+        return
+      }
+
+      const workoutSets = await db
+        .select()
+        .from(exerciseSetTable)
+        .where(eq(exerciseSetTable.workout_id, createdWorkoutId))
+
+      // Массив id не пустых упражнений
+      // (внутри которых есть хотя бы один полноценный подход)
+      const nonEmptyExerciseIds = Array.from(
+        new Set(
+          workoutSets
+            .filter((set) => set.reps > 0 && set.weight > 0)
+            .map((set) => set.exercise_id),
+        ),
+      )
+
+      if (nonEmptyExerciseIds.length === 0) {
+        setHighlightedMuscleGroupIds([])
+        return
+      }
+
+      const exercises = await db
+        .select({
+          muscle_group_id: exerciseTable.muscle_group_id,
+        })
+        .from(exerciseTable)
+        .where(inArray(exerciseTable.id, nonEmptyExerciseIds))
+
+      setHighlightedMuscleGroupIds(
+        Array.from(
+          new Set(exercises.map((exercise) => exercise.muscle_group_id)),
+        ),
+      )
+    }
+
+    loadHighlightedMuscleGroups()
+  }, [createdWorkoutId, db])
 
   const onMuscleGroupPress = async (muscle: MuscleGroup) => {
     if (createdWorkoutId === null) return
@@ -41,22 +93,34 @@ const SelectMuscleGroup = () => {
       <Text style={styles.title}>Что сегодня тренировал?</Text>
       {muscleGroups && (
         <View style={styles.wrapper}>
-          {muscleGroups.map((muscle) => (
-            <Pressable
-              key={muscle.id}
-              style={styles.image_container}
-              onPress={() => onMuscleGroupPress(muscle)}
-            >
-              <Image
-                style={styles.image}
-                source={muscleGroupImages[muscle.name].img}
-                placeholder={{
-                  blurhash: muscleGroupImages[muscle.name].blurhash,
-                }}
-                transition={250}
-              />
-            </Pressable>
-          ))}
+          {muscleGroups.map((muscle) => {
+            const isHighlighted = highlightedMuscleGroupIds.includes(muscle.id)
+
+            return (
+              <Pressable
+                key={muscle.id}
+                style={styles.imageContainer}
+                onPress={() => onMuscleGroupPress(muscle)}
+              >
+                {isHighlighted && (
+                  <View style={styles.doneBadge}>
+                    <CheckIcon size={24} color="rgba(184, 97, 200, 1)" />
+                  </View>
+                )}
+                <Image
+                  style={[
+                    styles.image,
+                    isHighlighted && styles.imageHighlighted,
+                  ]}
+                  source={muscleGroupImages[muscle.name].img}
+                  placeholder={{
+                    blurhash: muscleGroupImages[muscle.name].blurhash,
+                  }}
+                  transition={250}
+                />
+              </Pressable>
+            )
+          })}
         </View>
       )}
     </>
@@ -69,25 +133,42 @@ const styles = StyleSheet.create({
   title: {
     color: "white",
     fontSize: 24,
-    fontWeight: 600,
+    fontWeight: "600",
     marginVertical: 12,
   },
   wrapper: {
     flexWrap: "wrap",
     flexDirection: "row",
   },
-  image_container: {
+  imageContainer: {
     aspectRatio: 1 / 1,
     width: "50%",
     height: "100%",
+    position: "relative",
     borderLeftWidth: 3,
     borderRightWidth: 3,
     borderBottomWidth: 6,
     borderColor: "#211e27",
   },
+  doneBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    zIndex: 1,
+    backgroundColor: "rgba(184, 97, 200, 0.3)",
+    borderWidth: 1,
+    borderColor: "rgba(184, 97, 200, 0.5)",
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 9999,
+  },
   image: {
     width: "100%",
     height: "100%",
     borderRadius: 12,
+  },
+  imageHighlighted: {
+    borderWidth: 1.5,
+    borderColor: "rgba(184, 97, 200, 0.5)",
   },
 })
