@@ -39,7 +39,7 @@ const StatsHistoryModal = () => {
     }
 
     getData()
-  }, [exercise])
+  }, [exercise, db])
 
   if (exercise === null) return null
 
@@ -103,16 +103,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "500",
     marginBottom: 12,
+    color: "white",
   },
   description: {
     fontSize: 16,
-    color: "rgba(0,0,0,0.6)",
+    color: "rgba(255,255,255,0.6)",
     marginBottom: 32,
   },
   group_title: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 12,
+    color: "white",
   },
   group: {
     gap: 12,
@@ -122,15 +124,16 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderColor: "rgba(0,0,0,0.1)",
+    borderColor: "rgba(255,255,255,0.1)",
     paddingVertical: 4,
   },
   item_value: {
     fontSize: 24,
     fontWeight: "700",
+    color: "white",
   },
   item_date: {
     fontSize: 12,
-    color: "rgba(0,0,0,0.5)",
+    color: "rgba(255,255,255,0.5)",
   },
 })

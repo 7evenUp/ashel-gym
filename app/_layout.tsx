@@ -1,5 +1,5 @@
 import { Suspense, useEffect } from "react"
-import { ActivityIndicator } from "react-native"
+import { ActivityIndicator, Platform } from "react-native"
 import { Stack } from "expo-router"
 import { openDatabaseSync, SQLiteProvider } from "expo-sqlite"
 import { StatusBar } from "expo-status-bar"
@@ -50,11 +50,13 @@ const Layout = () => {
           name="stats-modal"
           options={{
             presentation: "formSheet",
-            sheetAllowedDetents: [0.75],
-            sheetInitialDetentIndex: 0,
+            sheetAllowedDetents: "fitToContents",
             sheetGrabberVisible: true,
-            sheetCornerRadius: 24,
             headerShown: false,
+            sheetCornerRadius: Platform.OS === "ios" ? undefined : 24,
+            contentStyle: {
+              backgroundColor: "#2d2636",
+            },
           }}
         />
         <Stack.Screen
@@ -64,8 +66,11 @@ const Layout = () => {
             sheetAllowedDetents: [0.75],
             sheetInitialDetentIndex: 0,
             sheetGrabberVisible: true,
-            sheetCornerRadius: 24,
             headerShown: false,
+            sheetCornerRadius: Platform.OS === "ios" ? undefined : 24,
+            contentStyle: {
+              backgroundColor: "#2d2636",
+            },
           }}
         />
       </Stack>

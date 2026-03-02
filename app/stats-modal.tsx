@@ -6,6 +6,7 @@ import {
   TextInput,
   Keyboard,
   Pressable,
+  Platform,
 } from "react-native"
 import { useRouter } from "expo-router"
 import { eq } from "drizzle-orm"
@@ -139,7 +140,7 @@ const StatsModal = () => {
           style={styles.history}
           onPress={() => router.navigate("/stats-history-modal")}
         >
-          <HistoryIcon size={24} color="black" />
+          <HistoryIcon size={24} color="white" />
         </Pressable>
       </View>
       <Text style={styles.description}>👇 Прогресс? Запиши 👇</Text>
@@ -149,6 +150,7 @@ const StatsModal = () => {
           <TextInput
             style={styles.input}
             placeholder="0"
+            placeholderTextColor="rgba(255,255,255,0.5)"
             keyboardType="numeric"
             value={workWeight}
             onChangeText={(text) => setWorkWeight(text)}
@@ -159,6 +161,7 @@ const StatsModal = () => {
           <TextInput
             style={styles.input}
             placeholder="0"
+            placeholderTextColor="rgba(255,255,255,0.5)"
             keyboardType="numeric"
             value={maxWeight}
             onChangeText={(text) => setMaxWeight(text)}
@@ -179,11 +182,10 @@ export default StatsModal
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
     paddingInline: 16,
-    paddingBlock: 24,
-    // height: 440,
+    paddingTop: 24,
+    paddingBottom: Platform.OS === "ios" ? 0 : 24,
   },
   header: {
     position: "relative",
@@ -198,6 +200,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     width: "80%",
     textAlign: "center",
+    color: "white",
   },
   history: {
     position: "absolute",
@@ -205,13 +208,13 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(0,0,0,0.1)",
+    backgroundColor: "rgba(255,255,255,0.1)",
     borderRadius: 12,
     right: 0,
   },
   description: {
     fontSize: 18,
-    color: "rgba(0,0,0,0.6)",
+    color: "rgba(255,255,255,0.6)",
     marginBottom: 32,
   },
   stats: {
@@ -226,11 +229,13 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 18,
+    color: "white",
   },
   input: {
     height: 64,
     width: 100,
     fontSize: 36,
     textAlign: "center",
+    color: "white",
   },
 })
