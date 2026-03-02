@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import {
   Modal,
   Pressable,
@@ -22,15 +23,29 @@ const CalendarDayDetailsModal = ({
   selectedSummary: DaySummary | null
   onClose: VoidFunction
 }) => {
+  const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    if (selectedDate) setIsVisible(true)
+  }, [selectedDate])
+
+  const onCloseClick = async () => {
+    setIsVisible(false)
+
+    await new Promise((r) => setTimeout(r, 300))
+
+    onClose()
+  }
+
   return (
     <Modal
-      animationType="slide"
+      animationType="fade"
       transparent
-      visible={selectedDate !== null}
-      onRequestClose={onClose}
+      visible={isVisible && selectedDate !== null}
+      onRequestClose={onCloseClick}
     >
       <View style={styles.modalRoot}>
-        <Pressable style={styles.modalBackdrop} onPress={onClose} />
+        <Pressable style={styles.modalBackdrop} onPress={onCloseClick} />
 
         <View style={styles.modalCard}>
           <View style={styles.modalHeader}>
@@ -41,7 +56,7 @@ const CalendarDayDetailsModal = ({
               </Text>
             </View>
 
-            <Pressable style={styles.iconButton} onPress={onClose}>
+            <Pressable style={styles.iconButton} onPress={onCloseClick}>
               <X color={md3Colors.dark.onSurface} size={20} />
             </Pressable>
           </View>
@@ -198,12 +213,11 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   tag: {
-    borderRadius: 9999,
+    height: 32,
+    justifyContent: "center",
+    borderRadius: 8,
     backgroundColor: md3Colors.dark.tertiaryContainer,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: md3Colors.dark.outlineVariant,
+    paddingHorizontal: 16,
   },
   tagText: {
     color: md3Colors.dark.onTertiaryContainer,
