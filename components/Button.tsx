@@ -11,6 +11,8 @@ import * as Haptics from "expo-haptics"
 
 import { Loader } from "lucide-react-native"
 
+import { md3Colors } from "@/constants/colors"
+
 export default function Button({
   label,
   icon,
@@ -58,7 +60,7 @@ export default function Button({
     >
       {isLoading ? (
         <Animated.View style={animatedRotationStyles}>
-          <Loader size={24} color="white" />
+          <Loader size={24} color={md3Colors.dark.onPrimary} />
         </Animated.View>
       ) : (
         <>
@@ -79,14 +81,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     gap: 8,
-    backgroundColor: "#56395B",
+    backgroundColor: md3Colors.dark.primary,
   },
   pressable_pressed: {
-    backgroundColor: "#452E49",
+    backgroundColor: md3Colors.dark.onPrimaryContainer,
     transform: [{ scale: 0.98 }],
   },
   label: {
-    color: "#fff",
+    color: md3Colors.dark.onPrimary,
     fontSize: 20,
   },
 })

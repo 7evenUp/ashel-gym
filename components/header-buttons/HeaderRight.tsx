@@ -4,6 +4,8 @@ import { eq } from "drizzle-orm"
 
 import { workoutTable } from "@/db/schema"
 
+import { md3Colors } from "@/constants/colors"
+
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 import useDb from "@/hooks/useDb"
@@ -22,7 +24,7 @@ const HeaderRight = () => {
 
   return (
     <Pressable style={styles.pressable} onPress={onCancelPress}>
-      <XIcon color="rgba(255,255,255,0.6)" size={24} />
+      <XIcon color={md3Colors.dark.onSurfaceVariant} size={24} />
     </Pressable>
   )
 }

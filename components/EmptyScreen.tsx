@@ -1,6 +1,8 @@
 import { Link } from "expo-router"
 import { StyleSheet, Text, View } from "react-native"
 
+import { md3Colors } from "@/constants/colors"
+
 export default function EmptyScreen() {
   return (
     <View style={styles.container}>
@@ -17,17 +19,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#211e27",
+    backgroundColor: md3Colors.dark.background,
     padding: 16,
   },
   text: {
-    color: "#9e9e9e",
+    color: md3Colors.dark.onSurfaceVariant,
     fontSize: 16,
     textAlign: "center",
   },
   button: {
     fontSize: 20,
     textDecorationLine: "underline",
-    color: "#fff",
+    color: md3Colors.dark.primary,
   },
 })

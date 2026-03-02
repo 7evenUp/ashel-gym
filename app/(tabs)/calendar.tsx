@@ -6,6 +6,8 @@ import CalendarMonthView from "@/components/calendar/CalendarMonthView"
 import useCalendarData from "@/components/calendar/useCalendarData"
 import { toDayKey } from "@/components/calendar/utils"
 
+import { md3Colors } from "@/constants/colors"
+
 export default function CalendarScreen() {
   const { daySummaries, isLoading } = useCalendarData()
 
@@ -37,7 +39,7 @@ export default function CalendarScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#211e27",
+    backgroundColor: md3Colors.dark.background,
     paddingHorizontal: 16,
     paddingTop: 28,
   },

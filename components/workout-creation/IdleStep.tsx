@@ -6,6 +6,8 @@ import Button from "../Button"
 
 import { Workout, workoutTable } from "@/db/schema"
 
+import { md3Colors } from "@/constants/colors"
+
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 import useDb from "@/hooks/useDb"
@@ -103,7 +105,7 @@ export default IdleStep
 
 const styles = StyleSheet.create({
   title: {
-    color: "white",
+    color: md3Colors.dark.onSurface,
     fontSize: 24,
     fontWeight: "600",
     marginTop: 20,

@@ -2,6 +2,8 @@ import { useMemo, useState } from "react"
 import { Pressable, StyleSheet, Text, View } from "react-native"
 import { ChevronLeft, ChevronRight } from "lucide-react-native"
 
+import { md3Colors } from "@/constants/colors"
+
 import { DaySummary } from "./types"
 
 import {
@@ -42,13 +44,13 @@ const CalendarMonthView = ({
     <>
       <View style={styles.header}>
         <Pressable onPress={onPreviousMonth} style={styles.iconButton}>
-          <ChevronLeft color="white" size={24} />
+          <ChevronLeft color={md3Colors.dark.onSurface} size={24} />
         </Pressable>
 
         <Text style={styles.monthLabel}>{getMonthLabel(viewDate)}</Text>
 
         <Pressable onPress={onNextMonth} style={styles.iconButton}>
-          <ChevronRight color="white" size={24} />
+          <ChevronRight color={md3Colors.dark.onSurface} size={24} />
         </Pressable>
       </View>
 
@@ -113,7 +115,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: 16,
+    marginBottom: 32,
   },
   iconButton: {
     width: 40,
@@ -121,10 +123,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: md3Colors.dark.surfaceContainerHighest,
   },
   monthLabel: {
-    color: "white",
+    color: md3Colors.dark.onSurface,
     fontSize: 22,
     fontWeight: "700",
     textTransform: "capitalize",
@@ -136,7 +138,7 @@ const styles = StyleSheet.create({
   weekLabel: {
     flex: 1,
     textAlign: "center",
-    color: "rgba(255,255,255,0.45)",
+    color: md3Colors.dark.onSurfaceVariant,
     fontSize: 13,
     fontWeight: "600",
   },
@@ -164,27 +166,27 @@ const styles = StyleSheet.create({
     opacity: 0.4,
   },
   dayBadgeWithWorkout: {
-    borderColor: "rgba(184, 97, 200, 0.5)",
-    backgroundColor: "rgba(184, 97, 200, 0.1)",
+    borderColor: md3Colors.dark.outline,
+    backgroundColor: md3Colors.dark.surfaceVariant,
   },
   dayBadgeSelected: {
-    backgroundColor: "#b861c8",
-    borderColor: "#b861c8",
+    backgroundColor: md3Colors.dark.primary,
+    borderColor: md3Colors.dark.primary,
   },
   dayText: {
-    color: "white",
+    color: md3Colors.dark.onSurface,
     fontSize: 16,
     fontWeight: "600",
   },
   dayTextOutsideMonth: {
-    color: "rgba(255,255,255,0.7)",
+    color: md3Colors.dark.onSurfaceVariant,
   },
   dayTextSelected: {
-    color: "white",
+    color: md3Colors.dark.onPrimary,
   },
   helperText: {
     marginTop: 16,
-    color: "rgba(255,255,255,0.55)",
+    color: md3Colors.dark.onSurfaceVariant,
     fontSize: 13,
     textAlign: "center",
   },

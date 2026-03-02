@@ -1,15 +1,17 @@
 import { Tabs } from "expo-router"
 import { Calendar, UserRound, Dumbbell } from "lucide-react-native"
 
+import { md3Colors } from "@/constants/colors"
+
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#b861c8",
+        tabBarActiveTintColor: md3Colors.dark.primary,
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#211e27",
-          borderColor: "#383342",
+          backgroundColor: md3Colors.dark.background,
+          borderColor: md3Colors.dark.outlineVariant,
           paddingTop: 4,
         },
       }}

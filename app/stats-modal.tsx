@@ -18,6 +18,8 @@ import { statsHistoryTable, statsTable } from "@/db/schema"
 
 import Button from "@/components/Button"
 
+import { md3Colors } from "@/constants/colors"
+
 import useDb from "@/hooks/useDb"
 
 import { logger } from "@/utils/logger"
@@ -140,7 +142,7 @@ const StatsModal = () => {
           style={styles.history}
           onPress={() => router.navigate("/stats-history-modal")}
         >
-          <HistoryIcon size={24} color="white" />
+          <HistoryIcon size={24} color={md3Colors.dark.onSurface} />
         </Pressable>
       </View>
       <Text style={styles.description}>👇 Прогресс? Запиши 👇</Text>
@@ -150,7 +152,7 @@ const StatsModal = () => {
           <TextInput
             style={styles.input}
             placeholder="0"
-            placeholderTextColor="rgba(255,255,255,0.5)"
+            placeholderTextColor={md3Colors.dark.onSurfaceVariant}
             keyboardType="numeric"
             value={workWeight}
             onChangeText={(text) => setWorkWeight(text)}
@@ -161,7 +163,7 @@ const StatsModal = () => {
           <TextInput
             style={styles.input}
             placeholder="0"
-            placeholderTextColor="rgba(255,255,255,0.5)"
+            placeholderTextColor={md3Colors.dark.onSurfaceVariant}
             keyboardType="numeric"
             value={maxWeight}
             onChangeText={(text) => setMaxWeight(text)}
@@ -200,7 +202,7 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     width: "80%",
     textAlign: "center",
-    color: "white",
+    color: md3Colors.dark.onSurface,
   },
   history: {
     position: "absolute",
@@ -208,13 +210,13 @@ const styles = StyleSheet.create({
     height: 40,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.1)",
+    backgroundColor: md3Colors.dark.surfaceContainerHighest,
     borderRadius: 12,
     right: 0,
   },
   description: {
     fontSize: 18,
-    color: "rgba(255,255,255,0.6)",
+    color: md3Colors.dark.onSurfaceVariant,
     marginBottom: 32,
   },
   stats: {
@@ -229,13 +231,13 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 18,
-    color: "white",
+    color: md3Colors.dark.onSurface,
   },
   input: {
     height: 64,
     width: 100,
     fontSize: 36,
     textAlign: "center",
-    color: "white",
+    color: md3Colors.dark.onSurface,
   },
 })

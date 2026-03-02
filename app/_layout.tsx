@@ -18,6 +18,7 @@ import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 import HeaderLeft from "@/components/header-buttons/HeaderLeft"
 import HeaderRight from "@/components/header-buttons/HeaderRight"
 
+import { md3Colors } from "@/constants/colors"
 import { DATABASE_NAME } from "@/constants/db"
 
 const expoDB = openDatabaseSync(DATABASE_NAME)
@@ -37,9 +38,9 @@ const Layout = () => {
             title: "Ashel Gym",
             headerShown: true,
             headerStyle: {
-              backgroundColor: "#211e27",
+              backgroundColor: md3Colors.dark.background,
             },
-            headerTintColor: "#fff",
+            headerTintColor: md3Colors.dark.onSurface,
             headerLeft:
               currentStep !== "idle" ? () => <HeaderLeft /> : undefined,
             headerRight:
@@ -55,7 +56,7 @@ const Layout = () => {
             headerShown: false,
             sheetCornerRadius: Platform.OS === "ios" ? undefined : 24,
             contentStyle: {
-              backgroundColor: "#2d2636",
+              backgroundColor: md3Colors.dark.surfaceContainerHigh,
             },
           }}
         />
@@ -69,7 +70,7 @@ const Layout = () => {
             headerShown: false,
             sheetCornerRadius: Platform.OS === "ios" ? undefined : 24,
             contentStyle: {
-              backgroundColor: "#2d2636",
+              backgroundColor: md3Colors.dark.surfaceContainerHigh,
             },
           }}
         />

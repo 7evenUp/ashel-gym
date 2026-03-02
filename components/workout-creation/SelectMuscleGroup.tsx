@@ -8,6 +8,7 @@ import { CheckIcon } from "lucide-react-native"
 import { MuscleGroup, exerciseSetTable, exerciseTable } from "@/db/schema"
 import { createWorkoutMuscleGroupIfNotExist } from "@/db/prepared-statements/workoutMuscleGroup"
 
+import { md3Colors } from "@/constants/colors"
 import { muscleGroupImages } from "@/constants/muscleGroupImages"
 
 import useMuscleGroups from "@/hooks/useMuscleGroups"
@@ -104,7 +105,7 @@ const SelectMuscleGroup = () => {
               >
                 {isHighlighted && (
                   <View style={styles.doneBadge}>
-                    <CheckIcon size={24} color="rgba(184, 97, 200, 1)" />
+                    <CheckIcon size={24} color={md3Colors.dark.primary} />
                   </View>
                 )}
                 <Image
@@ -131,7 +132,7 @@ export default SelectMuscleGroup
 
 const styles = StyleSheet.create({
   title: {
-    color: "white",
+    color: md3Colors.dark.onSurface,
     fontSize: 24,
     fontWeight: "600",
     marginVertical: 12,
@@ -148,16 +149,16 @@ const styles = StyleSheet.create({
     borderLeftWidth: 3,
     borderRightWidth: 3,
     borderBottomWidth: 6,
-    borderColor: "#211e27",
+    borderColor: md3Colors.dark.background,
   },
   doneBadge: {
     position: "absolute",
     top: 8,
     right: 8,
     zIndex: 1,
-    backgroundColor: "rgba(184, 97, 200, 0.3)",
+    backgroundColor: md3Colors.dark.tertiaryContainer,
     borderWidth: 1,
-    borderColor: "rgba(184, 97, 200, 0.5)",
+    borderColor: md3Colors.dark.primary,
     paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 9999,
@@ -169,6 +170,6 @@ const styles = StyleSheet.create({
   },
   imageHighlighted: {
     borderWidth: 1.5,
-    borderColor: "rgba(184, 97, 200, 0.5)",
+    borderColor: md3Colors.dark.primary,
   },
 })

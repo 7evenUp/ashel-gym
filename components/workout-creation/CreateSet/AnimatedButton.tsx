@@ -6,6 +6,8 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated"
 
+import { md3Colors } from "@/constants/colors"
+
 interface AnimatedColorButtonProps extends PressableProps {
   colors?: {
     from: string
@@ -25,8 +27,8 @@ const AnimatedColorButton = ({
   onPressOut: externalOnPressOut,
   ...rest
 }: AnimatedColorButtonProps) => {
-  const fromColor = colors?.from || "#3498db" // Default Blue
-  const toColor = colors?.to || "#2980b9" // Default Darker Blue
+  const fromColor = colors?.from || md3Colors.dark.primaryContainer
+  const toColor = colors?.to || md3Colors.dark.primary
 
   const pressed = useSharedValue(0)
 

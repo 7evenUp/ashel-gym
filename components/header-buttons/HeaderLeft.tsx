@@ -1,5 +1,8 @@
 import { Pressable, StyleSheet } from "react-native"
 import { ArrowLeftIcon } from "lucide-react-native"
+
+import { md3Colors } from "@/constants/colors"
+
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 const HeaderLeft = () => {
@@ -29,7 +32,7 @@ const HeaderLeft = () => {
 
   return (
     <Pressable style={styles.pressable} onPress={onBackPress}>
-      <ArrowLeftIcon color="rgba(255,255,255,0.6)" size={24} />
+      <ArrowLeftIcon color={md3Colors.dark.onSurfaceVariant} size={24} />
     </Pressable>
   )
 }

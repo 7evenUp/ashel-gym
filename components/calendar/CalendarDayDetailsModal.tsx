@@ -8,6 +8,8 @@ import {
 } from "react-native"
 import { X } from "lucide-react-native"
 
+import { md3Colors } from "@/constants/colors"
+
 import { DaySummary } from "./types"
 import { getReadableDateLabel } from "./utils"
 
@@ -40,7 +42,7 @@ const CalendarDayDetailsModal = ({
             </View>
 
             <Pressable style={styles.iconButton} onPress={onClose}>
-              <X color="white" size={20} />
+              <X color={md3Colors.dark.onSurface} size={20} />
             </Pressable>
           </View>
 
@@ -117,18 +119,19 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     left: 0,
-    backgroundColor: "rgba(0,0,0,0.55)",
+    backgroundColor: md3Colors.dark.scrim,
+    opacity: 0.55,
   },
   modalCard: {
     maxHeight: "72%",
-    backgroundColor: "#2d2636",
+    backgroundColor: md3Colors.dark.surfaceContainerHigh,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 16,
     paddingTop: 16,
     paddingBottom: 24,
     borderTopWidth: 1,
-    borderColor: "rgba(255,255,255,0.08)",
+    borderColor: md3Colors.dark.outlineVariant,
   },
   modalHeader: {
     flexDirection: "row",
@@ -143,16 +146,16 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "rgba(255,255,255,0.08)",
+    backgroundColor: md3Colors.dark.surfaceContainerHighest,
   },
   modalTitle: {
-    color: "white",
+    color: md3Colors.dark.onSurface,
     fontSize: 22,
     fontWeight: "700",
   },
   modalDateLabel: {
     marginTop: 4,
-    color: "rgba(255,255,255,0.6)",
+    color: md3Colors.dark.onSurfaceVariant,
     fontSize: 14,
   },
   modalScroll: {
@@ -166,18 +169,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "rgba(255,255,255,0.05)",
+    backgroundColor: md3Colors.dark.surfaceContainer,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 12,
   },
   statLabel: {
-    color: "rgba(255,255,255,0.7)",
+    color: md3Colors.dark.onSurfaceVariant,
     fontSize: 14,
     fontWeight: "600",
   },
   statValue: {
-    color: "white",
+    color: md3Colors.dark.onSurface,
     fontSize: 18,
     fontWeight: "700",
   },
@@ -185,7 +188,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   sectionTitle: {
-    color: "white",
+    color: md3Colors.dark.onSurface,
     fontSize: 16,
     fontWeight: "700",
   },
@@ -196,14 +199,14 @@ const styles = StyleSheet.create({
   },
   tag: {
     borderRadius: 9999,
-    backgroundColor: "rgba(184,97,200,0.18)",
+    backgroundColor: md3Colors.dark.tertiaryContainer,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: "rgba(184,97,200,0.35)",
+    borderColor: md3Colors.dark.outlineVariant,
   },
   tagText: {
-    color: "#f0d4f5",
+    color: md3Colors.dark.onTertiaryContainer,
     fontSize: 13,
     fontWeight: "600",
   },
@@ -215,19 +218,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     gap: 12,
-    backgroundColor: "rgba(255,255,255,0.05)",
+    backgroundColor: md3Colors.dark.surfaceContainer,
     borderRadius: 16,
     paddingHorizontal: 14,
     paddingVertical: 12,
   },
   exerciseName: {
     flex: 1,
-    color: "white",
+    color: md3Colors.dark.onSurface,
     fontSize: 14,
     fontWeight: "600",
   },
   exerciseSets: {
-    color: "rgba(255,255,255,0.65)",
+    color: md3Colors.dark.onSurfaceVariant,
     fontSize: 13,
     fontWeight: "600",
   },
@@ -237,12 +240,12 @@ const styles = StyleSheet.create({
     paddingVertical: 24,
   },
   emptyTitle: {
-    color: "white",
+    color: md3Colors.dark.onSurface,
     fontSize: 18,
     fontWeight: "700",
   },
   emptyText: {
-    color: "rgba(255,255,255,0.6)",
+    color: md3Colors.dark.onSurfaceVariant,
     fontSize: 14,
     textAlign: "center",
   },

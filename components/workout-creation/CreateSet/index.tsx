@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm"
 import ExerciseSetItem from "./ExerciseSetItem"
 import Button from "@/components/Button"
 
+import { md3Colors } from "@/constants/colors"
 import { exerciseImages } from "@/constants/exerciseImages"
 
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   title: {
-    color: "white",
+    color: md3Colors.dark.onSurface,
     fontSize: 24,
     fontWeight: 600,
     marginVertical: 12,

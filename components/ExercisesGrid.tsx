@@ -4,6 +4,7 @@ import { Image } from "expo-image"
 
 import { Exercise, MuscleGroup } from "@/db/schema"
 
+import { md3Colors } from "@/constants/colors"
 import { exerciseImages } from "@/constants/exerciseImages"
 
 const ExercisesGrid = ({
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   pressable_highlighted: {
-    backgroundColor: "rgba(184, 97, 200, 0.1)",
+    backgroundColor: md3Colors.dark.surfaceContainerLow,
     borderRadius: 24,
   },
   image: {
@@ -90,15 +91,15 @@ const styles = StyleSheet.create({
   },
   image_highlighted: {
     borderWidth: 1,
-    borderColor: "rgba(184, 97, 200, 0.5)",
+    borderColor: md3Colors.dark.primary,
   },
   exercise_name: {
     fontSize: 14,
-    color: "rgba(255,255,255,0.8)",
+    color: md3Colors.dark.onSurface,
     paddingHorizontal: 8,
     textAlign: "center",
   },
   exercise_name_highlighted: {
-    color: "#b861c8",
+    color: md3Colors.dark.primary,
   },
 })

@@ -1,5 +1,7 @@
 import { ActivityIndicator, StyleSheet, View } from "react-native"
 
+import { md3Colors } from "@/constants/colors"
+
 const LoadingScreen = () => {
   return (
     <View style={styles.container}>
@@ -15,6 +17,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#211e27",
+    backgroundColor: md3Colors.dark.background,
   },
 })

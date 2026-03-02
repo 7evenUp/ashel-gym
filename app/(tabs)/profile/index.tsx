@@ -6,6 +6,7 @@ import { Dumbbell } from "lucide-react-native"
 
 import Button from "@/components/Button"
 
+import { md3Colors } from "@/constants/colors"
 import { muscleGroupImages } from "@/constants/muscleGroupImages"
 
 import useMuscleGroups from "@/hooks/useMuscleGroups"
@@ -61,7 +62,7 @@ export default function ProfileScreen() {
       <View style={styles.buttonContainer}>
         <Button
           label="Gym session"
-          icon={<Dumbbell color="white" size={20} />}
+          icon={<Dumbbell color={md3Colors.dark.onPrimary} size={20} />}
           onPress={() => {
             router.push("/(tabs)")
           }}
@@ -74,7 +75,7 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#211e27",
+    backgroundColor: md3Colors.dark.background,
     alignItems: "center",
   },
   buttonContainer: {

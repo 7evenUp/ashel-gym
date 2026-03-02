@@ -16,6 +16,8 @@ import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 import { ExerciseSet } from "@/db/schema"
 import { createExerciseSet, updateExerciseSet } from "@/db/prepared-statements"
 
+import { md3Colors } from "@/constants/colors"
+
 const ExerciseSetItem = ({
   order,
   reps: outerReps,
@@ -104,7 +106,7 @@ const ExerciseSetItem = ({
             <TextInput
               style={styles.col_input}
               placeholder="Введите вес"
-              placeholderTextColor="gray"
+              placeholderTextColor={md3Colors.dark.onSurfaceVariant}
               keyboardType="numeric"
               keyboardAppearance="dark"
               returnKeyType="done"
@@ -120,19 +122,25 @@ const ExerciseSetItem = ({
                   styles.counter_pressable,
                   reps === 0 && { opacity: 0.5 },
                 ]}
-                colors={{ from: "#333333", to: "#4d4d4d" }}
+                colors={{
+                  from: md3Colors.dark.surfaceContainerHighest,
+                  to: md3Colors.dark.surfaceContainerHigh,
+                }}
                 onPress={onDecreaseRepsPress}
                 disabled={reps === 0}
               >
-                <MinusIcon size={20} color="white" />
+                <MinusIcon size={20} color={md3Colors.dark.onSurface} />
               </AnimatedColorButton>
               <Text style={styles.counter_value}>{reps}</Text>
               <AnimatedColorButton
                 style={styles.counter_pressable}
-                colors={{ from: "#333333", to: "#4d4d4d" }}
+                colors={{
+                  from: md3Colors.dark.surfaceContainerHighest,
+                  to: md3Colors.dark.surfaceContainerHigh,
+                }}
                 onPress={onIncreaseRepsPress}
               >
-                <PlusIcon size={20} color="white" />
+                <PlusIcon size={20} color={md3Colors.dark.onSurface} />
               </AnimatedColorButton>
             </View>
           </View>
@@ -148,8 +156,8 @@ const ExerciseSetItem = ({
             disabled={isConfirmDisabled}
             onPress={onAddPress}
           >
-            <PlusIcon color="hsl(0, 0%, 75%)" />
-            <Text style={{ color: "hsl(0, 0%, 75%)" }}>Добавить ещё</Text>
+            <PlusIcon color={md3Colors.dark.onSurfaceVariant} />
+            <Text style={styles.button_title}>Добавить ещё</Text>
           </Pressable>
         </>
       )}
@@ -161,18 +169,18 @@ export default ExerciseSetItem
 
 const styles = StyleSheet.create({
   set_item: {
-    backgroundColor: "hsl(0, 0%, 10%)",
+    backgroundColor: md3Colors.dark.surfaceContainerLow,
     padding: 16,
     width: "100%",
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: "hsl(0, 0%, 20%)",
+    borderColor: md3Colors.dark.outlineVariant,
   },
   left: {
     alignSelf: "flex-start",
   },
   order: {
-    color: "hsl(0, 0%, 75%)",
+    color: md3Colors.dark.onSurfaceVariant,
     fontSize: 14,
   },
   right: {
@@ -186,13 +194,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   col_title: {
-    color: "hsl(0, 0%, 75%)",
+    color: md3Colors.dark.onSurfaceVariant,
     fontSize: 13,
   },
   col_input: {
     textAlign: "center",
-    color: "white",
-    backgroundColor: "hsl(0, 0%, 20%)",
+    color: md3Colors.dark.onSurface,
+    backgroundColor: md3Colors.dark.surfaceContainerHighest,
     borderRadius: 10,
     height: 32,
     minWidth: 110,
@@ -206,7 +214,7 @@ const styles = StyleSheet.create({
     }),
   },
   counter_wrapper: {
-    backgroundColor: "hsl(0, 0%, 20%)",
+    backgroundColor: md3Colors.dark.surfaceContainerHighest,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -222,27 +230,27 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   counter_value: {
-    color: "white",
+    color: md3Colors.dark.onSurface,
     fontWeight: "600",
     fontSize: 16,
   },
   custom_border: {
     width: 1,
     height: 32,
-    backgroundColor: "hsl(0, 0%, 20%)",
+    backgroundColor: md3Colors.dark.outlineVariant,
   },
   button: {
     flexDirection: "row",
     gap: 4,
     alignItems: "center",
     borderWidth: 1,
-    borderColor: "hsl(0, 0%, 20%)",
+    borderColor: md3Colors.dark.outlineVariant,
     height: 40,
     paddingInline: 20,
     borderRadius: 9999,
   },
   button_title: {
-    color: "hsl(0, 0%, 75%)",
+    color: md3Colors.dark.onSurfaceVariant,
     fontSize: 16,
   },
 })

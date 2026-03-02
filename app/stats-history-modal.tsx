@@ -6,6 +6,8 @@ import { useSelectedExercise } from "@/store/useSelectedExercise"
 
 import { StatsHistory, statsHistoryTable } from "@/db/schema"
 
+import { md3Colors } from "@/constants/colors"
+
 import useDb from "@/hooks/useDb"
 
 import { logger } from "@/utils/logger"
@@ -103,18 +105,18 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "500",
     marginBottom: 12,
-    color: "white",
+    color: md3Colors.dark.onSurface,
   },
   description: {
     fontSize: 16,
-    color: "rgba(255,255,255,0.6)",
+    color: md3Colors.dark.onSurfaceVariant,
     marginBottom: 32,
   },
   group_title: {
     fontSize: 18,
     fontWeight: "600",
     marginBottom: 12,
-    color: "white",
+    color: md3Colors.dark.onSurface,
   },
   group: {
     gap: 12,
@@ -124,16 +126,16 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     borderBottomWidth: 1,
-    borderColor: "rgba(255,255,255,0.1)",
+    borderColor: md3Colors.dark.outlineVariant,
     paddingVertical: 4,
   },
   item_value: {
     fontSize: 24,
     fontWeight: "700",
-    color: "white",
+    color: md3Colors.dark.onSurface,
   },
   item_date: {
     fontSize: 12,
-    color: "rgba(255,255,255,0.5)",
+    color: md3Colors.dark.onSurfaceVariant,
   },
 })

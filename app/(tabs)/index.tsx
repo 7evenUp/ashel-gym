@@ -5,6 +5,8 @@ import SelectMuscleGroup from "@/components/workout-creation/SelectMuscleGroup"
 import SelectExercise from "@/components/workout-creation/SelectExercise"
 import CreateSet from "@/components/workout-creation/CreateSet"
 
+import { md3Colors } from "@/constants/colors"
+
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 export default function TrainingScreen() {
@@ -29,7 +31,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    backgroundColor: "#211e27",
+    backgroundColor: md3Colors.dark.background,
     padding: 16,
   },
 })

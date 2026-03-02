@@ -18,6 +18,8 @@ import EmptyScreen from "@/components/EmptyScreen"
 import LoadingScreen from "@/components/LoadingScreen"
 import ExercisesGrid from "@/components/ExercisesGrid"
 
+import { md3Colors } from "@/constants/colors"
+
 import { useSelectedExercise } from "@/store/useSelectedExercise"
 
 import useDb from "@/hooks/useDb"
@@ -89,12 +91,12 @@ export default MuscleGroupScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#211e27",
+    backgroundColor: md3Colors.dark.background,
     alignItems: "center",
   },
   title: {
     marginVertical: 12,
-    color: "white",
+    color: md3Colors.dark.onSurface,
     fontSize: 20,
     fontWeight: "600",
     textTransform: "capitalize",
@@ -106,7 +108,7 @@ const styles = StyleSheet.create({
   },
   exercise_name: {
     fontSize: 14,
-    color: "rgba(255,255,255,0.8)",
+    color: md3Colors.dark.onSurface,
     paddingHorizontal: 8,
     textAlign: "center",
   },

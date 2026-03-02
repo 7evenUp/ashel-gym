@@ -1,6 +1,8 @@
 import { Link, Stack } from "expo-router"
 import { StyleSheet, View } from "react-native"
 
+import { md3Colors } from "@/constants/colors"
+
 const NotFoundScreen = () => {
   return (
     <>
@@ -19,7 +21,7 @@ export default NotFoundScreen
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#211e27",
+    backgroundColor: md3Colors.dark.background,
     justifyContent: "center",
     alignItems: "center",
   },
@@ -27,6 +29,6 @@ const styles = StyleSheet.create({
   button: {
     fontSize: 20,
     textDecorationLine: "underline",
-    color: "#fff",
+    color: md3Colors.dark.primary,
   },
 })
