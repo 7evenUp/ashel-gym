@@ -61,12 +61,10 @@ const ExercisesGrid = ({
     <FlashList
       data={exercises}
       style={{ width: "100%" }}
-      contentContainerStyle={{
-        padding: 16,
-      }}
       numColumns={2}
       renderItem={renderFlashListItem}
       ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+      showsVerticalScrollIndicator={false}
     />
   )
 }

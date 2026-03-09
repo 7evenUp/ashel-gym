@@ -89,42 +89,36 @@ const SelectMuscleGroup = () => {
     goToExerciseSelection()
   }
 
-  return (
-    <>
-      <Text style={styles.title}>Что сегодня тренировал?</Text>
-      {muscleGroups && (
-        <View style={styles.wrapper}>
-          {muscleGroups.map((muscle) => {
-            const isHighlighted = highlightedMuscleGroupIds.includes(muscle.id)
+  if (!muscleGroups) return
 
-            return (
-              <Pressable
-                key={muscle.id}
-                style={styles.imageContainer}
-                onPress={() => onMuscleGroupPress(muscle)}
-              >
-                {isHighlighted && (
-                  <View style={styles.doneBadge}>
-                    <CheckIcon size={24} color={md3Colors.dark.primary} />
-                  </View>
-                )}
-                <Image
-                  style={[
-                    styles.image,
-                    isHighlighted && styles.imageHighlighted,
-                  ]}
-                  source={muscleGroupImages[muscle.name].img}
-                  placeholder={{
-                    blurhash: muscleGroupImages[muscle.name].blurhash,
-                  }}
-                  transition={250}
-                />
-              </Pressable>
-            )
-          })}
-        </View>
-      )}
-    </>
+  return (
+    <View style={styles.wrapper}>
+      {muscleGroups.map((muscle) => {
+        const isHighlighted = highlightedMuscleGroupIds.includes(muscle.id)
+
+        return (
+          <Pressable
+            key={muscle.id}
+            style={styles.imageContainer}
+            onPress={() => onMuscleGroupPress(muscle)}
+          >
+            {isHighlighted && (
+              <View style={styles.doneBadge}>
+                <CheckIcon size={24} color={md3Colors.dark.primary} />
+              </View>
+            )}
+            <Image
+              style={[styles.image, isHighlighted && styles.imageHighlighted]}
+              source={muscleGroupImages[muscle.name].img}
+              placeholder={{
+                blurhash: muscleGroupImages[muscle.name].blurhash,
+              }}
+              transition={250}
+            />
+          </Pressable>
+        )
+      })}
+    </View>
   )
 }
 

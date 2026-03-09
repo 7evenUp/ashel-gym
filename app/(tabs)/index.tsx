@@ -4,6 +4,7 @@ import IdleStep from "@/components/workout-creation/IdleStep"
 import SelectMuscleGroup from "@/components/workout-creation/SelectMuscleGroup"
 import SelectExercise from "@/components/workout-creation/SelectExercise"
 import CreateSet from "@/components/workout-creation/CreateSet"
+import WorkoutCreationProgress from "@/components/workout-creation/WorkoutCreationProgress"
 
 import { md3Colors } from "@/constants/colors"
 
@@ -12,17 +13,25 @@ import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 export default function TrainingScreen() {
   const { currentStep } = useWorkoutCreation()
 
+  const isWorkoutCreationStarted = currentStep !== "idle"
+
+  let content = <IdleStep />
+
+  if (currentStep === "select-muscle-group") {
+    content = <SelectMuscleGroup />
+  } else if (currentStep === "select-exercise") {
+    content = <SelectExercise />
+  } else if (currentStep === "create-set") {
+    content = <CreateSet />
+  }
+
   return (
     <View style={styles.container}>
-      {currentStep === "idle" ? (
-        <IdleStep />
-      ) : currentStep === "select-muscle-group" ? (
-        <SelectMuscleGroup />
-      ) : currentStep === "select-exercise" ? (
-        <SelectExercise />
-      ) : (
-        currentStep === "create-set" && <CreateSet />
+      {isWorkoutCreationStarted && (
+        <WorkoutCreationProgress currentStep={currentStep} />
       )}
+
+      <View style={styles.content}>{content}</View>
     </View>
   )
 }
@@ -30,8 +39,12 @@ export default function TrainingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
     backgroundColor: md3Colors.dark.background,
     padding: 16,
+  },
+  content: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
   },
 })

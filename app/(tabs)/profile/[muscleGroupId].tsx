@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: md3Colors.dark.background,
     alignItems: "center",
+    paddingHorizontal: 16,
   },
   title: {
     marginVertical: 12,
