@@ -45,12 +45,18 @@
           "enableFTS": true,
           "useSQLCipher": false
         }
-
       ]
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "8e7d5cce-2e11-4393-a07f-ec886a3c0223"
+      }
+    },
+    "owner": "7evenup"
   }
 }

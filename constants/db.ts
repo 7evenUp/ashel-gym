@@ -1,1 +1,1 @@
-export const DATABASE_NAME = "test2.db"
+export const DATABASE_NAME = "ashel-gym-1.db"
