@@ -109,7 +109,10 @@ const SelectMuscleGroup = () => {
             >
               {isHighlighted && (
                 <View style={styles.doneBadge}>
-                  <CheckIcon size={24} color={md3Colors.dark.primary} />
+                  <CheckIcon
+                    size={24}
+                    color={md3Colors.dark.onPrimaryContainer}
+                  />
                 </View>
               )}
               <Image
@@ -157,7 +160,7 @@ const styles = StyleSheet.create({
     top: 8,
     right: 8,
     zIndex: 1,
-    backgroundColor: md3Colors.dark.tertiaryContainer,
+    backgroundColor: md3Colors.dark.primaryContainer,
     borderWidth: 1,
     borderColor: md3Colors.dark.primary,
     paddingHorizontal: 8,
