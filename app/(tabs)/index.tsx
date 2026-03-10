@@ -5,6 +5,7 @@ import SelectMuscleGroup from "@/components/workout-creation/SelectMuscleGroup"
 import SelectExercise from "@/components/workout-creation/SelectExercise"
 import CreateSet from "@/components/workout-creation/CreateSet"
 import WorkoutCreationProgress from "@/components/workout-creation/WorkoutCreationProgress"
+import WorkoutCreationActions from "@/components/workout-creation/WorkoutCreationActions"
 
 import { md3Colors } from "@/constants/colors"
 
@@ -32,6 +33,8 @@ export default function TrainingScreen() {
       )}
 
       <View style={styles.content}>{content}</View>
+
+      {isWorkoutCreationStarted && <WorkoutCreationActions />}
     </View>
   )
 }
@@ -40,7 +43,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: md3Colors.dark.background,
-    padding: 16,
+    position: "relative",
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   content: {
     flex: 1,

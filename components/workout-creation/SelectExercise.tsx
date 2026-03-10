@@ -99,6 +99,7 @@ const SelectExercise = () => {
       muscleGroup={selectedMuscleGroup}
       highlightedExerciseIds={highlightedExerciseIds}
       onExercisePress={(exercise) => onExercisePress(exercise)}
+      containerStyle={{ paddingBottom: 100 }}
     />
   )
 }

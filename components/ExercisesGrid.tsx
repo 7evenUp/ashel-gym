@@ -1,4 +1,11 @@
-import { Pressable, StyleSheet, View, Text } from "react-native"
+import {
+  Pressable,
+  StyleSheet,
+  View,
+  Text,
+  StyleProp,
+  ViewStyle,
+} from "react-native"
 import { FlashList } from "@shopify/flash-list"
 import { Image } from "expo-image"
 
@@ -12,11 +19,13 @@ const ExercisesGrid = ({
   muscleGroup,
   onExercisePress,
   highlightedExerciseIds = [],
+  containerStyle,
 }: {
   exercises: Exercise[]
   muscleGroup: MuscleGroup
   onExercisePress: (exercise: Exercise) => void
   highlightedExerciseIds?: number[]
+  containerStyle?: StyleProp<ViewStyle>
 }) => {
   const renderFlashListItem = ({
     item,
@@ -61,6 +70,7 @@ const ExercisesGrid = ({
     <FlashList
       data={exercises}
       style={{ width: "100%" }}
+      contentContainerStyle={containerStyle}
       numColumns={2}
       renderItem={renderFlashListItem}
       ItemSeparatorComponent={() => <View style={{ height: 12 }} />}

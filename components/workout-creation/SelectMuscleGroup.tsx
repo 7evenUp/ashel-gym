@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Pressable, StyleSheet, Text, View } from "react-native"
+import { Pressable, ScrollView, StyleSheet, View } from "react-native"
 import { Image } from "expo-image"
 import * as Haptics from "expo-haptics"
 import { eq, inArray } from "drizzle-orm"
@@ -92,44 +92,51 @@ const SelectMuscleGroup = () => {
   if (!muscleGroups) return
 
   return (
-    <View style={styles.wrapper}>
-      {muscleGroups.map((muscle) => {
-        const isHighlighted = highlightedMuscleGroupIds.includes(muscle.id)
+    <ScrollView
+      contentContainerStyle={styles.scroll_view_container}
+      style={styles.scroll_view}
+      showsVerticalScrollIndicator={false}
+    >
+      <View style={styles.wrapper}>
+        {muscleGroups.map((muscle) => {
+          const isHighlighted = highlightedMuscleGroupIds.includes(muscle.id)
 
-        return (
-          <Pressable
-            key={muscle.id}
-            style={styles.imageContainer}
-            onPress={() => onMuscleGroupPress(muscle)}
-          >
-            {isHighlighted && (
-              <View style={styles.doneBadge}>
-                <CheckIcon size={24} color={md3Colors.dark.primary} />
-              </View>
-            )}
-            <Image
-              style={[styles.image, isHighlighted && styles.imageHighlighted]}
-              source={muscleGroupImages[muscle.name].img}
-              placeholder={{
-                blurhash: muscleGroupImages[muscle.name].blurhash,
-              }}
-              transition={250}
-            />
-          </Pressable>
-        )
-      })}
-    </View>
+          return (
+            <Pressable
+              key={muscle.id}
+              style={styles.imageContainer}
+              onPress={() => onMuscleGroupPress(muscle)}
+            >
+              {isHighlighted && (
+                <View style={styles.doneBadge}>
+                  <CheckIcon size={24} color={md3Colors.dark.primary} />
+                </View>
+              )}
+              <Image
+                style={[styles.image, isHighlighted && styles.imageHighlighted]}
+                source={muscleGroupImages[muscle.name].img}
+                placeholder={{
+                  blurhash: muscleGroupImages[muscle.name].blurhash,
+                }}
+                transition={250}
+              />
+            </Pressable>
+          )
+        })}
+      </View>
+    </ScrollView>
   )
 }
 
 export default SelectMuscleGroup
 
 const styles = StyleSheet.create({
-  title: {
-    color: md3Colors.dark.onSurface,
-    fontSize: 24,
-    fontWeight: "600",
-    marginVertical: 12,
+  scroll_view: {
+    width: "100%",
+  },
+  scroll_view_container: {
+    alignItems: "center",
+    paddingBottom: 100,
   },
   wrapper: {
     flexWrap: "wrap",

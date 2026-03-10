@@ -114,5 +114,6 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: "auto",
     gap: 12,
+    paddingBottom: 16,
   },
 })
