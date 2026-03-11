@@ -9,20 +9,20 @@ import Animated, {
 } from "react-native-reanimated"
 import * as Haptics from "expo-haptics"
 
-import { Loader } from "lucide-react-native"
+import { Loader, LucideIcon } from "lucide-react-native"
 
 import { md3Colors } from "@/constants/colors"
 
 export default function Button({
   label,
-  icon,
+  Icon,
   style,
   isLoading,
   onPress,
   ...props
 }: {
   label: string
-  icon?: React.ReactNode
+  Icon?: LucideIcon
   isLoading?: boolean
 } & ComponentProps<typeof Pressable>) {
   const rotation = useSharedValue(0)
@@ -64,7 +64,7 @@ export default function Button({
         </Animated.View>
       ) : (
         <>
-          {icon && icon}
+          {Icon && <Icon color={md3Colors.dark.onPrimary} size={20} />}
           <Text style={styles.label}>{label}</Text>
         </>
       )}

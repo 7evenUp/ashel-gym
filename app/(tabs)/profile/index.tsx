@@ -62,7 +62,7 @@ export default function ProfileScreen() {
       <View style={styles.buttonContainer}>
         <Button
           label="Gym session"
-          icon={<Dumbbell color={md3Colors.dark.onPrimary} size={20} />}
+          Icon={Dumbbell}
           onPress={() => {
             router.push("/(tabs)")
           }}
