@@ -52,7 +52,7 @@ const ExercisesGrid = ({
       >
         {isHighlighted && (
           <View style={styles.doneBadge}>
-            <CheckIcon size={24} color={md3Colors.dark.onPrimaryContainer} />
+            <CheckIcon size={16} color={md3Colors.dark.onPrimaryContainer} />
           </View>
         )}
         <Image
@@ -106,8 +106,7 @@ const styles = StyleSheet.create({
     backgroundColor: md3Colors.dark.primaryContainer,
     borderWidth: 1,
     borderColor: md3Colors.dark.primary,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
+    padding: 6,
     borderRadius: 9999,
   },
   image: {
