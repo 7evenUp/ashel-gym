@@ -56,12 +56,10 @@ const StatsModal = () => {
           setInitialMaxWeight(stats.max_weight.toString().replace(".", ","))
         }
       }
-
-      console.log("result: ", stats)
     }
 
     getData()
-  }, [exercise])
+  }, [exercise, db])
 
   if (exercise === null) return null
 
@@ -90,7 +88,6 @@ const StatsModal = () => {
           work_weight: workWeightValue,
           max_weight: maxWeightValue,
         })
-        console.log("inserted")
       } else {
         await db
           .update(statsTable)
@@ -99,7 +96,6 @@ const StatsModal = () => {
             max_weight: maxWeightValue,
           })
           .where(eq(statsTable.exercise_id, exercise.id))
-        console.log("updated")
       }
 
       // Inserting stats update history
@@ -111,7 +107,6 @@ const StatsModal = () => {
           value: parseFloat(workWeight.replace(",", ".")),
           changed_at: currentDate,
         })
-        console.log("workWeight stats update inserted")
         setInitialWorkWeight(workWeight)
       }
       if (maxWeight && initialMaxWeight !== maxWeight) {
@@ -121,9 +116,10 @@ const StatsModal = () => {
           value: parseFloat(maxWeight.replace(",", ".")),
           changed_at: currentDate,
         })
-        console.log("maxWeight stats update inserted")
         setInitialMaxWeight(maxWeight)
       }
+
+      router.back()
     } catch (error) {
       logger("Error happened while saving stats: ", error)
     } finally {
@@ -154,6 +150,7 @@ const StatsModal = () => {
             placeholder="0"
             placeholderTextColor={md3Colors.dark.onSurfaceVariant}
             keyboardType="numeric"
+            keyboardAppearance="dark"
             value={workWeight}
             onChangeText={(text) => setWorkWeight(text)}
           />
