@@ -33,7 +33,7 @@ const ExerciseSetItem = ({
   refetchSets: VoidFunction
   onSetAdded: VoidFunction
 }) => {
-  const [reps, setReps] = useState(outerReps)
+  const [repsInput, setRepsInput] = useState(outerReps.toString())
   const [weight, setWeight] = useState(outerWeight.toString())
 
   const { selectedExercise, selectedMuscleGroup, createdWorkoutId } =
@@ -43,39 +43,73 @@ const ExerciseSetItem = ({
   if (selectedMuscleGroup === null) return
   if (createdWorkoutId === null) return
 
-  const isConfirmDisabled = reps === 0 || !parseFloat(weight)
+  const reps = repsInput === "" ? 0 : parseInt(repsInput)
+  const parsedWeight = parseFloat(weight)
+  const weightValue = Number.isFinite(parsedWeight) ? parsedWeight : 0
+
+  const isConfirmDisabled = reps === 0 || !weightValue
 
   const onWeightChange = async (text: string) => {
-    const replacedText = text.replaceAll(",", ".")
-    const parsedText = parseFloat(replacedText)
+    const digitsAndDotsOnly = text.replaceAll(",", ".").replace(/[^0-9.]/g, "")
+    const normalizedLeadingDot = digitsAndDotsOnly.startsWith(".")
+      ? `0${digitsAndDotsOnly}`
+      : digitsAndDotsOnly
+    const firstDotIndex = normalizedLeadingDot.indexOf(".")
+    const normalizedText =
+      firstDotIndex === -1
+        ? normalizedLeadingDot
+        : `${normalizedLeadingDot.slice(0, firstDotIndex + 1)}${normalizedLeadingDot
+            .slice(firstDotIndex + 1)
+            .replaceAll(".", "")}`
+    const parsedText = parseFloat(normalizedText)
+    const nextWeight = Number.isFinite(parsedText) ? parsedText : 0
 
     await updateExerciseSet({
       order,
       reps,
-      weight: parsedText ? parsedText : 0,
+      weight: nextWeight,
       id,
     })
-    setWeight(replacedText)
+    setWeight(normalizedText)
+  }
+
+  const onRepsChange = async (text: string) => {
+    const digitsOnly = text.replace(/\D/g, "")
+    const normalizedText = digitsOnly.replace(/^0+(?=\d)/, "")
+    const nextReps = normalizedText === "" ? 0 : parseInt(normalizedText, 10)
+
+    setRepsInput(normalizedText)
+
+    await updateExerciseSet({
+      order,
+      reps: nextReps,
+      weight: weightValue,
+      id,
+    })
   }
 
   const onDecreaseRepsPress = async () => {
+    const nextReps = Math.max(reps - 1, 0)
+
     await updateExerciseSet({
       order,
-      reps: reps === 0 ? 0 : reps - 1,
-      weight: parseFloat(weight),
+      reps: nextReps,
+      weight: weightValue,
       id,
     })
-    setReps((prev) => (prev === 0 ? -0 : prev - 1))
+    setRepsInput(nextReps.toString())
   }
 
   const onIncreaseRepsPress = async () => {
+    const nextReps = reps + 1
+
     await updateExerciseSet({
       order,
-      reps: reps + 1,
-      weight: parseFloat(weight),
+      reps: nextReps,
+      weight: weightValue,
       id,
     })
-    setReps((prev) => prev + 1)
+    setRepsInput(nextReps.toString())
   }
 
   const onAddPress = async () => {
@@ -86,7 +120,7 @@ const ExerciseSetItem = ({
       workout_id: createdWorkoutId,
       order: order + 1,
       reps,
-      weight: parseFloat(weight),
+      weight: weightValue,
     })
 
     refetchSets()
@@ -131,7 +165,16 @@ const ExerciseSetItem = ({
               >
                 <MinusIcon size={20} color={md3Colors.dark.onSurface} />
               </AnimatedColorButton>
-              <Text style={styles.counter_value}>{reps}</Text>
+              <TextInput
+                style={styles.counter_input}
+                placeholder="0"
+                placeholderTextColor={md3Colors.dark.onSurfaceVariant}
+                keyboardType="numeric"
+                keyboardAppearance="dark"
+                returnKeyType="done"
+                value={repsInput}
+                onChangeText={onRepsChange}
+              />
               <AnimatedColorButton
                 style={styles.counter_pressable}
                 colors={{
@@ -229,10 +272,20 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 10,
   },
-  counter_value: {
+  counter_input: {
     color: md3Colors.dark.onSurface,
     fontWeight: "600",
     fontSize: 16,
+    minWidth: 27,
+    textAlign: "center",
+    paddingVertical: 0,
+    ...Platform.select({
+      android: {
+        includeFontPadding: false,
+        textAlignVertical: "center",
+        paddingVertical: 0,
+      },
+    }),
   },
   custom_border: {
     width: 1,
