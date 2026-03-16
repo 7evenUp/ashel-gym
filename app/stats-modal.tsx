@@ -21,6 +21,7 @@ import Button from "@/components/Button"
 import { md3Colors } from "@/constants/colors"
 
 import useDb from "@/hooks/useDb"
+import { useKeyboardHeight } from "@/hooks/useKeyboardHeight"
 
 import { logger } from "@/utils/logger"
 
@@ -30,6 +31,8 @@ const StatsModal = () => {
   const router = useRouter()
 
   const exercise = useSelectedExercise((state) => state.exercise)
+
+  const { isKeyboardVisible, keyboardHeight } = useKeyboardHeight()
 
   const [isLocked, setIsLocked] = useState(false)
   const [initialWorkWeight, setInitialWorkWeight] = useState("")
@@ -170,8 +173,11 @@ const StatsModal = () => {
       <Button
         label="Сохранить"
         isLoading={isLocked}
-        style={{ marginTop: 40 }}
         onPress={onSaveClick}
+        style={[
+          { marginTop: "auto" },
+          isKeyboardVisible && { marginBottom: keyboardHeight },
+        ]}
       />
     </View>
   )
@@ -181,6 +187,7 @@ export default StatsModal
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     alignItems: "center",
     paddingInline: 16,
     paddingTop: 24,
