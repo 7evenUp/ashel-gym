@@ -31,6 +31,7 @@ const CalendarMonthView = ({
   })
 
   const monthGrid = useMemo(() => getMonthGrid(viewDate), [viewDate])
+  const todayKey = useMemo(() => toDayKey(new Date()), [])
 
   const onPreviousMonth = () => {
     setViewDate((current) => shiftMonth(current, -1))
@@ -67,6 +68,7 @@ const CalendarMonthView = ({
           const isCurrentMonth = day.getMonth() === viewDate.getMonth()
           const dayKey = toDayKey(day)
           const hasWorkout = daySummaries.has(dayKey)
+          const isToday = dayKey === todayKey
           const isSelected =
             selectedDate !== null && toDayKey(selectedDate) === dayKey
 
@@ -81,6 +83,8 @@ const CalendarMonthView = ({
                   styles.dayBadge,
                   !isCurrentMonth && styles.dayBadgeOutsideMonth,
                   hasWorkout && styles.dayBadgeWithWorkout,
+                  isToday && styles.dayBadgeToday,
+                  isToday && hasWorkout && styles.dayBadgeTodayWithWorkout,
                   isSelected && styles.dayBadgeSelected,
                 ]}
               >
@@ -88,6 +92,8 @@ const CalendarMonthView = ({
                   style={[
                     styles.dayText,
                     !isCurrentMonth && styles.dayTextOutsideMonth,
+                    isToday && styles.dayTextToday,
+                    isToday && hasWorkout && styles.dayTextTodayWithWorkout,
                     isSelected && styles.dayTextSelected,
                   ]}
                 >
@@ -169,6 +175,13 @@ const styles = StyleSheet.create({
     borderColor: md3Colors.dark.outline,
     backgroundColor: md3Colors.dark.surfaceVariant,
   },
+  dayBadgeToday: {
+    borderColor: md3Colors.dark.tertiary,
+  },
+  dayBadgeTodayWithWorkout: {
+    backgroundColor: md3Colors.dark.tertiaryContainer,
+    borderColor: md3Colors.dark.tertiary,
+  },
   dayBadgeSelected: {
     backgroundColor: md3Colors.dark.primary,
     borderColor: md3Colors.dark.primary,
@@ -180,6 +193,12 @@ const styles = StyleSheet.create({
   },
   dayTextOutsideMonth: {
     color: md3Colors.dark.onSurfaceVariant,
+  },
+  dayTextToday: {
+    color: md3Colors.dark.tertiary,
+  },
+  dayTextTodayWithWorkout: {
+    color: md3Colors.dark.onTertiaryContainer,
   },
   dayTextSelected: {
     color: md3Colors.dark.onPrimary,
