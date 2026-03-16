@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import {
+  LayoutChangeEvent,
   Platform,
   Pressable,
   StyleSheet,
@@ -27,14 +28,17 @@ const ExerciseSetItem = ({
   isLast,
   refetchSets,
   onSetAdded,
+  onInputFocus,
 }: ExerciseSet & {
   isFirst: boolean
   isLast: boolean
   refetchSets: VoidFunction
   onSetAdded: VoidFunction
+  onInputFocus: (layout: { y: number; height: number }) => void
 }) => {
   const [repsInput, setRepsInput] = useState(outerReps.toString())
   const [weight, setWeight] = useState(outerWeight.toString())
+  const layoutRef = useRef({ y: 0, height: 0 })
 
   const { selectedExercise, selectedMuscleGroup, createdWorkoutId } =
     useWorkoutCreation()
@@ -127,9 +131,22 @@ const ExerciseSetItem = ({
     onSetAdded()
   }
 
+  const onLayout = (event: LayoutChangeEvent) => {
+    const { y, height } = event.nativeEvent.layout
+
+    layoutRef.current = { y, height }
+  }
+
+  const onFocus = () => {
+    onInputFocus(layoutRef.current)
+  }
+
   return (
     <>
-      <View style={[styles.set_item, { marginTop: isFirst ? 0 : 8 }]}>
+      <View
+        style={[styles.set_item, { marginTop: isFirst ? 0 : 8 }]}
+        onLayout={onLayout}
+      >
         <View style={styles.left}>
           <Text style={styles.order}>Подход №{order + 1}</Text>
         </View>
@@ -146,6 +163,7 @@ const ExerciseSetItem = ({
               returnKeyType="done"
               value={weight}
               onChangeText={onWeightChange}
+              onFocus={onFocus}
             />
           </View>
           <View style={styles.col}>
@@ -174,6 +192,7 @@ const ExerciseSetItem = ({
                 returnKeyType="done"
                 value={repsInput}
                 onChangeText={onRepsChange}
+                onFocus={onFocus}
               />
               <AnimatedColorButton
                 style={styles.counter_pressable}
