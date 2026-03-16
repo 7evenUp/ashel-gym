@@ -3,7 +3,8 @@ import { Pressable, ScrollView, StyleSheet, View } from "react-native"
 import { Image } from "expo-image"
 import * as Haptics from "expo-haptics"
 import { eq, inArray } from "drizzle-orm"
-import { CheckIcon } from "lucide-react-native"
+
+import DoneBadge from "../DoneBadge"
 
 import { MuscleGroup, exerciseSetTable, exerciseTable } from "@/db/schema"
 import { createWorkoutMuscleGroupIfNotExist } from "@/db/prepared-statements/workoutMuscleGroup"
@@ -107,14 +108,7 @@ const SelectMuscleGroup = () => {
               style={styles.imageContainer}
               onPress={() => onMuscleGroupPress(muscle)}
             >
-              {isHighlighted && (
-                <View style={styles.doneBadge}>
-                  <CheckIcon
-                    size={16}
-                    color={md3Colors.dark.onPrimaryContainer}
-                  />
-                </View>
-              )}
+              {isHighlighted && <DoneBadge />}
               <Image
                 style={[styles.image, isHighlighted && styles.imageHighlighted]}
                 source={muscleGroupImages[muscle.name].img}
@@ -154,17 +148,6 @@ const styles = StyleSheet.create({
     borderRightWidth: 3,
     borderBottomWidth: 6,
     borderColor: md3Colors.dark.background,
-  },
-  doneBadge: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    zIndex: 1,
-    backgroundColor: md3Colors.dark.primaryContainer,
-    borderWidth: 1,
-    borderColor: md3Colors.dark.primary,
-    padding: 6,
-    borderRadius: 9999,
   },
   image: {
     width: "100%",

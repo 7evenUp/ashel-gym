@@ -8,7 +8,8 @@ import {
 } from "react-native"
 import { FlashList } from "@shopify/flash-list"
 import { Image } from "expo-image"
-import { CheckIcon } from "lucide-react-native"
+
+import DoneBadge from "./DoneBadge"
 
 import { Exercise, MuscleGroup } from "@/db/schema"
 
@@ -50,11 +51,7 @@ const ExercisesGrid = ({
           isHighlighted && styles.pressable_highlighted,
         ]}
       >
-        {isHighlighted && (
-          <View style={styles.doneBadge}>
-            <CheckIcon size={16} color={md3Colors.dark.onPrimaryContainer} />
-          </View>
-        )}
+        {isHighlighted && <DoneBadge />}
         <Image
           style={[styles.image, isHighlighted && styles.image_highlighted]}
           source={exerciseImages[muscleGroup.name][item.image]}
@@ -97,17 +94,6 @@ const styles = StyleSheet.create({
   pressable_highlighted: {
     backgroundColor: md3Colors.dark.surfaceContainerLow,
     borderRadius: 24,
-  },
-  doneBadge: {
-    position: "absolute",
-    top: 8,
-    right: 8,
-    zIndex: 1,
-    backgroundColor: md3Colors.dark.primaryContainer,
-    borderWidth: 1,
-    borderColor: md3Colors.dark.primary,
-    padding: 6,
-    borderRadius: 9999,
   },
   image: {
     aspectRatio: 1 / 1,
