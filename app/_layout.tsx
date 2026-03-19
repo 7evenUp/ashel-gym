@@ -1,5 +1,6 @@
 import { Suspense, useEffect } from "react"
 import { ActivityIndicator, Platform } from "react-native"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Stack } from "expo-router"
 import { openDatabaseSync, SQLiteProvider } from "expo-sqlite"
 import { StatusBar } from "expo-status-bar"
@@ -13,11 +14,6 @@ import migrations from "@/drizzle/migrations"
 import { logger } from "@/utils/logger"
 import { populateDb } from "@/utils/populateDb"
 
-import { useWorkoutCreation } from "@/store/useWorkoutCreation"
-
-import HeaderLeft from "@/components/header-buttons/HeaderLeft"
-import HeaderRight from "@/components/header-buttons/HeaderRight"
-
 import { md3Colors } from "@/constants/colors"
 import { DATABASE_NAME } from "@/constants/db"
 
@@ -27,7 +23,7 @@ const db = drizzle(expoDB)
 const Layout = () => {
   useDrizzleStudio(expoDB)
 
-  const { currentStep, createdWorkoutId } = useWorkoutCreation()
+  const insets = useSafeAreaInsets()
 
   return (
     <>
@@ -35,16 +31,11 @@ const Layout = () => {
         <Stack.Screen
           name="(tabs)"
           options={{
-            title: "Ashel Gym",
-            headerShown: true,
-            headerStyle: {
+            headerShown: false,
+            contentStyle: {
+              paddingTop: insets.top,
               backgroundColor: md3Colors.dark.background,
             },
-            headerTintColor: md3Colors.dark.onSurface,
-            headerLeft:
-              currentStep !== "idle" ? () => <HeaderLeft /> : undefined,
-            headerRight:
-              createdWorkoutId !== null ? () => <HeaderRight /> : undefined,
           }}
         />
         <Stack.Screen
