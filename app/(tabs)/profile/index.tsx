@@ -1,73 +1,99 @@
+import { useEffect, useState } from "react"
 import { Pressable, StyleSheet, View } from "react-native"
 import { Image } from "expo-image"
-import { Link, useRouter } from "expo-router"
+import { useRouter } from "expo-router"
+import * as Haptics from "expo-haptics"
 import { FlashList } from "@shopify/flash-list"
-import { Dumbbell } from "lucide-react-native"
 
-import Button from "@/components/Button"
+import ExercisesGrid from "@/components/ExercisesGrid"
 
 import { md3Colors } from "@/constants/colors"
 import { muscleGroupImages } from "@/constants/muscleGroupImages"
 
+import { useSelectedExercise } from "@/store/useSelectedExercise"
+
+import { MuscleGroup } from "@/db/schema"
+
 import useMuscleGroups from "@/hooks/useMuscleGroups"
+import useExercises from "@/hooks/useExercises"
 
 import { logger } from "@/utils/logger"
 
 export default function ProfileScreen() {
   const router = useRouter()
 
+  const [selectedMuscleGroup, setSelectedMuscleGroup] =
+    useState<MuscleGroup | null>(null)
+
   const muscleGroups = useMuscleGroups()
+  const exercises = useExercises({
+    neededMuscleGroupId: selectedMuscleGroup ? selectedMuscleGroup.id : null,
+  })
+
+  const setExercise = useSelectedExercise((state) => state.setExercise)
+
+  useEffect(() => {
+    if (!muscleGroups) return
+
+    setSelectedMuscleGroup(muscleGroups[0])
+  }, [muscleGroups])
 
   logger("MuscleGroups: ", muscleGroups)
+  logger("Exercises for selected muscle group: ", exercises)
 
   return (
     <View style={styles.container}>
       {muscleGroups && (
         <FlashList
           data={muscleGroups}
+          horizontal
           style={{ width: "100%" }}
           contentContainerStyle={{
             padding: 16,
           }}
-          numColumns={2}
           renderItem={({ item, index }) => {
-            const marginLeft = index % 2 === 0 ? 0 : 6
-            const marginRight = index % 2 === 0 ? 6 : 0
+            const marginLeft = index === 0 ? 0 : 12
 
             return (
-              <Link href={`/(tabs)/profile/${item.id}`} asChild>
-                <Pressable
-                  style={{
-                    aspectRatio: 1 / 1,
-                    borderRadius: 20,
-                    marginLeft,
-                    marginRight,
+              <Pressable
+                style={[
+                  styles.muscleGroupItem,
+                  selectedMuscleGroup !== null &&
+                    selectedMuscleGroup.id === item.id &&
+                    styles.muscleGroupItemSelected,
+                  { marginLeft },
+                ]}
+                onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+                  setSelectedMuscleGroup(item)
+                }}
+              >
+                <Image
+                  style={styles.image}
+                  source={muscleGroupImages[item.name].img}
+                  placeholder={{
+                    blurhash: muscleGroupImages[item.name].blurhash,
                   }}
-                >
-                  <Image
-                    style={styles.image}
-                    source={muscleGroupImages[item.name].img}
-                    placeholder={{
-                      blurhash: muscleGroupImages[item.name].blurhash,
-                    }}
-                    transition={250}
-                  />
-                </Pressable>
-              </Link>
+                  transition={250}
+                />
+              </Pressable>
             )
           }}
           ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
+          showsHorizontalScrollIndicator={false}
         />
       )}
-      <View style={styles.buttonContainer}>
-        <Button
-          label="Gym session"
-          Icon={Dumbbell}
-          onPress={() => {
-            router.push("/(tabs)")
+      {selectedMuscleGroup && exercises && exercises.length > 0 && (
+        <ExercisesGrid
+          exercises={exercises}
+          muscleGroup={selectedMuscleGroup}
+          onExercisePress={(exercise) => {
+            setExercise(exercise)
+            router.navigate("/stats-modal")
           }}
+          containerStyle={{ padding: 16 }}
         />
-      </View>
+      )}
     </View>
   )
 }
@@ -78,13 +104,28 @@ const styles = StyleSheet.create({
     backgroundColor: md3Colors.dark.background,
     alignItems: "center",
   },
-  buttonContainer: {
-    width: "100%",
-    padding: 16,
+  muscleGroupItem: {
+    aspectRatio: 1 / 1,
+    borderRadius: 18,
+    height: 100,
+    boxShadow:
+      "0px 4px 8px 3px rgba(0,0,0,0.15), 0px 1px 3px 0px rgba(0,0,0,0.3)",
+    borderWidth: 1,
+    borderColor: "transparent",
+  },
+  muscleGroupItemSelected: {
+    borderColor: md3Colors.dark.primary,
   },
   image: {
     height: "100%",
     width: "100%",
-    borderRadius: 20,
+    borderRadius: 18,
+  },
+  exerciseTitle: {
+    marginVertical: 12,
+    color: md3Colors.dark.onSurface,
+    fontSize: 20,
+    fontWeight: "600",
+    textTransform: "capitalize",
   },
 })
