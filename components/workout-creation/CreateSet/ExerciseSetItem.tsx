@@ -58,13 +58,26 @@ const ExerciseSetItem = ({
     const normalizedLeadingDot = digitsAndDotsOnly.startsWith(".")
       ? `0${digitsAndDotsOnly}`
       : digitsAndDotsOnly
+
     const firstDotIndex = normalizedLeadingDot.indexOf(".")
-    const normalizedText =
+
+    const normalizedSingleDotText =
       firstDotIndex === -1
         ? normalizedLeadingDot
         : `${normalizedLeadingDot.slice(0, firstDotIndex + 1)}${normalizedLeadingDot
             .slice(firstDotIndex + 1)
             .replaceAll(".", "")}`
+
+    const [integerPart, fractionalPart] = normalizedSingleDotText.split(".")
+
+    const normalizedIntegerPart =
+      integerPart === "" ? "0" : integerPart.replace(/^0+(?=\d)/, "")
+
+    const normalizedText =
+      fractionalPart !== undefined
+        ? `${normalizedIntegerPart}.${fractionalPart}`
+        : normalizedIntegerPart
+
     const parsedText = parseFloat(normalizedText)
     const nextWeight = Number.isFinite(parsedText) ? parsedText : 0
 
@@ -74,6 +87,7 @@ const ExerciseSetItem = ({
       weight: nextWeight,
       id,
     })
+
     setWeight(normalizedText)
   }
 
@@ -156,8 +170,6 @@ const ExerciseSetItem = ({
             <Text style={styles.col_title}>Вес, кг</Text>
             <TextInput
               style={styles.col_input}
-              placeholder="Введите вес"
-              placeholderTextColor={md3Colors.dark.onSurfaceVariant}
               keyboardType="numeric"
               keyboardAppearance="dark"
               returnKeyType="done"
