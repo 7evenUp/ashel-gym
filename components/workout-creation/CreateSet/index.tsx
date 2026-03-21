@@ -2,12 +2,15 @@ import { useEffect, useRef, useState } from "react"
 import {
   Keyboard,
   KeyboardEvent,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
 } from "react-native"
 import { Image } from "expo-image"
+import { useRouter } from "expo-router"
+import { ChartLineIcon } from "lucide-react-native"
 
 import ExerciseSetItem from "./ExerciseSetItem"
 
@@ -15,8 +18,11 @@ import { md3Colors } from "@/constants/colors"
 import { exerciseImages } from "@/constants/exerciseImages"
 
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
+import { useSelectedExercise } from "@/store/useSelectedExercise"
 
 import useSets from "@/hooks/useSets"
+
+import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
 
 type SetItemLayout = {
   y: number
@@ -27,6 +33,8 @@ const ACTIONS_OFFSET = 120
 const KEYBOARD_GAP = 24
 
 const CreateSet = () => {
+  const router = useRouter()
+
   const scrollViewRef = useRef<ScrollView>(null)
   const prevSetsLengthRef = useRef(0)
   const scrollOffsetRef = useRef(0)
@@ -39,6 +47,8 @@ const CreateSet = () => {
 
   const { selectedExercise, selectedMuscleGroup, createdWorkoutId } =
     useWorkoutCreation()
+
+  const setExercise = useSelectedExercise((state) => state.setExercise)
 
   const { sets, refetch } = useSets({
     exerciseId: selectedExercise ? selectedExercise.id : null,
@@ -169,6 +179,16 @@ const CreateSet = () => {
             exerciseImages[selectedMuscleGroup.name][selectedExercise.image]
           }
         />
+        <Pressable
+          style={styles.statsButton}
+          onPress={() => {
+            makeHapticFeedback()
+            setExercise(selectedExercise)
+            router.navigate("/stats-modal")
+          }}
+        >
+          <ChartLineIcon size={20} color={md3Colors.dark.onSecondary} />
+        </Pressable>
       </View>
 
       {sets.map((set, i) => (
@@ -203,12 +223,24 @@ const styles = StyleSheet.create({
   },
   image_wrapper: {
     aspectRatio: 1 / 1,
-    width: "60%",
+    width: "65%",
     marginBottom: 16,
+    position: "relative",
   },
   image: {
     width: "100%",
     height: "100%",
     borderRadius: 20,
+  },
+  statsButton: {
+    position: "absolute",
+    right: 4,
+    bottom: 4,
+    borderRadius: 9999,
+    backgroundColor: md3Colors.dark.secondary,
+    width: 36,
+    height: 36,
+    alignItems: "center",
+    justifyContent: "center",
   },
 })
