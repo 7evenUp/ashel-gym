@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import {
+  Alert,
   Modal,
   Pressable,
   ScrollView,
@@ -7,7 +8,8 @@ import {
   Text,
   View,
 } from "react-native"
-import { ChevronDown, X } from "lucide-react-native"
+import { ChevronDown, Trash2Icon, X } from "lucide-react-native"
+import { inArray } from "drizzle-orm"
 import Animated, {
   Easing,
   FadeInDown,
@@ -18,10 +20,20 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated"
 
-import { md3Colors } from "@/constants/colors"
-
 import { DayExerciseSummary, DaySummary } from "./types"
 import { getReadableDateLabel } from "./utils"
+
+import Button from "../Button"
+
+import { md3Colors } from "@/constants/colors"
+
+import {
+  exerciseSetTable,
+  workoutMuscleGroupTable,
+  workoutTable,
+} from "@/db/schema"
+
+import useDb from "@/hooks/useDb"
 
 import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
 
@@ -101,12 +113,15 @@ const CalendarDayDetailsModal = ({
   selectedSummary: DaySummary | null
   onClose: VoidFunction
 }) => {
-  const [isVisible, setIsVisible] = useState(false)
+  const db = useDb()
+
+  const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedMuscleGroups, setSelectedMuscleGroups] = useState<string[]>([])
   const [expandedExerciseIds, setExpandedExerciseIds] = useState<number[]>([])
+  const [isWorkoutDeleting, setIsWorkoutDeleting] = useState(false)
 
   useEffect(() => {
-    if (selectedDate) setIsVisible(true)
+    if (selectedDate) setIsModalVisible(true)
   }, [selectedDate])
 
   useEffect(() => {
@@ -115,7 +130,7 @@ const CalendarDayDetailsModal = ({
   }, [selectedSummary])
 
   const onCloseClick = async () => {
-    setIsVisible(false)
+    setIsModalVisible(false)
 
     await new Promise((r) => setTimeout(r, 300))
 
@@ -148,11 +163,62 @@ const CalendarDayDetailsModal = ({
     )
   }
 
+  const workoutIds = useMemo(() => {
+    if (!selectedSummary) return []
+
+    return Array.from(
+      new Set(
+        selectedSummary.exercises.flatMap((exercise) =>
+          exercise.sets.map((set) => set.workoutId),
+        ),
+      ),
+    )
+  }, [selectedSummary])
+
+  const onDeletePress = () => {
+    if (workoutIds.length === 0 || isWorkoutDeleting) return
+
+    Alert.alert(
+      "Delete workouts?",
+      "This will delete all workouts logged for this day.",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            setIsWorkoutDeleting(true)
+
+            try {
+              await db
+                .delete(exerciseSetTable)
+                .where(inArray(exerciseSetTable.workout_id, workoutIds))
+              await db
+                .delete(workoutMuscleGroupTable)
+                .where(inArray(workoutMuscleGroupTable.workout_id, workoutIds))
+              await db
+                .delete(workoutTable)
+                .where(inArray(workoutTable.id, workoutIds))
+
+              makeHapticFeedback()
+              await onCloseClick()
+            } finally {
+              setIsWorkoutDeleting(false)
+            }
+          },
+        },
+      ],
+    )
+  }
+
   return (
     <Modal
       animationType="fade"
       transparent
-      visible={isVisible && selectedDate !== null}
+      visible={isModalVisible && selectedDate !== null}
       onRequestClose={onCloseClick}
     >
       <View style={styles.modalRoot}>
@@ -250,6 +316,15 @@ const CalendarDayDetailsModal = ({
                     </View>
                   )}
                 </View>
+
+                <Button
+                  label="Удалить тренировку"
+                  Icon={Trash2Icon}
+                  variant="error"
+                  style={styles.deleteButton}
+                  onPress={onDeletePress}
+                  isLoading={isWorkoutDeleting}
+                />
               </ScrollView>
             </>
           ) : (
@@ -430,6 +505,9 @@ const styles = StyleSheet.create({
   filteredEmptyText: {
     color: md3Colors.dark.onSurfaceVariant,
     fontSize: 14,
+  },
+  deleteButton: {
+    marginTop: 24,
   },
   emptyState: {
     alignItems: "center",

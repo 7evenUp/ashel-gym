@@ -19,11 +19,13 @@ export default function Button({
   style,
   isLoading,
   onPress,
+  variant = "default",
   ...props
 }: {
   label: string
   Icon?: LucideIcon
   isLoading?: boolean
+  variant: "default" | "error"
 } & ComponentProps<typeof Pressable>) {
   const rotation = useSharedValue(0)
 
@@ -38,6 +40,7 @@ export default function Button({
           false,
         )
       : 0
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading])
 
   const animatedRotationStyles = useAnimatedStyle(() => ({
@@ -48,7 +51,9 @@ export default function Button({
     <Pressable
       style={(state) => [
         styles.pressable,
+        variant === "error" && styles.pressable__error,
         state.pressed && styles.pressable_pressed,
+        state.pressed && variant === "error" && styles.pressable_pressed__error,
         typeof style === "function" ? style(state) : style,
       ]}
       onPress={(event) => {
@@ -60,12 +65,32 @@ export default function Button({
     >
       {isLoading ? (
         <Animated.View style={animatedRotationStyles}>
-          <Loader size={24} color={md3Colors.dark.onPrimary} />
+          <Loader
+            size={24}
+            color={
+              variant === "error"
+                ? md3Colors.dark.onError
+                : md3Colors.dark.onPrimary
+            }
+          />
         </Animated.View>
       ) : (
         <>
-          {Icon && <Icon color={md3Colors.dark.onPrimary} size={20} />}
-          <Text style={styles.label}>{label}</Text>
+          {Icon && (
+            <Icon
+              color={
+                variant === "error"
+                  ? md3Colors.dark.onError
+                  : md3Colors.dark.onPrimary
+              }
+              size={20}
+            />
+          )}
+          <Text
+            style={[styles.label, variant === "error" && styles.label__error]}
+          >
+            {label}
+          </Text>
         </>
       )}
     </Pressable>
@@ -90,5 +115,14 @@ const styles = StyleSheet.create({
   label: {
     color: md3Colors.dark.onPrimary,
     fontSize: 20,
+  },
+  pressable__error: {
+    backgroundColor: md3Colors.dark.error,
+  },
+  pressable_pressed__error: {
+    backgroundColor: md3Colors.light.errorContainer,
+  },
+  label__error: {
+    color: md3Colors.dark.onError,
   },
 })
