@@ -7,14 +7,90 @@ import {
   Text,
   View,
 } from "react-native"
-import { ChevronDown, ChevronUp, X } from "lucide-react-native"
+import { ChevronDown, X } from "lucide-react-native"
+import Animated, {
+  Easing,
+  FadeInDown,
+  FadeOutUp,
+  LinearTransition,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated"
 
 import { md3Colors } from "@/constants/colors"
 
-import { DaySummary } from "./types"
+import { DayExerciseSummary, DaySummary } from "./types"
 import { getReadableDateLabel } from "./utils"
 
 import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
+
+const exerciseLayoutTransition = LinearTransition.duration(220).easing(
+  Easing.out(Easing.cubic),
+)
+
+const ExerciseAccordionItem = ({
+  exercise,
+  isExpanded,
+  onPress,
+}: {
+  exercise: DayExerciseSummary
+  isExpanded: boolean
+  onPress: VoidFunction
+}) => {
+  const rotation = useSharedValue(isExpanded ? 180 : 0)
+
+  useEffect(() => {
+    rotation.value = withTiming(isExpanded ? 180 : 0, {
+      duration: 220,
+      easing: Easing.out(Easing.cubic),
+    })
+  }, [isExpanded, rotation])
+
+  const chevronAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ rotate: `${rotation.value}deg` }],
+  }))
+
+  return (
+    <Animated.View
+      layout={exerciseLayoutTransition}
+      style={styles.exerciseCard}
+    >
+      <Pressable style={styles.exercisePressable} onPress={onPress}>
+        <View style={styles.exerciseRow}>
+          <View style={styles.exerciseMeta}>
+            <Text style={styles.exerciseName}>{exercise.name}</Text>
+            <Text style={styles.exerciseSets}>
+              Подходы: {exercise.setsCount}
+            </Text>
+          </View>
+
+          <Animated.View style={chevronAnimatedStyle}>
+            <ChevronDown color={md3Colors.dark.onSurfaceVariant} size={18} />
+          </Animated.View>
+        </View>
+      </Pressable>
+
+      {isExpanded && (
+        <Animated.View
+          entering={FadeInDown.duration(180)}
+          exiting={FadeOutUp.duration(160)}
+          layout={exerciseLayoutTransition}
+          style={styles.setsList}
+        >
+          {exercise.sets.map((set, index) => (
+            <View key={set.id} style={styles.setRow}>
+              <Text style={styles.setOrder}>Подход №{index + 1}</Text>
+              <Text style={styles.setValue}>
+                {set.weight}кг x {set.reps}
+              </Text>
+            </View>
+          ))}
+        </Animated.View>
+      )}
+    </Animated.View>
+  )
+}
 
 const CalendarDayDetailsModal = ({
   selectedDate,
@@ -72,10 +148,6 @@ const CalendarDayDetailsModal = ({
     )
   }
 
-  const formatWeight = (weight: number) => {
-    return weight.toString().replace(".", ",")
-  }
-
   return (
     <Modal
       animationType="fade"
@@ -110,6 +182,7 @@ const CalendarDayDetailsModal = ({
                   {selectedSummary.muscleGroups.map((muscleGroup) => {
                     const isSelected =
                       selectedMuscleGroups.includes(muscleGroup)
+
                     return (
                       <Pressable
                         key={muscleGroup}
@@ -157,57 +230,17 @@ const CalendarDayDetailsModal = ({
                   </Text>
                   {filteredExercises.length > 0 ? (
                     <View style={styles.exerciseList}>
-                      {filteredExercises.map((exercise) => {
-                        const isExpanded = expandedExerciseIds.includes(
-                          exercise.id,
-                        )
-
-                        return (
-                          <Pressable
-                            key={exercise.id}
-                            style={styles.exerciseCard}
-                            onPress={() => onToggleExercise(exercise.id)}
-                          >
-                            <View style={styles.exerciseRow}>
-                              <View style={styles.exerciseMeta}>
-                                <Text style={styles.exerciseName}>
-                                  {exercise.name}
-                                </Text>
-                                <Text style={styles.exerciseSets}>
-                                  Подходы: {exercise.setsCount}
-                                </Text>
-                              </View>
-
-                              {isExpanded ? (
-                                <ChevronUp
-                                  color={md3Colors.dark.onSurfaceVariant}
-                                  size={18}
-                                />
-                              ) : (
-                                <ChevronDown
-                                  color={md3Colors.dark.onSurfaceVariant}
-                                  size={18}
-                                />
-                              )}
-                            </View>
-
-                            {isExpanded && (
-                              <View style={styles.setsList}>
-                                {exercise.sets.map((set, index) => (
-                                  <View key={set.id} style={styles.setRow}>
-                                    <Text style={styles.setOrder}>
-                                      Подход №{index + 1}
-                                    </Text>
-                                    <Text style={styles.setValue}>
-                                      {formatWeight(set.weight)}кг x {set.reps}
-                                    </Text>
-                                  </View>
-                                ))}
-                              </View>
-                            )}
-                          </Pressable>
-                        )
-                      })}
+                      {filteredExercises.map((exercise) => (
+                        <ExerciseAccordionItem
+                          key={exercise.id}
+                          exercise={exercise}
+                          isExpanded={expandedExerciseIds.includes(exercise.id)}
+                          onPress={() => {
+                            makeHapticFeedback()
+                            onToggleExercise(exercise.id)
+                          }}
+                        />
+                      ))}
                     </View>
                   ) : (
                     <View style={styles.filteredEmptyState}>
@@ -337,9 +370,10 @@ const styles = StyleSheet.create({
   exerciseCard: {
     backgroundColor: md3Colors.dark.surfaceContainer,
     borderRadius: 16,
+  },
+  exercisePressable: {
     paddingHorizontal: 14,
     paddingVertical: 12,
-    gap: 12,
   },
   exerciseRow: {
     flexDirection: "row",
@@ -363,6 +397,8 @@ const styles = StyleSheet.create({
   },
   setsList: {
     gap: 8,
+    paddingHorizontal: 14,
+    paddingBottom: 12,
     paddingTop: 2,
   },
   setRow: {
