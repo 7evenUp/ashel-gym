@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import * as Haptics from "expo-haptics"
 import { eq } from "drizzle-orm"
 
 import ExercisesGrid from "../ExercisesGrid"
@@ -11,6 +10,8 @@ import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 import { Exercise, exerciseSetTable } from "@/db/schema"
 import { createExerciseSet, getExerciseSets } from "@/db/prepared-statements"
+
+import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
 
 const SelectExercise = () => {
   const db = useDb()
@@ -71,7 +72,7 @@ const SelectExercise = () => {
     return
 
   const onExercisePress = async (exercise: Exercise) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+    makeHapticFeedback()
 
     setSelectedExercise(exercise)
 

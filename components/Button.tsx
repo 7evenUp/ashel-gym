@@ -7,11 +7,11 @@ import Animated, {
   withRepeat,
   Easing,
 } from "react-native-reanimated"
-import * as Haptics from "expo-haptics"
-
 import { Loader, LucideIcon } from "lucide-react-native"
 
 import { md3Colors } from "@/constants/colors"
+
+import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
 
 export default function Button({
   label,
@@ -52,7 +52,7 @@ export default function Button({
         typeof style === "function" ? style(state) : style,
       ]}
       onPress={(event) => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+        makeHapticFeedback()
         if (onPress) onPress(event)
       }}
       disabled={isLoading}

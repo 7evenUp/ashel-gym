@@ -8,6 +8,8 @@ import Animated, {
 
 import { md3Colors } from "@/constants/colors"
 
+import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
+
 interface AnimatedColorButtonProps extends PressableProps {
   colors?: {
     from: string
@@ -23,6 +25,7 @@ const AnimatedColorButton = ({
   style,
   colors,
   duration = 200,
+  onPress: externalOnPress,
   onPressIn: externalOnPressIn,
   onPressOut: externalOnPressOut,
   ...rest
@@ -45,6 +48,11 @@ const AnimatedColorButton = ({
     }
   })
 
+  const handleOnPress = (e: any) => {
+    makeHapticFeedback()
+    externalOnPress?.(e)
+  }
+
   const handlePressIn = (e: any) => {
     pressed.value = withSpring(1, { damping: 35, stiffness: 300 })
     externalOnPressIn?.(e)
@@ -58,6 +66,7 @@ const AnimatedColorButton = ({
   return (
     <AnimatedPressable
       {...rest}
+      onPress={handleOnPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       style={[style, animatedStyle]}

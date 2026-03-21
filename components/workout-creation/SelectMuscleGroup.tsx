@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { Pressable, ScrollView, StyleSheet, View } from "react-native"
 import { Image } from "expo-image"
-import * as Haptics from "expo-haptics"
 import { eq, inArray } from "drizzle-orm"
 
 import DoneBadge from "../DoneBadge"
@@ -16,6 +15,8 @@ import useMuscleGroups from "@/hooks/useMuscleGroups"
 import useDb from "@/hooks/useDb"
 
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
+
+import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
 
 const SelectMuscleGroup = () => {
   const db = useDb()
@@ -76,7 +77,7 @@ const SelectMuscleGroup = () => {
   const onMuscleGroupPress = async (muscle: MuscleGroup) => {
     if (createdWorkoutId === null) return
 
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+    makeHapticFeedback()
 
     await createWorkoutMuscleGroupIfNotExist(
       {

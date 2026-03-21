@@ -2,7 +2,6 @@ import { useEffect, useState } from "react"
 import { Pressable, StyleSheet, View } from "react-native"
 import { Image } from "expo-image"
 import { useRouter } from "expo-router"
-import * as Haptics from "expo-haptics"
 import { FlashList } from "@shopify/flash-list"
 
 import ExercisesGrid from "@/components/ExercisesGrid"
@@ -17,6 +16,7 @@ import { MuscleGroup } from "@/db/schema"
 import useMuscleGroups from "@/hooks/useMuscleGroups"
 import useExercises from "@/hooks/useExercises"
 
+import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
 import { logger } from "@/utils/logger"
 
 export default function ProfileScreen() {
@@ -64,7 +64,7 @@ export default function ProfileScreen() {
                   { marginLeft },
                 ]}
                 onPress={() => {
-                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+                  makeHapticFeedback()
                   setSelectedMuscleGroup(item)
                 }}
               >

@@ -11,6 +11,8 @@ import { workoutTable } from "@/db/schema"
 
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
+import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
+
 const WorkoutCreationActions = () => {
   const db = useDb()
 
@@ -27,6 +29,7 @@ const WorkoutCreationActions = () => {
   const onFinishWorkout = async () => {
     if (createdWorkoutId === null || isFinishing) return
 
+    makeHapticFeedback()
     setIsFinishing(true)
 
     try {
@@ -55,7 +58,10 @@ const WorkoutCreationActions = () => {
           <SplitButtons.LeftButton
             label="Новая группа"
             Icon={LayoutGrid}
-            onPress={goToMuscleGroupSelection}
+            onPress={() => {
+              makeHapticFeedback()
+              goToMuscleGroupSelection()
+            }}
           />
           <SplitButtons.RightButton Icon={Flag} onPress={onFinishWorkout} />
         </>
@@ -65,7 +71,10 @@ const WorkoutCreationActions = () => {
           <SplitButtons.LeftButton
             label="Новое упражнение"
             Icon={Dumbbell}
-            onPress={goToExerciseSelection}
+            onPress={() => {
+              makeHapticFeedback()
+              goToExerciseSelection()
+            }}
           />
           <SplitButtons.RightButton Icon={Flag} onPress={onFinishWorkout} />
         </>

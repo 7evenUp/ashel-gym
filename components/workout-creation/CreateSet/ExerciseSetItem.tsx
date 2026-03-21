@@ -19,6 +19,8 @@ import { createExerciseSet, updateExerciseSet } from "@/db/prepared-statements"
 
 import { md3Colors } from "@/constants/colors"
 
+import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
+
 const ExerciseSetItem = ({
   order,
   reps: outerReps,
@@ -132,6 +134,8 @@ const ExerciseSetItem = ({
 
   const onAddPress = async () => {
     if (isConfirmDisabled) return
+
+    makeHapticFeedback()
 
     await createExerciseSet({
       exercise_id: selectedExercise.id,
