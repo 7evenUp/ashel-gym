@@ -10,13 +10,20 @@ import {
   workoutTable,
 } from "@/db/schema"
 
-import { DaySummary } from "./types"
+import { DayExerciseSetSummary, DaySummary } from "./types"
 import { formatMuscleGroupName, toDayKey } from "./utils"
 
 type DaySummaryDraft = {
   workoutIds: Set<number>
   muscleGroups: Set<string>
-  exerciseSetCounts: Map<number, { name: string; setsCount: number }>
+  exercises: Map<
+    number,
+    {
+      name: string
+      muscleGroup: string
+      sets: DayExerciseSetSummary[]
+    }
+  >
   setsCount: number
 }
 
@@ -79,10 +86,7 @@ const useCalendarData = () => {
           draft = {
             workoutIds: new Set<number>(),
             muscleGroups: new Set<string>(),
-            exerciseSetCounts: new Map<
-              number,
-              { name: string; setsCount: number }
-            >(),
+            exercises: new Map(),
             setsCount: 0,
           }
           summaryDrafts.set(dayKey, draft)
@@ -95,23 +99,35 @@ const useCalendarData = () => {
 
           if (!exercise) return
 
+          const muscleGroup =
+            muscleGroupsById.get(exercise.muscle_group_id) ?? null
+          const muscleGroupName = muscleGroup
+            ? formatMuscleGroupName(muscleGroup.name)
+            : "Unknown"
+
           draft.setsCount += 1
 
-          const exerciseSummary = draft.exerciseSetCounts.get(exercise.id)
+          const exerciseSummary = draft.exercises.get(exercise.id)
+          const setSummary: DayExerciseSetSummary = {
+            id: set.id,
+            order: set.order,
+            reps: set.reps,
+            weight: set.weight,
+            workoutId: workout.id,
+            workoutCreatedAt: workout.created_at,
+          }
 
           if (exerciseSummary) {
-            exerciseSummary.setsCount += 1
+            exerciseSummary.sets.push(setSummary)
           } else {
-            draft.exerciseSetCounts.set(exercise.id, {
+            draft.exercises.set(exercise.id, {
               name: exercise.name,
-              setsCount: 1,
+              muscleGroup: muscleGroupName,
+              sets: [setSummary],
             })
           }
 
-          const muscleGroup = muscleGroupsById.get(exercise.muscle_group_id)
-          if (muscleGroup) {
-            draft.muscleGroups.add(formatMuscleGroupName(muscleGroup.name))
-          }
+          draft.muscleGroups.add(muscleGroupName)
         })
       })
 
@@ -121,12 +137,23 @@ const useCalendarData = () => {
         nextSummaries.set(dayKey, {
           dateKey: dayKey,
           workoutCount: draft.workoutIds.size,
-          muscleGroups: Array.from(draft.muscleGroups.values()),
-          exercises: Array.from(draft.exerciseSetCounts.entries())
+          muscleGroups: Array.from(draft.muscleGroups.values()).sort((a, b) =>
+            a.localeCompare(b),
+          ),
+          exercises: Array.from(draft.exercises.entries())
             .map(([id, value]) => ({
               id,
               name: value.name,
-              setsCount: value.setsCount,
+              muscleGroup: value.muscleGroup,
+              setsCount: value.sets.length,
+              sets: value.sets
+                .slice()
+                .sort(
+                  (a, b) =>
+                    a.workoutCreatedAt - b.workoutCreatedAt ||
+                    a.order - b.order ||
+                    a.id - b.id,
+                ),
             }))
             .sort(
               (a, b) =>

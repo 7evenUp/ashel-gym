@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import {
   Modal,
   Pressable,
@@ -7,12 +7,14 @@ import {
   Text,
   View,
 } from "react-native"
-import { X } from "lucide-react-native"
+import { ChevronDown, ChevronUp, X } from "lucide-react-native"
 
 import { md3Colors } from "@/constants/colors"
 
 import { DaySummary } from "./types"
 import { getReadableDateLabel } from "./utils"
+
+import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
 
 const CalendarDayDetailsModal = ({
   selectedDate,
@@ -24,10 +26,17 @@ const CalendarDayDetailsModal = ({
   onClose: VoidFunction
 }) => {
   const [isVisible, setIsVisible] = useState(false)
+  const [selectedMuscleGroups, setSelectedMuscleGroups] = useState<string[]>([])
+  const [expandedExerciseIds, setExpandedExerciseIds] = useState<number[]>([])
 
   useEffect(() => {
     if (selectedDate) setIsVisible(true)
   }, [selectedDate])
+
+  useEffect(() => {
+    setSelectedMuscleGroups(selectedSummary?.muscleGroups ?? [])
+    setExpandedExerciseIds([])
+  }, [selectedSummary])
 
   const onCloseClick = async () => {
     setIsVisible(false)
@@ -35,6 +44,36 @@ const CalendarDayDetailsModal = ({
     await new Promise((r) => setTimeout(r, 300))
 
     onClose()
+  }
+
+  const filteredExercises = useMemo(() => {
+    if (!selectedSummary || selectedMuscleGroups.length === 0) return []
+
+    const selectedMuscleGroupSet = new Set(selectedMuscleGroups)
+
+    return selectedSummary.exercises.filter((exercise) =>
+      selectedMuscleGroupSet.has(exercise.muscleGroup),
+    )
+  }, [selectedMuscleGroups, selectedSummary])
+
+  const onToggleMuscleGroup = (muscleGroup: string) => {
+    setSelectedMuscleGroups((current) =>
+      current.includes(muscleGroup)
+        ? current.filter((item) => item !== muscleGroup)
+        : [...current, muscleGroup],
+    )
+  }
+
+  const onToggleExercise = (exerciseId: number) => {
+    setExpandedExerciseIds((current) =>
+      current.includes(exerciseId)
+        ? current.filter((item) => item !== exerciseId)
+        : [...current, exerciseId],
+    )
+  }
+
+  const formatWeight = (weight: number) => {
+    return weight.toString().replace(".", ",")
   }
 
   return (
@@ -62,51 +101,124 @@ const CalendarDayDetailsModal = ({
           </View>
 
           {selectedSummary ? (
-            <ScrollView
-              style={styles.modalScroll}
-              contentContainerStyle={styles.modalScrollContent}
-              showsVerticalScrollIndicator={false}
-            >
-              <View style={styles.statRow}>
-                <Text style={styles.statLabel}>Workouts</Text>
-                <Text style={styles.statValue}>
-                  {selectedSummary.workoutCount}
-                </Text>
-              </View>
-
-              <View style={styles.statRow}>
-                <Text style={styles.statLabel}>Sets</Text>
-                <Text style={styles.statValue}>
-                  {selectedSummary.setsCount}
-                </Text>
-              </View>
-
+            <>
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Muscle groups</Text>
+                <Text style={styles.sectionTitle}>
+                  Проработанные группы мышц
+                </Text>
                 <View style={styles.tagList}>
-                  {selectedSummary.muscleGroups.map((muscleGroup) => (
-                    <View key={muscleGroup} style={styles.tag}>
-                      <Text style={styles.tagText}>{muscleGroup}</Text>
-                    </View>
-                  ))}
+                  {selectedSummary.muscleGroups.map((muscleGroup) => {
+                    const isSelected =
+                      selectedMuscleGroups.includes(muscleGroup)
+                    return (
+                      <Pressable
+                        key={muscleGroup}
+                        style={[
+                          styles.tag,
+                          isSelected
+                            ? styles.tagSelected
+                            : styles.tagUnselected,
+                        ]}
+                        onPress={() => {
+                          makeHapticFeedback()
+                          onToggleMuscleGroup(muscleGroup)
+                        }}
+                      >
+                        <Text
+                          style={[
+                            styles.tagText,
+                            isSelected
+                              ? styles.tagTextSelected
+                              : styles.tagTextUnselected,
+                          ]}
+                        >
+                          {muscleGroup}
+                        </Text>
+                        {isSelected && (
+                          <X
+                            size={14}
+                            color={md3Colors.dark.onTertiaryContainer}
+                          />
+                        )}
+                      </Pressable>
+                    )
+                  })}
                 </View>
               </View>
 
-              <View style={styles.section}>
-                <Text style={styles.sectionTitle}>Exercises</Text>
-                <View style={styles.exerciseList}>
-                  {selectedSummary.exercises.map((exercise) => (
-                    <View key={exercise.id} style={styles.exerciseRow}>
-                      <Text style={styles.exerciseName}>{exercise.name}</Text>
-                      <Text style={styles.exerciseSets}>
-                        {exercise.setsCount} set
-                        {exercise.setsCount === 1 ? "" : "s"}
+              <ScrollView
+                style={styles.modalScroll}
+                contentContainerStyle={styles.modalScrollContent}
+                showsVerticalScrollIndicator={false}
+              >
+                <View style={styles.section}>
+                  <Text style={styles.sectionTitle}>
+                    Проделанные упражнения
+                  </Text>
+                  {filteredExercises.length > 0 ? (
+                    <View style={styles.exerciseList}>
+                      {filteredExercises.map((exercise) => {
+                        const isExpanded = expandedExerciseIds.includes(
+                          exercise.id,
+                        )
+
+                        return (
+                          <Pressable
+                            key={exercise.id}
+                            style={styles.exerciseCard}
+                            onPress={() => onToggleExercise(exercise.id)}
+                          >
+                            <View style={styles.exerciseRow}>
+                              <View style={styles.exerciseMeta}>
+                                <Text style={styles.exerciseName}>
+                                  {exercise.name}
+                                </Text>
+                                <Text style={styles.exerciseSets}>
+                                  Подходы: {exercise.setsCount}
+                                </Text>
+                              </View>
+
+                              {isExpanded ? (
+                                <ChevronUp
+                                  color={md3Colors.dark.onSurfaceVariant}
+                                  size={18}
+                                />
+                              ) : (
+                                <ChevronDown
+                                  color={md3Colors.dark.onSurfaceVariant}
+                                  size={18}
+                                />
+                              )}
+                            </View>
+
+                            {isExpanded && (
+                              <View style={styles.setsList}>
+                                {exercise.sets.map((set, index) => (
+                                  <View key={set.id} style={styles.setRow}>
+                                    <Text style={styles.setOrder}>
+                                      Подход №{index + 1}
+                                    </Text>
+                                    <Text style={styles.setValue}>
+                                      {formatWeight(set.weight)}кг x {set.reps}
+                                    </Text>
+                                  </View>
+                                ))}
+                              </View>
+                            )}
+                          </Pressable>
+                        )
+                      })}
+                    </View>
+                  ) : (
+                    <View style={styles.filteredEmptyState}>
+                      <Text style={styles.filteredEmptyText}>
+                        Select at least one muscle group to see exercises.
                       </Text>
                     </View>
-                  ))}
+                  )}
                 </View>
-              </View>
-            </ScrollView>
+              </ScrollView>
+            </>
           ) : (
             <View style={styles.emptyState}>
               <Text style={styles.emptyTitle}>No workouts logged</Text>
@@ -144,7 +256,6 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     paddingHorizontal: 16,
     paddingTop: 16,
-    paddingBottom: 24,
     borderTopWidth: 1,
     borderColor: md3Colors.dark.outlineVariant,
   },
@@ -177,27 +288,8 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   modalScrollContent: {
-    gap: 16,
-    paddingBottom: 4,
-  },
-  statRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: md3Colors.dark.surfaceContainer,
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
-  },
-  statLabel: {
-    color: md3Colors.dark.onSurfaceVariant,
-    fontSize: 14,
-    fontWeight: "600",
-  },
-  statValue: {
-    color: md3Colors.dark.onSurface,
-    fontSize: 18,
-    fontWeight: "700",
+    marginTop: 16,
+    paddingBottom: 24,
   },
   section: {
     gap: 10,
@@ -205,7 +297,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     color: md3Colors.dark.onSurface,
     fontSize: 16,
-    fontWeight: "700",
+    fontWeight: "600",
   },
   tagList: {
     flexDirection: "row",
@@ -214,28 +306,50 @@ const styles = StyleSheet.create({
   },
   tag: {
     height: 32,
+    alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
+    gap: 6,
     borderRadius: 8,
+  },
+  tagSelected: {
     backgroundColor: md3Colors.dark.tertiaryContainer,
+    paddingLeft: 16,
+    paddingRight: 12,
+  },
+  tagUnselected: {
+    backgroundColor: md3Colors.dark.surfaceContainer,
     paddingHorizontal: 16,
   },
   tagText: {
-    color: md3Colors.dark.onTertiaryContainer,
     fontSize: 13,
     fontWeight: "600",
   },
+  tagTextSelected: {
+    color: md3Colors.dark.onTertiaryContainer,
+  },
+  tagTextUnselected: {
+    color: md3Colors.dark.onSurfaceVariant,
+  },
   exerciseList: {
-    gap: 10,
+    gap: 8,
+  },
+  exerciseCard: {
+    backgroundColor: md3Colors.dark.surfaceContainer,
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    gap: 12,
   },
   exerciseRow: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
     gap: 12,
-    backgroundColor: md3Colors.dark.surfaceContainer,
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+  },
+  exerciseMeta: {
+    flex: 1,
+    gap: 2,
   },
   exerciseName: {
     flex: 1,
@@ -246,7 +360,40 @@ const styles = StyleSheet.create({
   exerciseSets: {
     color: md3Colors.dark.onSurfaceVariant,
     fontSize: 13,
+  },
+  setsList: {
+    gap: 8,
+    paddingTop: 2,
+  },
+  setRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: 12,
+    backgroundColor: md3Colors.dark.surfaceContainerHigh,
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  setOrder: {
+    color: md3Colors.dark.onSurfaceVariant,
+    fontSize: 13,
     fontWeight: "600",
+  },
+  setValue: {
+    color: md3Colors.dark.onSurface,
+    fontSize: 14,
+    fontWeight: "600",
+  },
+  filteredEmptyState: {
+    backgroundColor: md3Colors.dark.surfaceContainer,
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 16,
+  },
+  filteredEmptyText: {
+    color: md3Colors.dark.onSurfaceVariant,
+    fontSize: 14,
   },
   emptyState: {
     alignItems: "center",
