@@ -12,7 +12,7 @@ import { md3Colors } from "@/constants/colors"
 
 import useDb from "@/hooks/useDb"
 
-import audiowide from "../assets/fonts/Audiowide-Regular.ttf"
+const audiowide = require("../assets/fonts/Audiowide-Regular.ttf")
 
 const CHART_HEIGHT = 300
 const WEIGHT_TICK_PADDING = 5
@@ -264,6 +264,9 @@ const StatsHistoryModal = () => {
       style={styles.container}
       contentContainerStyle={styles.content}
       showsVerticalScrollIndicator={false}
+      nestedScrollEnabled
+      overScrollMode="never"
+      scrollEventThrottle={16}
     >
       <Text style={styles.title}>История изменений</Text>
       <Text style={styles.description}>

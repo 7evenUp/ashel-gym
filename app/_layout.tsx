@@ -56,7 +56,7 @@ const Layout = () => {
           name="stats-history-modal"
           options={{
             presentation: "formSheet",
-            sheetAllowedDetents: [0.95],
+            sheetAllowedDetents: [0.75],
             sheetInitialDetentIndex: 0,
             sheetGrabberVisible: true,
             headerShown: false,
