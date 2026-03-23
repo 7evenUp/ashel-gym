@@ -25,7 +25,7 @@ export default function Button({
   label: string
   Icon?: LucideIcon
   isLoading?: boolean
-  variant: "default" | "error"
+  variant?: "default" | "error"
 } & ComponentProps<typeof Pressable>) {
   const rotation = useSharedValue(0)
 

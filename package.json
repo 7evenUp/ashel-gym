@@ -19,6 +19,7 @@
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",
     "@shopify/flash-list": "2.0.2",
+    "@shopify/react-native-skia": "2.2.12",
     "babel-plugin-inline-import": "^3.0.0",
     "drizzle-orm": "^0.45.1",
     "expo": "~54.0.33",
@@ -46,6 +47,7 @@
     "react-native-svg": "15.12.1",
     "react-native-web": "~0.21.0",
     "react-native-worklets": "0.5.1",
+    "victory-native": "^41.20.2",
     "zustand": "^5.0.11"
   },
   "devDependencies": {
