@@ -397,7 +397,7 @@ const styles = StyleSheet.create({
   },
   modalScrollContent: {
     marginTop: 16,
-    paddingBottom: 24,
+    paddingBottom: 36,
   },
   section: {
     gap: 10,
