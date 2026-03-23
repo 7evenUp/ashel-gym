@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { ScrollView, StyleSheet, Text, View } from "react-native"
 import { asc, eq } from "drizzle-orm"
-import { matchFont } from "@shopify/react-native-skia"
+import { useFont } from "@shopify/react-native-skia"
 import { Area, CartesianChart, Line, Scatter } from "victory-native"
 
 import { useSelectedExercise } from "@/store/useSelectedExercise"
@@ -12,15 +12,21 @@ import { md3Colors } from "@/constants/colors"
 
 import useDb from "@/hooks/useDb"
 
-const CHART_HEIGHT = 240
+import audiowide from "../assets/fonts/Audiowide-Regular.ttf"
+
+const CHART_HEIGHT = 300
+const WEIGHT_TICK_PADDING = 5
+
+const getNiceWeightStep = (range: number) => {
+  if (range <= 10) return 2.5
+  if (range <= 25) return 5
+  if (range <= 50) return 10
+  if (range <= 100) return 20
+
+  return 25
+}
 
 const padNumber = (value: number) => value.toString().padStart(2, "0")
-
-const formatWeight = (value: number) => {
-  if (Number.isInteger(value)) return `${value}`
-
-  return value.toFixed(1).replace(".", ",")
-}
 
 const formatChartDate = (timestamp: number) => {
   const date = new Date(timestamp)
@@ -38,42 +44,70 @@ const formatHistoryDate = (timestamp: number) => {
   )}`
 }
 
-type ChartDatum = {
+type ChartData = {
+  index: number
   timestamp: number
+  dateLabel: string
   value: number
-}
-
-type ProgressChartProps = {
-  title: string
-  history: StatsHistory[] | null
-  lineColor: string
-  isLoading: boolean
 }
 
 const ProgressChart = ({
   title,
   history,
-  lineColor,
   isLoading,
-}: ProgressChartProps) => {
-  const axisFont = useMemo(
-    () =>
-      matchFont({
-        fontFamily: "System",
-        fontSize: 11,
-        fontWeight: "500",
-      }),
-    [],
-  )
+}: {
+  title: string
+  history: StatsHistory[] | null
+  isLoading: boolean
+}) => {
+  const font = useFont(audiowide, 12)
 
-  const chartData = useMemo<ChartDatum[]>(
+  const chartData = useMemo<ChartData[]>(
     () =>
-      (history ?? []).map((item) => ({
+      (history ?? []).map((item, index) => ({
+        index,
         timestamp: item.changed_at,
+        dateLabel: formatChartDate(item.changed_at),
         value: item.value,
       })),
     [history],
   )
+
+  const xTickValues = useMemo(() => {
+    return chartData.map((item) => item.index)
+  }, [chartData])
+
+  const yTickValues = useMemo(() => {
+    const values = chartData.map((item) => item.value)
+    const minValue = Math.min(...values)
+    const maxValue = Math.max(...values)
+    const lowerBound = Math.max(
+      0,
+      Math.floor(minValue / WEIGHT_TICK_PADDING) * WEIGHT_TICK_PADDING -
+        WEIGHT_TICK_PADDING,
+    )
+    const upperBound =
+      Math.ceil(maxValue / WEIGHT_TICK_PADDING) * WEIGHT_TICK_PADDING +
+      WEIGHT_TICK_PADDING
+    const step = getNiceWeightStep(upperBound - lowerBound)
+    const ticks: number[] = []
+
+    for (let tick = lowerBound; tick <= upperBound; tick += step) {
+      ticks.push(Number(tick.toFixed(2)))
+    }
+
+    if (ticks[ticks.length - 1] !== upperBound) {
+      ticks.push(upperBound)
+    }
+
+    return ticks
+  }, [chartData])
+
+  const getDateLabelByIndex = (index: number) => {
+    const item = chartData[Math.round(index)]
+
+    return item?.dateLabel ?? ""
+  }
 
   if (isLoading) {
     return (
@@ -103,26 +137,45 @@ const ProgressChart = ({
       <View style={styles.chartContainer}>
         <CartesianChart
           data={chartData}
-          xKey="timestamp"
+          xKey="index"
           yKeys={["value"]}
-          domainPadding={{ left: 20, right: 20, top: 24, bottom: 12 }}
+          domainPadding={{ left: 12, right: 24, top: 12, bottom: 12 }}
+          xAxis={{
+            font,
+            labelColor: md3Colors.dark.onSurfaceVariant,
+            lineColor: md3Colors.dark.outlineVariant,
+            lineWidth: StyleSheet.hairlineWidth,
+            tickCount: xTickValues.length,
+            tickValues: xTickValues,
+            labelRotate: -30,
+            labelOffset: 8,
+            formatXLabel: (value) => getDateLabelByIndex(Number(value)),
+          }}
           axisOptions={{
-            font: axisFont,
+            font,
             labelColor: {
               x: md3Colors.dark.onSurfaceVariant,
               y: md3Colors.dark.onSurfaceVariant,
             },
             lineColor: {
-              grid: md3Colors.dark.outlineVariant,
+              grid: {
+                x: md3Colors.dark.outlineVariant,
+                y: md3Colors.dark.outlineVariant,
+              },
               frame: md3Colors.dark.outline,
             },
             lineWidth: {
-              grid: StyleSheet.hairlineWidth,
+              grid: {
+                x: StyleSheet.hairlineWidth,
+                y: StyleSheet.hairlineWidth,
+              },
               frame: 1,
             },
-            tickCount: { x: 3, y: 4 },
-            formatXLabel: (value) => formatChartDate(Number(value)),
-            formatYLabel: (value) => formatWeight(Number(value)),
+            tickCount: { x: 0, y: yTickValues.length },
+            tickValues: { x: xTickValues, y: yTickValues },
+          }}
+          frame={{
+            lineColor: "transparent",
           }}
         >
           {({ points, chartBounds }) => (
@@ -130,21 +183,19 @@ const ProgressChart = ({
               <Area
                 points={points.value}
                 y0={chartBounds.bottom}
-                color={md3Colors.dark.primaryContainer}
-                animate={{ type: "timing", duration: 300 }}
+                color={md3Colors.dark.primaryContainer + "33"}
               />
               <Line
                 points={points.value}
-                color={lineColor}
+                color={md3Colors.dark.primaryContainer}
                 strokeWidth={3}
-                animate={{ type: "timing", duration: 350 }}
               />
               <Scatter
                 points={points.value}
                 shape="circle"
                 radius={4}
                 style="fill"
-                color={lineColor}
+                color={md3Colors.dark.primary}
               />
             </>
           )}
@@ -153,9 +204,7 @@ const ProgressChart = ({
 
       <View style={styles.latestEntry}>
         <Text style={styles.latestEntryLabel}>Последнее изменение</Text>
-        <Text style={styles.latestEntryValue}>
-          {formatWeight(latestItem.value)} кг
-        </Text>
+        <Text style={styles.latestEntryValue}>{latestItem.value} кг</Text>
         <Text style={styles.latestEntryDate}>
           {formatHistoryDate(latestItem.timestamp)}
         </Text>
@@ -224,13 +273,11 @@ const StatsHistoryModal = () => {
       <ProgressChart
         title="Рабочий вес"
         history={workStatsHistory}
-        lineColor={md3Colors.dark.primary}
         isLoading={isLoading}
       />
       <ProgressChart
         title="Максимальный вес"
         history={maxStatsHistory}
-        lineColor={md3Colors.dark.tertiary}
         isLoading={isLoading}
       />
     </ScrollView>
@@ -244,9 +291,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    paddingInline: 16,
     paddingBlock: 24,
-    gap: 24,
+    paddingInline: 4,
+    gap: 4,
   },
   title: {
     fontSize: 24,
@@ -258,6 +305,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: md3Colors.dark.onSurfaceVariant,
     textAlign: "center",
+    marginBottom: 16,
   },
   groupTitle: {
     fontSize: 18,
