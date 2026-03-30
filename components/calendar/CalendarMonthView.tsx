@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { Dispatch, SetStateAction, useMemo } from "react"
 import { Pressable, StyleSheet, Text, View } from "react-native"
 import { ChevronLeft, ChevronRight } from "lucide-react-native"
 
@@ -16,29 +16,26 @@ import {
 
 const CalendarMonthView = ({
   daySummaries,
-  isLoading,
+  viewDate,
   selectedDate,
+  onChangeViewDate,
   onSelectDate,
 }: {
   daySummaries: Map<string, DaySummary>
-  isLoading: boolean
+  viewDate: Date
   selectedDate: Date | null
+  onChangeViewDate: Dispatch<SetStateAction<Date>>
   onSelectDate: (date: Date) => void
 }) => {
-  const [viewDate, setViewDate] = useState(() => {
-    const today = new Date()
-    return new Date(today.getFullYear(), today.getMonth(), 1)
-  })
-
   const monthGrid = useMemo(() => getMonthGrid(viewDate), [viewDate])
   const todayKey = useMemo(() => toDayKey(new Date()), [])
 
   const onPreviousMonth = () => {
-    setViewDate((current) => shiftMonth(current, -1))
+    onChangeViewDate((current) => shiftMonth(current, -1))
   }
 
   const onNextMonth = () => {
-    setViewDate((current) => shiftMonth(current, 1))
+    onChangeViewDate((current) => shiftMonth(current, 1))
   }
 
   return (
@@ -104,12 +101,6 @@ const CalendarMonthView = ({
           )
         })}
       </View>
-
-      <Text style={styles.helperText}>
-        {isLoading
-          ? "Loading workouts..."
-          : "Outlined days contain at least one logged workout."}
-      </Text>
     </>
   )
 }
@@ -202,11 +193,5 @@ const styles = StyleSheet.create({
   },
   dayTextSelected: {
     color: md3Colors.dark.onPrimary,
-  },
-  helperText: {
-    marginTop: 16,
-    color: md3Colors.dark.onSurfaceVariant,
-    fontSize: 13,
-    textAlign: "center",
   },
 })

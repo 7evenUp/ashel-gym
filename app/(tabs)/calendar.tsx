@@ -1,8 +1,9 @@
 import { useMemo, useState } from "react"
-import { StyleSheet, View } from "react-native"
+import { ScrollView, StyleSheet, View } from "react-native"
 
 import CalendarDayDetailsModal from "@/components/calendar/CalendarDayDetailsModal"
 import CalendarMonthView from "@/components/calendar/CalendarMonthView"
+import MonthStats from "@/components/calendar/MonthStats"
 import useCalendarData from "@/components/calendar/useCalendarData"
 import { toDayKey } from "@/components/calendar/utils"
 
@@ -12,6 +13,10 @@ export default function CalendarScreen() {
   const { daySummaries, isLoading } = useCalendarData()
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [viewDate, setViewDate] = useState(() => {
+    const today = new Date()
+    return new Date(today.getFullYear(), today.getMonth(), 1)
+  })
 
   const selectedSummary = useMemo(() => {
     if (selectedDate === null) return null
@@ -20,12 +25,24 @@ export default function CalendarScreen() {
 
   return (
     <View style={styles.container}>
-      <CalendarMonthView
-        daySummaries={daySummaries}
-        isLoading={isLoading}
-        selectedDate={selectedDate}
-        onSelectDate={(date) => setSelectedDate(date)}
-      />
+      <ScrollView
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <CalendarMonthView
+          daySummaries={daySummaries}
+          viewDate={viewDate}
+          selectedDate={selectedDate}
+          onChangeViewDate={setViewDate}
+          onSelectDate={(date) => setSelectedDate(date)}
+        />
+
+        <MonthStats
+          daySummaries={daySummaries}
+          isLoading={isLoading}
+          viewDate={viewDate}
+        />
+      </ScrollView>
 
       <CalendarDayDetailsModal
         selectedDate={selectedDate}
@@ -40,7 +57,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: md3Colors.dark.background,
+  },
+  content: {
     paddingHorizontal: 16,
     paddingTop: 28,
+    paddingBottom: 32,
   },
 })
