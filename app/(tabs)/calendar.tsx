@@ -59,8 +59,6 @@ const styles = StyleSheet.create({
     backgroundColor: md3Colors.dark.background,
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 28,
-    paddingBottom: 32,
+    paddingTop: 16,
   },
 })

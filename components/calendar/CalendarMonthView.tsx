@@ -39,7 +39,7 @@ const CalendarMonthView = ({
   }
 
   return (
-    <>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Pressable onPress={onPreviousMonth} style={styles.iconButton}>
           <ChevronLeft color={md3Colors.dark.onSurface} size={24} />
@@ -101,13 +101,16 @@ const CalendarMonthView = ({
           )
         })}
       </View>
-    </>
+    </View>
   )
 }
 
 export default CalendarMonthView
 
 const styles = StyleSheet.create({
+  container: {
+    paddingHorizontal: 16,
+  },
   header: {
     flexDirection: "row",
     alignItems: "center",
