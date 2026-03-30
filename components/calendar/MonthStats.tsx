@@ -71,6 +71,17 @@ const formatSetLabel = (count: number) => {
   return `${count} ${count === 1 ? "подход" : "подходов"}`
 }
 
+const formatDurationLabel = (seconds: number) => {
+  if (seconds < 60) return `${seconds} с`
+
+  const minutes = Math.floor(seconds / 60)
+  const remainingSeconds = seconds % 60
+
+  if (remainingSeconds === 0) return `${minutes} м`
+
+  return `${minutes}:${remainingSeconds}`
+}
+
 const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
   const currentMonthLabel = useMemo(() => getMonthLabel(viewDate), [viewDate])
   const currentMonthKey = useMemo(() => {
@@ -79,6 +90,7 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
 
   const stats = useMemo(() => {
     let workoutsCount = 0
+    let setsCount = 0
     const muscleGroupCounts = new Map<string, MuscleGroupStats>()
     const exerciseCounts = new Map<number, ExerciseStats>()
 
@@ -86,6 +98,7 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
       if (!summary.dateKey.startsWith(currentMonthKey)) return
 
       workoutsCount += summary.workoutCount
+      setsCount += summary.setsCount
 
       summary.exercises.forEach((exercise) => {
         const uniqueWorkoutIds = new Set(
@@ -126,6 +139,8 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
 
     return {
       workoutsCount,
+      setsCount,
+      spentTimeInSeconds: setsCount * 45,
       favoriteMuscleGroup: getTopEntry(muscleGroupCounts),
       topExercises: Array.from(exerciseCounts.values())
         .map((exercise) => ({
@@ -177,9 +192,21 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
       <View style={styles.heroCard}>
         <Text style={styles.heroTitle}>Статистика за {currentMonthLabel}</Text>
 
-        <View style={styles.heroCounter}>
-          <Text style={styles.heroCounterValue}>{stats.workoutsCount}</Text>
-          <Text style={styles.heroCounterLabel}>Тренировок</Text>
+        <View style={styles.heroMetrics}>
+          <View style={styles.heroMetricCard}>
+            <Text style={styles.heroMetricValue}>{stats.workoutsCount}</Text>
+            <Text style={styles.heroMetricLabel}>Тренировок</Text>
+          </View>
+          <View style={styles.heroMetricCard}>
+            <Text style={styles.heroMetricValue}>{stats.setsCount}</Text>
+            <Text style={styles.heroMetricLabel}>Подходов</Text>
+          </View>
+          <View style={styles.heroMetricCard}>
+            <Text style={styles.heroMetricValue}>
+              {formatDurationLabel(stats.spentTimeInSeconds)}
+            </Text>
+            <Text style={styles.heroMetricLabel}>Время</Text>
+          </View>
         </View>
       </View>
 
@@ -315,24 +342,31 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "600",
   },
-  heroCounter: {
-    minWidth: 92,
+  heroMetrics: {
+    width: "100%",
+    flexDirection: "row",
+    gap: 8,
+  },
+  heroMetricCard: {
+    flex: 1,
+    minHeight: 82,
     paddingHorizontal: 14,
     paddingVertical: 12,
     borderRadius: 22,
     backgroundColor: md3Colors.dark.surfaceContainerHighest,
     alignItems: "center",
+    justifyContent: "center",
     gap: 2,
   },
-  heroCounterValue: {
+  heroMetricValue: {
     color: md3Colors.dark.primary,
-    fontSize: 36,
+    fontSize: 28,
     fontWeight: "800",
+    textAlign: "center",
   },
-  heroCounterLabel: {
+  heroMetricLabel: {
     color: md3Colors.dark.onSurfaceVariant,
     fontSize: 14,
-    fontWeight: "600",
     textAlign: "center",
   },
   card: {
