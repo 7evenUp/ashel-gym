@@ -5,12 +5,15 @@ import {
   ChessQueenIcon,
   Trophy,
   Tally5Icon,
+  BicepsFlexedIcon,
 } from "lucide-react-native"
 
 import { md3Colors } from "@/constants/colors"
 
+import useMuscleGroups from "@/hooks/useMuscleGroups"
+
 import { DaySummary } from "./types"
-import { getMonthLabel } from "./utils"
+import { formatMuscleGroupName, getMonthLabel } from "./utils"
 
 type MonthStatsProps = {
   daySummaries: Map<string, DaySummary>
@@ -27,6 +30,12 @@ type TopEntry = {
 
 type MuscleGroupStats = {
   workoutIds: Set<number>
+  setsCount: number
+}
+
+type LeastWorkedMuscleGroup = {
+  labels: string[]
+  workoutsCount: number
   setsCount: number
 }
 
@@ -63,6 +72,56 @@ const getTopEntry = (entries: Map<string, MuscleGroupStats>): TopEntry => {
   return topEntry ?? null
 }
 
+const getLeastWorkedMuscleGroup = (
+  entries: Map<string, MuscleGroupStats>,
+  allMuscleGroups: string[],
+): LeastWorkedMuscleGroup | null => {
+  if (allMuscleGroups.length === 0) return null
+
+  const normalizedEntries = allMuscleGroups
+    .map((label) => {
+      const stats = entries.get(label)
+      const workoutsCount = stats?.workoutIds.size ?? 0
+      const setsCount = stats?.setsCount ?? 0
+
+      return {
+        label,
+        workoutsCount,
+        setsCount,
+        score: getPreferenceScore(workoutsCount, setsCount),
+      }
+    })
+    .sort(
+      (a, b) =>
+        a.score - b.score ||
+        a.setsCount - b.setsCount ||
+        a.workoutsCount - b.workoutsCount ||
+        a.label.localeCompare(b.label),
+    )
+
+  const zeroEntries = normalizedEntries.filter(
+    (entry) => entry.workoutsCount === 0 && entry.setsCount === 0,
+  )
+
+  if (zeroEntries.length > 0) {
+    return {
+      labels: zeroEntries.map((entry) => entry.label),
+      workoutsCount: 0,
+      setsCount: 0,
+    }
+  }
+
+  const [leastWorked] = normalizedEntries
+
+  if (!leastWorked) return null
+
+  return {
+    labels: [leastWorked.label],
+    workoutsCount: leastWorked.workoutsCount,
+    setsCount: leastWorked.setsCount,
+  }
+}
+
 const formatWorkoutLabel = (count: number) => {
   return `${count} ${count === 1 ? "тренировка" : "тренировок"}`
 }
@@ -83,10 +142,21 @@ const formatDurationLabel = (seconds: number) => {
 }
 
 const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
+  const muscleGroups = useMuscleGroups()
+
   const currentMonthLabel = useMemo(() => getMonthLabel(viewDate), [viewDate])
+
   const currentMonthKey = useMemo(() => {
     return `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, "0")}`
   }, [viewDate])
+
+  const allMuscleGroups = useMemo(
+    () =>
+      (muscleGroups ?? [])
+        .map((muscleGroup) => formatMuscleGroupName(muscleGroup.name))
+        .sort((a, b) => a.localeCompare(b)),
+    [muscleGroups],
+  )
 
   const stats = useMemo(() => {
     let workoutsCount = 0
@@ -142,6 +212,10 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
       setsCount,
       spentTimeInSeconds: setsCount * 45,
       favoriteMuscleGroup: getTopEntry(muscleGroupCounts),
+      leastWorkedMuscleGroup: getLeastWorkedMuscleGroup(
+        muscleGroupCounts,
+        allMuscleGroups,
+      ),
       topExercises: Array.from(exerciseCounts.values())
         .map((exercise) => ({
           id: exercise.id,
@@ -164,9 +238,9 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
         )
         .slice(0, 3),
     }
-  }, [currentMonthKey, daySummaries])
+  }, [allMuscleGroups, currentMonthKey, daySummaries])
 
-  if (isLoading) return
+  if (isLoading || muscleGroups === null) return
 
   if (!stats.favoriteMuscleGroup || stats.topExercises.length === 0)
     return (
@@ -244,7 +318,7 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
         </View>
       </View>
 
-      <View style={[styles.card, styles.cardLast]}>
+      <View style={styles.card}>
         <View style={styles.cardHeader}>
           <View style={styles.cardIcon}>
             <Trophy size={32} color={md3Colors.dark.onPrimary} />
@@ -311,6 +385,43 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
             </View>
           ))}
         </View>
+      </View>
+
+      <View style={[styles.card, styles.cardAccent, styles.cardLast]}>
+        <View style={styles.cardHeader}>
+          <View style={[styles.cardIcon, styles.cardIconAccent]}>
+            <BicepsFlexedIcon size={32} color={md3Colors.dark.onSecondary} />
+          </View>
+          <View style={styles.cardHeaderInfo}>
+            <Text style={[styles.cardLabel, styles.cardLabelAccent]}>
+              Группа мышц для акцента
+            </Text>
+            <Text style={[styles.cardValue, styles.cardValueAccent]}>
+              {stats.leastWorkedMuscleGroup?.labels.join(", ") ?? "Нет данных"}
+            </Text>
+          </View>
+        </View>
+
+        <Text style={[styles.cardHint, styles.cardHintAccent]}>
+          В этом месяце следует сделать упор на эту группу мышц
+        </Text>
+
+        {stats.leastWorkedMuscleGroup && (
+          <View style={styles.pillRow}>
+            <View style={[styles.metaPill, styles.metaPillAccent]}>
+              <Dumbbell size={18} color={md3Colors.dark.onSecondary} />
+              <Text style={[styles.metaPillText, styles.metaPillTextAccent]}>
+                {formatWorkoutLabel(stats.leastWorkedMuscleGroup.workoutsCount)}
+              </Text>
+            </View>
+            <View style={[styles.metaPill, styles.metaPillAccent]}>
+              <Tally5Icon size={18} color={md3Colors.dark.onSecondary} />
+              <Text style={[styles.metaPillText, styles.metaPillTextAccent]}>
+                {formatSetLabel(stats.leastWorkedMuscleGroup.setsCount)}
+              </Text>
+            </View>
+          </View>
+        )}
       </View>
     </View>
   )
@@ -379,6 +490,9 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
+  cardAccent: {
+    backgroundColor: md3Colors.dark.secondaryContainer,
+  },
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -396,10 +510,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: md3Colors.dark.primary,
   },
+  cardIconAccent: {
+    backgroundColor: md3Colors.dark.secondary,
+  },
+  cardLabelAccent: {
+    color: md3Colors.dark.onSecondaryContainer,
+  },
   cardLabel: {
     color: md3Colors.dark.onSurface,
     fontSize: 14,
     fontWeight: "600",
+  },
+  cardValueAccent: {
+    color: md3Colors.dark.onSecondaryContainer,
   },
   cardValue: {
     color: md3Colors.dark.onSurface,
@@ -411,6 +534,9 @@ const styles = StyleSheet.create({
     color: md3Colors.dark.onSurfaceVariant,
     fontSize: 15,
     lineHeight: 20,
+  },
+  cardHintAccent: {
+    color: md3Colors.dark.onSecondaryContainer,
   },
   pillRow: {
     flexDirection: "row",
@@ -426,10 +552,16 @@ const styles = StyleSheet.create({
     borderRadius: 999,
     backgroundColor: md3Colors.dark.tertiaryContainer,
   },
+  metaPillAccent: {
+    backgroundColor: md3Colors.dark.onSecondaryContainer,
+  },
   metaPillText: {
     color: md3Colors.dark.onTertiaryContainer,
     fontSize: 16,
     fontWeight: "700",
+  },
+  metaPillTextAccent: {
+    color: md3Colors.dark.onSecondary,
   },
   exerciseList: {
     marginTop: 8,
