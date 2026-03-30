@@ -121,11 +121,4 @@ const styles = StyleSheet.create({
     width: "100%",
     borderRadius: 18,
   },
-  exerciseTitle: {
-    marginVertical: 12,
-    color: md3Colors.dark.onSurface,
-    fontSize: 20,
-    fontWeight: "600",
-    textTransform: "capitalize",
-  },
 })
