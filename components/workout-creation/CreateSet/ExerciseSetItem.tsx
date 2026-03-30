@@ -141,7 +141,7 @@ const ExerciseSetItem = ({
       exercise_id: selectedExercise.id,
       workout_id: createdWorkoutId,
       order: order + 1,
-      reps,
+      reps: 0,
       weight: weightValue,
     })
 
