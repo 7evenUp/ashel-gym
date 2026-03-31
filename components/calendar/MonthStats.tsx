@@ -1,5 +1,6 @@
 import { useMemo } from "react"
 import { StyleSheet, Text, View } from "react-native"
+import { Image } from "expo-image"
 import {
   Dumbbell,
   ChessQueenIcon,
@@ -9,6 +10,8 @@ import {
 } from "lucide-react-native"
 
 import { md3Colors } from "@/constants/colors"
+import { exerciseImages } from "@/constants/exerciseImages"
+import { muscleGroupImages } from "@/constants/muscleGroupImages"
 
 import useMuscleGroups from "@/hooks/useMuscleGroups"
 
@@ -39,9 +42,17 @@ type LeastWorkedMuscleGroup = {
   setsCount: number
 }
 
+type MuscleGroupVisual = {
+  key: keyof typeof muscleGroupImages
+  label: string
+  image: number
+  blurhash: string
+}
+
 type ExerciseStats = {
   id: number
   name: string
+  image: string
   muscleGroup: string
   workoutIds: Set<number>
   setsCount: number
@@ -141,6 +152,17 @@ const formatDurationLabel = (seconds: number) => {
   return `${minutes}:${remainingSeconds}`
 }
 
+const getExerciseImageSource = (
+  muscleGroupKey: keyof typeof exerciseImages | null,
+  image: string,
+) => {
+  if (muscleGroupKey === null) return null
+
+  const images = exerciseImages[muscleGroupKey] as Record<string, number>
+
+  return images[image] ?? null
+}
+
 const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
   const muscleGroups = useMuscleGroups()
 
@@ -150,12 +172,33 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
     return `${viewDate.getFullYear()}-${String(viewDate.getMonth() + 1).padStart(2, "0")}`
   }, [viewDate])
 
-  const allMuscleGroups = useMemo(
+  const muscleGroupVisuals = useMemo<MuscleGroupVisual[]>(
     () =>
       (muscleGroups ?? [])
-        .map((muscleGroup) => formatMuscleGroupName(muscleGroup.name))
-        .sort((a, b) => a.localeCompare(b)),
+        .map((muscleGroup) => ({
+          key: muscleGroup.name,
+          label: formatMuscleGroupName(muscleGroup.name),
+          image: muscleGroupImages[muscleGroup.name].img,
+          blurhash: muscleGroupImages[muscleGroup.name].blurhash,
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label)),
     [muscleGroups],
+  )
+
+  const allMuscleGroups = useMemo(
+    () => muscleGroupVisuals.map((muscleGroup) => muscleGroup.label),
+    [muscleGroupVisuals],
+  )
+
+  const muscleGroupVisualsByLabel = useMemo(
+    () =>
+      new Map(
+        muscleGroupVisuals.map((muscleGroup) => [
+          muscleGroup.label,
+          muscleGroup,
+        ]),
+      ),
+    [muscleGroupVisuals],
   )
 
   const stats = useMemo(() => {
@@ -199,6 +242,7 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
           exerciseCounts.set(exercise.id, {
             id: exercise.id,
             name: exercise.name,
+            image: exercise.image,
             muscleGroup: exercise.muscleGroup,
             setsCount: exercise.setsCount,
             workoutIds: new Set(uniqueWorkoutIds),
@@ -220,6 +264,7 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
         .map((exercise) => ({
           id: exercise.id,
           name: exercise.name,
+          image: exercise.image,
           muscleGroup: exercise.muscleGroup,
           workoutsCount: exercise.workoutIds.size,
           setsCount: exercise.setsCount,
@@ -239,6 +284,23 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
         .slice(0, 3),
     }
   }, [allMuscleGroups, currentMonthKey, daySummaries])
+
+  const favoriteMuscleGroupVisual = useMemo(
+    () =>
+      stats.favoriteMuscleGroup
+        ? (muscleGroupVisualsByLabel.get(stats.favoriteMuscleGroup.label) ??
+          null)
+        : null,
+    [muscleGroupVisualsByLabel, stats.favoriteMuscleGroup],
+  )
+
+  const leastWorkedMuscleGroupVisuals = useMemo(
+    () =>
+      stats.leastWorkedMuscleGroup?.labels
+        .map((label) => muscleGroupVisualsByLabel.get(label) ?? null)
+        .filter((value): value is MuscleGroupVisual => value !== null) ?? [],
+    [muscleGroupVisualsByLabel, stats.leastWorkedMuscleGroup],
+  )
 
   if (isLoading || muscleGroups === null) return
 
@@ -286,16 +348,25 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
 
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <View style={styles.cardIcon}>
-            <ChessQueenIcon size={32} color={md3Colors.dark.onPrimary} />
-          </View>
           <View style={styles.cardHeaderInfo}>
             <Text style={styles.cardLabel}>Любимая группа мышц</Text>
             <Text style={styles.cardValue}>
               {stats.favoriteMuscleGroup?.label ?? "Нет данных"}
             </Text>
           </View>
+          <View style={styles.cardIcon}>
+            <ChessQueenIcon size={24} color={md3Colors.dark.onPrimary} />
+          </View>
         </View>
+
+        {favoriteMuscleGroupVisual && (
+          <Image
+            style={styles.muscleGroupHeroImage}
+            source={favoriteMuscleGroupVisual.image}
+            placeholder={{ blurhash: favoriteMuscleGroupVisual.blurhash }}
+            transition={250}
+          />
+        )}
 
         <Text style={styles.cardHint}>
           Сбалансировано по частоте тренировок и по общему количеству
@@ -320,14 +391,14 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
 
       <View style={styles.card}>
         <View style={styles.cardHeader}>
-          <View style={styles.cardIcon}>
-            <Trophy size={32} color={md3Colors.dark.onPrimary} />
-          </View>
           <View style={styles.cardHeaderInfo}>
             <Text style={styles.cardLabel}>Любимые упражнения</Text>
             <Text style={styles.cardHint}>
               Определяются по смешанному количеству тренировок и подходов
             </Text>
+          </View>
+          <View style={styles.cardIcon}>
+            <Trophy size={24} color={md3Colors.dark.onPrimary} />
           </View>
         </View>
 
@@ -353,6 +424,23 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
                   {index + 1}
                 </Text>
               </View>
+
+              <Image
+                style={[
+                  styles.exerciseImage,
+                  !getExerciseImageSource(
+                    muscleGroupVisualsByLabel.get(exercise.muscleGroup)?.key ??
+                      null,
+                    exercise.image,
+                  ) && styles.exerciseImageFallback,
+                ]}
+                source={getExerciseImageSource(
+                  muscleGroupVisualsByLabel.get(exercise.muscleGroup)?.key ??
+                    null,
+                  exercise.image,
+                )}
+                transition={250}
+              />
 
               <View style={styles.exerciseInfo}>
                 <View style={styles.exerciseHeader}>
@@ -389,9 +477,6 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
 
       <View style={[styles.card, styles.cardAccent, styles.cardLast]}>
         <View style={styles.cardHeader}>
-          <View style={[styles.cardIcon, styles.cardIconAccent]}>
-            <BicepsFlexedIcon size={32} color={md3Colors.dark.onSecondary} />
-          </View>
           <View style={styles.cardHeaderInfo}>
             <Text style={[styles.cardLabel, styles.cardLabelAccent]}>
               Группа мышц для акцента
@@ -400,7 +485,39 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
               {stats.leastWorkedMuscleGroup?.labels.join(", ") ?? "Нет данных"}
             </Text>
           </View>
+          <View style={[styles.cardIcon, styles.cardIconAccent]}>
+            <BicepsFlexedIcon size={24} color={md3Colors.dark.onSecondary} />
+          </View>
         </View>
+
+        {leastWorkedMuscleGroupVisuals.length === 1 && (
+          <Image
+            style={styles.muscleGroupHeroImage}
+            source={leastWorkedMuscleGroupVisuals[0].image}
+            placeholder={{
+              blurhash: leastWorkedMuscleGroupVisuals[0].blurhash,
+            }}
+            transition={250}
+          />
+        )}
+
+        {leastWorkedMuscleGroupVisuals.length > 1 && (
+          <View style={styles.muscleGroupGrid}>
+            {leastWorkedMuscleGroupVisuals.map((muscleGroup) => (
+              <View key={muscleGroup.key} style={styles.muscleGroupTile}>
+                <Image
+                  style={styles.muscleGroupTileImage}
+                  source={muscleGroup.image}
+                  placeholder={{ blurhash: muscleGroup.blurhash }}
+                  transition={250}
+                />
+                <Text style={styles.muscleGroupTileText}>
+                  {muscleGroup.label}
+                </Text>
+              </View>
+            ))}
+          </View>
+        )}
 
         <Text style={[styles.cardHint, styles.cardHintAccent]}>
           В этом месяце следует сделать упор на эту группу мышц
@@ -503,23 +620,23 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   cardIcon: {
-    width: 64,
-    height: 64,
+    width: 40,
+    height: 40,
     borderRadius: 14,
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: md3Colors.dark.primary,
+    alignSelf: "flex-start",
   },
   cardIconAccent: {
     backgroundColor: md3Colors.dark.secondary,
   },
-  cardLabelAccent: {
-    color: md3Colors.dark.onSecondaryContainer,
-  },
   cardLabel: {
     color: md3Colors.dark.onSurface,
-    fontSize: 14,
-    fontWeight: "600",
+    fontSize: 20,
+  },
+  cardLabelAccent: {
+    color: md3Colors.dark.onSecondaryContainer,
   },
   cardValueAccent: {
     color: md3Colors.dark.onSecondaryContainer,
@@ -537,6 +654,31 @@ const styles = StyleSheet.create({
   },
   cardHintAccent: {
     color: md3Colors.dark.onSecondaryContainer,
+  },
+  muscleGroupHeroImage: {
+    width: "100%",
+    aspectRatio: 1 / 1,
+    borderRadius: 20,
+  },
+  muscleGroupGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 10,
+  },
+  muscleGroupTile: {
+    width: 96,
+    gap: 8,
+  },
+  muscleGroupTileImage: {
+    width: "100%",
+    aspectRatio: 1,
+    borderRadius: 18,
+  },
+  muscleGroupTileText: {
+    color: md3Colors.dark.onSecondaryContainer,
+    fontSize: 13,
+    fontWeight: "600",
+    textAlign: "center",
   },
   pillRow: {
     flexDirection: "row",
@@ -569,9 +711,20 @@ const styles = StyleSheet.create({
   },
   exerciseRow: {
     gap: 12,
-    padding: 14,
+    padding: 2,
+    paddingBottom: 14,
     borderRadius: 20,
     backgroundColor: md3Colors.dark.surfaceContainerHigh,
+  },
+  exerciseImage: {
+    width: "100%",
+    aspectRatio: 16 / 14,
+    borderRadius: 18,
+    backgroundColor: md3Colors.dark.surfaceVariant,
+  },
+  exerciseImageFallback: {
+    borderWidth: 1,
+    borderColor: md3Colors.dark.outlineVariant,
   },
   rankBadge: {
     width: 34,
@@ -579,6 +732,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
+    position: "absolute",
+    zIndex: 999,
+    left: 14,
+    top: 14,
   },
   rankBadgeFirst: {
     backgroundColor: md3Colors.dark.primary,
@@ -606,13 +763,13 @@ const styles = StyleSheet.create({
   exerciseInfo: {
     flex: 1,
     gap: 16,
+    paddingHorizontal: 14,
   },
   exerciseHeader: {
     flexDirection: "row",
     alignItems: "center",
     gap: 4,
     flex: 1,
-    marginTop: 16,
   },
   exerciseName: {
     color: md3Colors.dark.onSurface,

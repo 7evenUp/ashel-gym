@@ -10,6 +10,7 @@ export type DayExerciseSetSummary = {
 export type DayExerciseSummary = {
   id: number
   name: string
+  image: string
   muscleGroup: string
   setsCount: number
   sets: DayExerciseSetSummary[]

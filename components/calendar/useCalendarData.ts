@@ -20,6 +20,7 @@ type DaySummaryDraft = {
     number,
     {
       name: string
+      image: string
       muscleGroup: string
       sets: DayExerciseSetSummary[]
     }
@@ -122,6 +123,7 @@ const useCalendarData = () => {
           } else {
             draft.exercises.set(exercise.id, {
               name: exercise.name,
+              image: exercise.image,
               muscleGroup: muscleGroupName,
               sets: [setSummary],
             })
@@ -144,6 +146,7 @@ const useCalendarData = () => {
             .map(([id, value]) => ({
               id,
               name: value.name,
+              image: value.image,
               muscleGroup: value.muscleGroup,
               setsCount: value.sets.length,
               sets: value.sets
