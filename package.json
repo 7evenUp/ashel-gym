@@ -11,7 +11,8 @@
     "lint": "expo lint",
     "make-migrations": "drizzle-kit generate",
     "upgrade-packages": "expo install --fix",
-    "health-check": "npx expo-doctor@latest"
+    "health-check": "npx expo-doctor@latest",
+    "build-apk-file": "eas build --platform android --profile preview"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
