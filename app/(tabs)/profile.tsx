@@ -47,20 +47,25 @@ export default function ProfileScreen() {
         <FlashList
           data={muscleGroups}
           horizontal
-          style={{ width: "100%" }}
+          style={{
+            width: "100%",
+            boxShadow:
+              "0px 4px 8px 3px rgba(0,0,0,0.15), 0px 1px 3px 0px rgba(0,0,0,0.3), inset 0px -6px 8px -8px rgba(255,255,255,0.1)",
+            zIndex: 1,
+          }}
           contentContainerStyle={{
             padding: 16,
           }}
           renderItem={({ item, index }) => {
+            const isSelected =
+              selectedMuscleGroup !== null && selectedMuscleGroup.id === item.id
             const marginLeft = index === 0 ? 0 : 12
 
             return (
               <Pressable
                 style={[
                   styles.muscleGroupItem,
-                  selectedMuscleGroup !== null &&
-                    selectedMuscleGroup.id === item.id &&
-                    styles.muscleGroupItemSelected,
+                  isSelected && styles.muscleGroupItemSelected,
                   { marginLeft },
                 ]}
                 onPress={() => {
@@ -79,7 +84,6 @@ export default function ProfileScreen() {
               </Pressable>
             )
           }}
-          ItemSeparatorComponent={() => <View style={{ height: 12 }} />}
           showsHorizontalScrollIndicator={false}
         />
       )}
