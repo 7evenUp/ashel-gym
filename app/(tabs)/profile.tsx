@@ -17,7 +17,6 @@ import useMuscleGroups from "@/hooks/useMuscleGroups"
 import useExercises from "@/hooks/useExercises"
 
 import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
-import { logger } from "@/utils/logger"
 
 export default function ProfileScreen() {
   const router = useRouter()
@@ -37,9 +36,6 @@ export default function ProfileScreen() {
 
     setSelectedMuscleGroup(muscleGroups[0])
   }, [muscleGroups])
-
-  logger("MuscleGroups: ", muscleGroups)
-  logger("Exercises for selected muscle group: ", exercises)
 
   return (
     <View style={styles.container}>

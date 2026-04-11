@@ -1,0 +1,9 @@
+node_modules
+.expo
+dist
+web-build
+android
+ios
+drizzle/meta
+package-lock.json
+skills-lock.json

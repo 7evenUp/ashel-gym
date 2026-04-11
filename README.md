@@ -1,50 +1,85 @@
-# Welcome to your Expo app 👋
+# Ashel Gym
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Expo Router app for tracking workouts, sets, calendar activity, and exercise
+progress. The app uses local SQLite storage through Drizzle ORM and is built
+for React Native with Expo SDK 54.
 
-## Get started
+## Stack
 
-1. Install dependencies
+- Expo Router
+- React Native 0.81 / React 19
+- Expo SQLite
+- Drizzle ORM + Drizzle Kit
+- Zustand
+- FlashList, Reanimated, Victory Native, Skia
 
-   ```bash
-   npm install
-   ```
+## Getting Started
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+1. Install dependencies:
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Start the Expo dev server:
 
-## Learn more
+```bash
+npm run start
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+3. Run on a target platform:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+```bash
+npm run android
+npm run ios
+npm run web
+```
 
-## Join the community
+## Quality Checks
 
-Join our community of developers creating universal apps.
+- `npm run lint` runs Expo ESLint rules
+- `npm run lint:fix` applies autofixable ESLint changes
+- `npm run typecheck` runs TypeScript without emitting files
+- `npm run format` formats the repository with Prettier
+- `npm run format:check` validates formatting without writing
+- `npm run check` runs typecheck, lint, and format validation
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Database Workflow
+
+- Schema lives in `db/schema.ts`
+- Generated migrations live in `drizzle/`
+- Create a new migration with:
+
+```bash
+npm run make-migrations
+```
+
+- Initial seed data is populated from `utils/populateDb.tsx`
+
+## Useful Commands
+
+- `npm run health-check` runs Expo Doctor
+- `npm run upgrade-packages` aligns Expo package versions
+- `npm run build-apk-file` starts the Android preview build through EAS
+
+## Project Structure
+
+- `app/` route files and screens
+- `components/` shared UI and feature components
+- `hooks/` reusable hooks over SQLite and UI behavior
+- `store/` Zustand state
+- `db/` schema and query helpers
+- `constants/` theme values and image maps
+- `utils/` seed logic, logging, and device helpers
+- `assets/` fonts and images
+
+## Current Verification Baseline
+
+There is no automated test suite yet. The current minimum quality gate is:
+
+```bash
+npm run check
+```
+
+For behavior changes, also manually verify workout creation, stats modals, and
+calendar flows in Expo.
