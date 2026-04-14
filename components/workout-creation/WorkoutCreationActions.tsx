@@ -1,21 +1,16 @@
 import { useState } from "react"
 import { StyleSheet } from "react-native"
-import { eq } from "drizzle-orm"
 import { Dumbbell, Flag, LayoutGrid } from "lucide-react-native"
 
 import SplitButtons from "../SplitButtons"
 
-import useDb from "@/hooks/useDb"
-
-import { workoutTable } from "@/db/schema"
+import { finishWorkout } from "@/db/repositories/workouts"
 
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
 
 const WorkoutCreationActions = () => {
-  const db = useDb()
-
   const [isFinishing, setIsFinishing] = useState(false)
 
   const {
@@ -33,10 +28,7 @@ const WorkoutCreationActions = () => {
     setIsFinishing(true)
 
     try {
-      await db
-        .update(workoutTable)
-        .set({ finished_at: new Date().getTime() })
-        .where(eq(workoutTable.id, createdWorkoutId))
+      await finishWorkout(createdWorkoutId)
 
       resetWorkoutCreation()
     } finally {

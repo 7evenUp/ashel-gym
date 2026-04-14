@@ -1,18 +1,13 @@
-import { drizzle } from "drizzle-orm/expo-sqlite"
-import { openDatabaseSync } from "expo-sqlite"
+import { and, asc, eq } from "drizzle-orm"
 
-import { DATABASE_NAME } from "@/constants/db"
-import { ExerciseSet, exerciseSetTable, InsertExerciseSet } from "./schema"
-import { eq, and } from "drizzle-orm"
-
-const expoDB = openDatabaseSync(DATABASE_NAME)
-const db = drizzle(expoDB)
+import { db } from "@/db/client"
+import { ExerciseSet, exerciseSetTable, InsertExerciseSet } from "@/db/schema"
 
 export const getExerciseSets = async ({
   exercise_id,
   workout_id,
 }: Pick<ExerciseSet, "exercise_id" | "workout_id">) => {
-  const sets = await db
+  return db
     .select()
     .from(exerciseSetTable)
     .where(
@@ -21,8 +16,7 @@ export const getExerciseSets = async ({
         eq(exerciseSetTable.workout_id, workout_id),
       ),
     )
-
-  return sets
+    .orderBy(asc(exerciseSetTable.order), asc(exerciseSetTable.id))
 }
 
 export const createExerciseSet = async (values: InsertExerciseSet) => {

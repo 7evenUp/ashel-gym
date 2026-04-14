@@ -1,9 +1,7 @@
 import { useEffect, useState } from "react"
-import { eq } from "drizzle-orm"
 
-import { Exercise, exerciseTable } from "@/db/schema"
-
-import useDb from "./useDb"
+import { getExercisesByMuscleGroupId } from "@/db/repositories/catalog"
+import { Exercise } from "@/db/schema"
 
 const useExercises = ({
   neededMuscleGroupId,
@@ -12,19 +10,26 @@ const useExercises = ({
 }) => {
   const [exercises, setExercises] = useState<Exercise[] | null>(null)
 
-  const db = useDb()
-
   useEffect(() => {
+    let isActive = true
+
     ;(async () => {
-      if (neededMuscleGroupId === null) return
+      if (neededMuscleGroupId === null) {
+        setExercises(null)
+        return
+      }
 
-      const exercises = await db
-        .select()
-        .from(exerciseTable)
-        .where(eq(exerciseTable.muscle_group_id, neededMuscleGroupId))
+      const nextExercises =
+        await getExercisesByMuscleGroupId(neededMuscleGroupId)
 
-      setExercises(exercises)
+      if (!isActive) return
+
+      setExercises(nextExercises)
     })()
+
+    return () => {
+      isActive = false
+    }
   }, [neededMuscleGroupId])
 
   return exercises

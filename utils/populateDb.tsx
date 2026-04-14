@@ -1,21 +1,14 @@
-import { ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite"
-import { SQLiteDatabase } from "expo-sqlite"
-
 import {
   exerciseTable,
   muscleGroupTable,
   statsHistoryTable,
   statsTable,
 } from "@/db/schema"
+import type { DB } from "@/db/client"
 
 import { logger } from "./logger"
 
-export const populateDb = async (
-  db: ExpoSQLiteDatabase<Record<string, never>> & {
-    $client: SQLiteDatabase
-  },
-  isPopulateNeeded = false,
-) => {
+export const populateDb = async (db: DB, isPopulateNeeded = false) => {
   const initialData = await db.select().from(muscleGroupTable)
 
   if (initialData.length > 0 && !isPopulateNeeded) return

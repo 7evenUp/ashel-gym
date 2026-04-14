@@ -15,7 +15,7 @@ import AnimatedColorButton from "./AnimatedButton"
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 import { ExerciseSet } from "@/db/schema"
-import { createExerciseSet, updateExerciseSet } from "@/db/prepared-statements"
+import { createExerciseSet, updateExerciseSet } from "@/db/repositories/sets"
 
 import { md3Colors } from "@/constants/colors"
 

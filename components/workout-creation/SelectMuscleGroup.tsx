@@ -1,26 +1,25 @@
 import { useEffect, useState } from "react"
 import { Pressable, ScrollView, StyleSheet, View } from "react-native"
 import { Image } from "expo-image"
-import { eq, inArray } from "drizzle-orm"
 
 import DoneBadge from "../DoneBadge"
 
-import { MuscleGroup, exerciseSetTable, exerciseTable } from "@/db/schema"
-import { createWorkoutMuscleGroupIfNotExist } from "@/db/prepared-statements/workoutMuscleGroup"
+import { MuscleGroup } from "@/db/schema"
+import {
+  ensureWorkoutMuscleGroup,
+  getCompletedMuscleGroupIdsForWorkout,
+} from "@/db/repositories/workouts"
 
 import { md3Colors } from "@/constants/colors"
 import { muscleGroupImages } from "@/constants/muscleGroupImages"
 
 import useMuscleGroups from "@/hooks/useMuscleGroups"
-import useDb from "@/hooks/useDb"
 
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
 import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
 
 const SelectMuscleGroup = () => {
-  const db = useDb()
-
   const muscleGroups = useMuscleGroups()
 
   const [highlightedMuscleGroupIds, setHighlightedMuscleGroupIds] = useState<
@@ -31,61 +30,38 @@ const SelectMuscleGroup = () => {
     useWorkoutCreation()
 
   useEffect(() => {
+    let isActive = true
+
     const loadHighlightedMuscleGroups = async () => {
       if (createdWorkoutId === null) {
         setHighlightedMuscleGroupIds([])
         return
       }
 
-      const workoutSets = await db
-        .select()
-        .from(exerciseSetTable)
-        .where(eq(exerciseSetTable.workout_id, createdWorkoutId))
+      const highlightedIds =
+        await getCompletedMuscleGroupIdsForWorkout(createdWorkoutId)
 
-      // Массив id не пустых упражнений
-      // (внутри которых есть хотя бы один полноценный подход)
-      const nonEmptyExerciseIds = Array.from(
-        new Set(
-          workoutSets
-            .filter((set) => set.reps > 0 && set.weight > 0)
-            .map((set) => set.exercise_id),
-        ),
-      )
+      if (!isActive) return
 
-      if (nonEmptyExerciseIds.length === 0) {
-        setHighlightedMuscleGroupIds([])
-        return
-      }
-
-      const exercises = await db
-        .select({
-          muscle_group_id: exerciseTable.muscle_group_id,
-        })
-        .from(exerciseTable)
-        .where(inArray(exerciseTable.id, nonEmptyExerciseIds))
-
-      setHighlightedMuscleGroupIds(
-        Array.from(
-          new Set(exercises.map((exercise) => exercise.muscle_group_id)),
-        ),
-      )
+      setHighlightedMuscleGroupIds(highlightedIds)
     }
 
     loadHighlightedMuscleGroups()
-  }, [createdWorkoutId, db])
+
+    return () => {
+      isActive = false
+    }
+  }, [createdWorkoutId])
 
   const onMuscleGroupPress = async (muscle: MuscleGroup) => {
     if (createdWorkoutId === null) return
 
     makeHapticFeedback()
 
-    await createWorkoutMuscleGroupIfNotExist(
-      {
-        muscle_group_id: muscle.id,
-        workout_id: createdWorkoutId,
-      },
-      db,
-    )
+    await ensureWorkoutMuscleGroup({
+      muscle_group_id: muscle.id,
+      workout_id: createdWorkoutId,
+    })
 
     setSelectedMuscleGroup(muscle)
     goToExerciseSelection()

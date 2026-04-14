@@ -1,16 +1,13 @@
 import { useEffect, useMemo, useState } from "react"
 import { ScrollView, StyleSheet, Text, View } from "react-native"
-import { asc, eq } from "drizzle-orm"
 import { useFont } from "@shopify/react-native-skia"
 import { Area, CartesianChart, Line, Scatter } from "victory-native"
 
 import { useSelectedExercise } from "@/store/useSelectedExercise"
-
-import { StatsHistory, statsHistoryTable } from "@/db/schema"
+import { getExerciseStatsHistory } from "@/db/repositories/stats"
+import { StatsHistory } from "@/db/schema"
 
 import { md3Colors } from "@/constants/colors"
-
-import useDb from "@/hooks/useDb"
 
 const audiowide = require("../assets/fonts/Audiowide-Regular.ttf")
 
@@ -214,8 +211,6 @@ const ProgressChart = ({
 }
 
 const StatsHistoryModal = () => {
-  const db = useDb()
-
   const exercise = useSelectedExercise((state) => state.exercise)
 
   const [workStatsHistory, setWorkStatsHistory] = useState<
@@ -228,6 +223,8 @@ const StatsHistoryModal = () => {
 
   useEffect(() => {
     if (exercise === null) {
+      setWorkStatsHistory(null)
+      setMaxStatsHistory(null)
       setIsLoading(false)
       return
     }
@@ -237,11 +234,7 @@ const StatsHistoryModal = () => {
     const getData = async () => {
       setIsLoading(true)
 
-      const statsHistory = await db
-        .select()
-        .from(statsHistoryTable)
-        .where(eq(statsHistoryTable.exercise_id, exercise.id))
-        .orderBy(asc(statsHistoryTable.changed_at))
+      const statsHistory = await getExerciseStatsHistory(exercise.id)
 
       if (!isActive) return
 
@@ -255,7 +248,7 @@ const StatsHistoryModal = () => {
     return () => {
       isActive = false
     }
-  }, [exercise, db])
+  }, [exercise])
 
   if (exercise === null) return null
 

@@ -1,21 +1,18 @@
 import { useEffect, useState } from "react"
-import { eq } from "drizzle-orm"
 
 import ExercisesGrid from "../ExercisesGrid"
 
 import useExercises from "@/hooks/useExercises"
-import useDb from "@/hooks/useDb"
 
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
-import { Exercise, exerciseSetTable } from "@/db/schema"
-import { createExerciseSet, getExerciseSets } from "@/db/prepared-statements"
+import { Exercise } from "@/db/schema"
+import { createExerciseSet, getExerciseSets } from "@/db/repositories/sets"
+import { getCompletedExerciseIdsForWorkout } from "@/db/repositories/workouts"
 
 import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
 
 const SelectExercise = () => {
-  const db = useDb()
-
   const {
     selectedMuscleGroup,
     setSelectedExercise,
@@ -32,36 +29,30 @@ const SelectExercise = () => {
   })
 
   useEffect(() => {
+    let isActive = true
+
     const loadHighlightedExerciseIds = async () => {
-      if (createdWorkoutId === null || exercises === null) return
+      if (createdWorkoutId === null || exercises === null) {
+        setHighlightedExerciseIds([])
+        return
+      }
 
-      const workoutSets = await db
-        .select()
-        .from(exerciseSetTable)
-        .where(eq(exerciseSetTable.workout_id, createdWorkoutId))
+      const highlightedIds = await getCompletedExerciseIdsForWorkout({
+        workoutId: createdWorkoutId,
+        exerciseIds: exercises.map((item) => item.id),
+      })
 
-      const exerciseIdsInCurrentGroup = new Set(
-        exercises.map((item) => item.id),
-      )
-
-      const highlightedIds = Array.from(
-        new Set(
-          workoutSets
-            .filter(
-              (set) =>
-                exerciseIdsInCurrentGroup.has(set.exercise_id) &&
-                set.reps > 0 &&
-                set.weight > 0,
-            )
-            .map((set) => set.exercise_id),
-        ),
-      )
+      if (!isActive) return
 
       setHighlightedExerciseIds(highlightedIds)
     }
 
     loadHighlightedExerciseIds()
-  }, [createdWorkoutId, db, exercises])
+
+    return () => {
+      isActive = false
+    }
+  }, [createdWorkoutId, exercises])
 
   if (
     exercises === null ||

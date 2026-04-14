@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 
+import { getExerciseSets } from "@/db/repositories/sets"
 import { ExerciseSet } from "@/db/schema"
-import { getExerciseSets } from "@/db/prepared-statements"
 
 const useSets = ({
   exerciseId,
@@ -18,16 +18,27 @@ const useSets = ({
   }, [])
 
   useEffect(() => {
-    ;(async () => {
-      if (exerciseId === null || workoutId === null) return
+    let isActive = true
 
-      const sets = await getExerciseSets({
+    ;(async () => {
+      if (exerciseId === null || workoutId === null) {
+        setSets(null)
+        return
+      }
+
+      const nextSets = await getExerciseSets({
         exercise_id: exerciseId,
         workout_id: workoutId,
       })
 
-      setSets(sets)
+      if (!isActive) return
+
+      setSets(nextSets)
     })()
+
+    return () => {
+      isActive = false
+    }
   }, [exerciseId, workoutId, refreshKey])
 
   return { sets, refetch }

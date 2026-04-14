@@ -1,19 +1,25 @@
 import { useEffect, useState } from "react"
 
-import { MuscleGroup, muscleGroupTable } from "@/db/schema"
-
-import useDb from "./useDb"
+import { getMuscleGroups } from "@/db/repositories/catalog"
+import { MuscleGroup } from "@/db/schema"
 
 const useMuscleGroups = () => {
   const [muscleGroups, setMuscleGroups] = useState<MuscleGroup[] | null>(null)
 
-  const db = useDb()
-
   useEffect(() => {
+    let isActive = true
+
     ;(async () => {
-      const muscleGroups = await db.select().from(muscleGroupTable)
-      setMuscleGroups(muscleGroups)
+      const nextMuscleGroups = await getMuscleGroups()
+
+      if (!isActive) return
+
+      setMuscleGroups(nextMuscleGroups)
     })()
+
+    return () => {
+      isActive = false
+    }
   }, [])
 
   return muscleGroups

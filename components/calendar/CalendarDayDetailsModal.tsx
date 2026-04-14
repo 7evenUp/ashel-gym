@@ -9,7 +9,6 @@ import {
   View,
 } from "react-native"
 import { ChevronDown, Trash2Icon, X } from "lucide-react-native"
-import { inArray } from "drizzle-orm"
 import Animated, {
   Easing,
   FadeInDown,
@@ -27,13 +26,7 @@ import Button from "../Button"
 
 import { md3Colors } from "@/constants/colors"
 
-import {
-  exerciseSetTable,
-  workoutMuscleGroupTable,
-  workoutTable,
-} from "@/db/schema"
-
-import useDb from "@/hooks/useDb"
+import { deleteWorkoutsByIds } from "@/db/repositories/workouts"
 
 import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
 
@@ -113,8 +106,6 @@ const CalendarDayDetailsModal = ({
   selectedSummary: DaySummary | null
   onClose: VoidFunction
 }) => {
-  const db = useDb()
-
   const [isModalVisible, setIsModalVisible] = useState(false)
   const [selectedMuscleGroups, setSelectedMuscleGroups] = useState<string[]>([])
   const [expandedExerciseIds, setExpandedExerciseIds] = useState<number[]>([])
@@ -193,16 +184,7 @@ const CalendarDayDetailsModal = ({
             setIsWorkoutDeleting(true)
 
             try {
-              await db
-                .delete(exerciseSetTable)
-                .where(inArray(exerciseSetTable.workout_id, workoutIds))
-              await db
-                .delete(workoutMuscleGroupTable)
-                .where(inArray(workoutMuscleGroupTable.workout_id, workoutIds))
-              await db
-                .delete(workoutTable)
-                .where(inArray(workoutTable.id, workoutIds))
-
+              await deleteWorkoutsByIds(workoutIds)
               makeHapticFeedback()
               await onCloseClick()
             } finally {

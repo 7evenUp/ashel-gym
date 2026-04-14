@@ -1,13 +1,13 @@
-import { Suspense, useEffect } from "react"
-import { ActivityIndicator, Platform } from "react-native"
+import { useEffect } from "react"
+import { Platform } from "react-native"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { Stack } from "expo-router"
-import { openDatabaseSync, SQLiteProvider } from "expo-sqlite"
 import { StatusBar } from "expo-status-bar"
 
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin"
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator"
-import { drizzle } from "drizzle-orm/expo-sqlite"
+
+import { db, expoDb } from "@/db/client"
 
 import migrations from "@/drizzle/migrations"
 
@@ -15,13 +15,9 @@ import { logger } from "@/utils/logger"
 import { populateDb } from "@/utils/populateDb"
 
 import { md3Colors } from "@/constants/colors"
-import { DATABASE_NAME } from "@/constants/db"
-
-const expoDB = openDatabaseSync(DATABASE_NAME)
-const db = drizzle(expoDB)
 
 const Layout = () => {
-  useDrizzleStudio(expoDB)
+  useDrizzleStudio(expoDb)
 
   const insets = useSafeAreaInsets()
 
@@ -86,15 +82,5 @@ export default function RootLayout() {
     populateDb(db)
   }, [success])
 
-  return (
-    <Suspense fallback={<ActivityIndicator />}>
-      <SQLiteProvider
-        useSuspense
-        databaseName={DATABASE_NAME}
-        options={{ enableChangeListener: true }}
-      >
-        <Layout />
-      </SQLiteProvider>
-    </Suspense>
-  )
+  return <Layout />
 }

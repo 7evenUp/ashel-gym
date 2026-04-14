@@ -9,25 +9,30 @@ import {
   Platform,
 } from "react-native"
 import { useRouter } from "expo-router"
-import { eq } from "drizzle-orm"
 import { HistoryIcon } from "lucide-react-native"
 
 import { useSelectedExercise } from "@/store/useSelectedExercise"
-
-import { statsHistoryTable, statsTable } from "@/db/schema"
+import { getExerciseStats, saveExerciseStats } from "@/db/repositories/stats"
 
 import Button from "@/components/Button"
 
 import { md3Colors } from "@/constants/colors"
 
-import useDb from "@/hooks/useDb"
 import { useKeyboardHeight } from "@/hooks/useKeyboardHeight"
 
 import { logger } from "@/utils/logger"
 
-const StatsModal = () => {
-  const db = useDb()
+const formatWeightInput = (value: number) => value.toString().replace(".", ",")
 
+const parseWeightInput = (value: string) => {
+  if (value === "") return null
+
+  const parsedValue = parseFloat(value.replace(",", "."))
+
+  return Number.isFinite(parsedValue) ? parsedValue : null
+}
+
+const StatsModal = () => {
   const router = useRouter()
 
   const exercise = useSelectedExercise((state) => state.exercise)
@@ -43,26 +48,34 @@ const StatsModal = () => {
   useEffect(() => {
     if (exercise === null) return
 
-    const getData = async () => {
-      const [stats] = await db
-        .select()
-        .from(statsTable)
-        .where(eq(statsTable.exercise_id, exercise.id))
+    let isActive = true
 
-      if (stats) {
-        if (stats.work_weight) {
-          setWorkWeight(stats.work_weight.toString().replace(".", ","))
-          setInitialWorkWeight(stats.work_weight.toString().replace(".", ","))
-        }
-        if (stats.max_weight) {
-          setMaxWeight(stats.max_weight.toString().replace(".", ","))
-          setInitialMaxWeight(stats.max_weight.toString().replace(".", ","))
-        }
-      }
+    const getData = async () => {
+      const stats = await getExerciseStats(exercise.id)
+
+      if (!isActive) return
+
+      const nextWorkWeight =
+        stats?.work_weight !== null && stats?.work_weight !== undefined
+          ? formatWeightInput(stats.work_weight)
+          : ""
+      const nextMaxWeight =
+        stats?.max_weight !== null && stats?.max_weight !== undefined
+          ? formatWeightInput(stats.max_weight)
+          : ""
+
+      setWorkWeight(nextWorkWeight)
+      setInitialWorkWeight(nextWorkWeight)
+      setMaxWeight(nextMaxWeight)
+      setInitialMaxWeight(nextMaxWeight)
     }
 
     getData()
-  }, [exercise, db])
+
+    return () => {
+      isActive = false
+    }
+  }, [exercise])
 
   if (exercise === null) return null
 
@@ -71,54 +84,23 @@ const StatsModal = () => {
 
     setIsLocked(true)
 
-    const workWeightValue = workWeight
-      ? parseFloat(workWeight.replace(",", "."))
-      : null
-    const maxWeightValue = maxWeight
-      ? parseFloat(maxWeight.replace(",", "."))
-      : null
+    const workWeightValue = parseWeightInput(workWeight)
+    const maxWeightValue = parseWeightInput(maxWeight)
 
     try {
-      const [stats] = await db
-        .select()
-        .from(statsTable)
-        .where(eq(statsTable.exercise_id, exercise.id))
+      const { maxWeightChanged, workWeightChanged } = await saveExerciseStats({
+        exerciseId: exercise.id,
+        initialMaxWeight: parseWeightInput(initialMaxWeight),
+        initialWorkWeight: parseWeightInput(initialWorkWeight),
+        maxWeight: maxWeightValue,
+        workWeight: workWeightValue,
+      })
 
-      // Inserting or updating stats
-      if (!stats) {
-        await db.insert(statsTable).values({
-          exercise_id: exercise.id,
-          work_weight: workWeightValue,
-          max_weight: maxWeightValue,
-        })
-      } else {
-        await db
-          .update(statsTable)
-          .set({
-            work_weight: workWeightValue,
-            max_weight: maxWeightValue,
-          })
-          .where(eq(statsTable.exercise_id, exercise.id))
-      }
-
-      // Inserting stats update history
-      const currentDate = new Date().getTime()
-      if (workWeight && initialWorkWeight !== workWeight) {
-        await db.insert(statsHistoryTable).values({
-          exercise_id: exercise.id,
-          type: "work",
-          value: parseFloat(workWeight.replace(",", ".")),
-          changed_at: currentDate,
-        })
+      if (workWeightChanged) {
         setInitialWorkWeight(workWeight)
       }
-      if (maxWeight && initialMaxWeight !== maxWeight) {
-        await db.insert(statsHistoryTable).values({
-          exercise_id: exercise.id,
-          type: "max",
-          value: parseFloat(maxWeight.replace(",", ".")),
-          changed_at: currentDate,
-        })
+
+      if (maxWeightChanged) {
         setInitialMaxWeight(maxWeight)
       }
 
