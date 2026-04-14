@@ -346,7 +346,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    gap: 8,
     borderRadius: 10,
     height: 32,
     minWidth: 110,
@@ -361,7 +360,8 @@ const styles = StyleSheet.create({
     color: md3Colors.dark.onSurface,
     fontWeight: "600",
     fontSize: 16,
-    minWidth: 27,
+    minWidth: 44,
+    height: "100%",
     textAlign: "center",
     paddingVertical: 0,
     ...Platform.select({
