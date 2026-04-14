@@ -1,4 +1,4 @@
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
   LayoutChangeEvent,
   Platform,
@@ -21,6 +21,45 @@ import { md3Colors } from "@/constants/colors"
 
 import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
 
+const normalizeWeightInput = (text: string) => {
+  const digitsAndDotsOnly = text.replaceAll(",", ".").replace(/[^0-9.]/g, "")
+  const normalizedLeadingDot = digitsAndDotsOnly.startsWith(".")
+    ? `0${digitsAndDotsOnly}`
+    : digitsAndDotsOnly
+
+  const firstDotIndex = normalizedLeadingDot.indexOf(".")
+
+  const normalizedSingleDotText =
+    firstDotIndex === -1
+      ? normalizedLeadingDot
+      : `${normalizedLeadingDot.slice(0, firstDotIndex + 1)}${normalizedLeadingDot
+          .slice(firstDotIndex + 1)
+          .replaceAll(".", "")}`
+
+  const [integerPart, fractionalPart] = normalizedSingleDotText.split(".")
+
+  const normalizedIntegerPart =
+    integerPart === "" ? "0" : integerPart.replace(/^0+(?=\d)/, "")
+
+  return fractionalPart !== undefined
+    ? `${normalizedIntegerPart}.${fractionalPart}`
+    : normalizedIntegerPart
+}
+
+const normalizeRepsInput = (text: string) => {
+  return text.replace(/\D/g, "").replace(/^0+(?=\d)/, "")
+}
+
+const parseWeightInput = (text: string) => {
+  const parsedWeight = parseFloat(text)
+
+  return Number.isFinite(parsedWeight) ? parsedWeight : 0
+}
+
+const parseRepsInput = (text: string) => {
+  return text === "" ? 0 : parseInt(text, 10)
+}
+
 const ExerciseSetItem = ({
   order,
   reps: outerReps,
@@ -41,101 +80,110 @@ const ExerciseSetItem = ({
   const [repsInput, setRepsInput] = useState(outerReps.toString())
   const [weight, setWeight] = useState(outerWeight.toString())
   const layoutRef = useRef({ y: 0, height: 0 })
+  const persistedSetRef = useRef({
+    order,
+    reps: outerReps,
+    weight: outerWeight,
+  })
 
   const { selectedExercise, selectedMuscleGroup, createdWorkoutId } =
     useWorkoutCreation()
+
+  useEffect(() => {
+    setRepsInput(outerReps.toString())
+    setWeight(outerWeight.toString())
+    persistedSetRef.current = {
+      order,
+      reps: outerReps,
+      weight: outerWeight,
+    }
+  }, [id, order, outerReps, outerWeight])
 
   if (selectedExercise === null) return
   if (selectedMuscleGroup === null) return
   if (createdWorkoutId === null) return
 
-  const reps = repsInput === "" ? 0 : parseInt(repsInput)
-  const parsedWeight = parseFloat(weight)
-  const weightValue = Number.isFinite(parsedWeight) ? parsedWeight : 0
+  const reps = parseRepsInput(repsInput)
+  const weightValue = parseWeightInput(weight)
 
   const isConfirmDisabled = reps === 0 || !weightValue
 
-  const onWeightChange = async (text: string) => {
-    const digitsAndDotsOnly = text.replaceAll(",", ".").replace(/[^0-9.]/g, "")
-    const normalizedLeadingDot = digitsAndDotsOnly.startsWith(".")
-      ? `0${digitsAndDotsOnly}`
-      : digitsAndDotsOnly
+  const saveSet = async ({
+    nextReps,
+    nextWeight,
+  }: {
+    nextReps: number
+    nextWeight: number
+  }) => {
+    const persistedSet = persistedSetRef.current
 
-    const firstDotIndex = normalizedLeadingDot.indexOf(".")
-
-    const normalizedSingleDotText =
-      firstDotIndex === -1
-        ? normalizedLeadingDot
-        : `${normalizedLeadingDot.slice(0, firstDotIndex + 1)}${normalizedLeadingDot
-            .slice(firstDotIndex + 1)
-            .replaceAll(".", "")}`
-
-    const [integerPart, fractionalPart] = normalizedSingleDotText.split(".")
-
-    const normalizedIntegerPart =
-      integerPart === "" ? "0" : integerPart.replace(/^0+(?=\d)/, "")
-
-    const normalizedText =
-      fractionalPart !== undefined
-        ? `${normalizedIntegerPart}.${fractionalPart}`
-        : normalizedIntegerPart
-
-    const parsedText = parseFloat(normalizedText)
-    const nextWeight = Number.isFinite(parsedText) ? parsedText : 0
-
-    await updateExerciseSet({
-      order,
-      reps,
-      weight: nextWeight,
-      id,
-    })
-
-    setWeight(normalizedText)
-  }
-
-  const onRepsChange = async (text: string) => {
-    const digitsOnly = text.replace(/\D/g, "")
-    const normalizedText = digitsOnly.replace(/^0+(?=\d)/, "")
-    const nextReps = normalizedText === "" ? 0 : parseInt(normalizedText, 10)
-
-    setRepsInput(normalizedText)
+    if (
+      persistedSet.order === order &&
+      persistedSet.reps === nextReps &&
+      persistedSet.weight === nextWeight
+    )
+      return
 
     await updateExerciseSet({
       order,
       reps: nextReps,
-      weight: weightValue,
+      weight: nextWeight,
       id,
+    })
+
+    persistedSetRef.current = {
+      order,
+      reps: nextReps,
+      weight: nextWeight,
+    }
+  }
+
+  const onWeightChange = (text: string) => {
+    setWeight(normalizeWeightInput(text))
+  }
+
+  const onRepsChange = (text: string) => {
+    setRepsInput(normalizeRepsInput(text))
+  }
+
+  const onInputBlur = async () => {
+    await saveSet({
+      nextReps: reps,
+      nextWeight: weightValue,
     })
   }
 
   const onDecreaseRepsPress = async () => {
     const nextReps = Math.max(reps - 1, 0)
 
-    await updateExerciseSet({
-      order,
-      reps: nextReps,
-      weight: weightValue,
-      id,
-    })
     setRepsInput(nextReps.toString())
+
+    await saveSet({
+      nextReps,
+      nextWeight: weightValue,
+    })
   }
 
   const onIncreaseRepsPress = async () => {
     const nextReps = reps + 1
 
-    await updateExerciseSet({
-      order,
-      reps: nextReps,
-      weight: weightValue,
-      id,
-    })
     setRepsInput(nextReps.toString())
+
+    await saveSet({
+      nextReps,
+      nextWeight: weightValue,
+    })
   }
 
   const onAddPress = async () => {
     if (isConfirmDisabled) return
 
     makeHapticFeedback()
+
+    await saveSet({
+      nextReps: reps,
+      nextWeight: weightValue,
+    })
 
     await createExerciseSet({
       exercise_id: selectedExercise.id,
@@ -179,6 +227,7 @@ const ExerciseSetItem = ({
               returnKeyType="done"
               value={weight}
               onChangeText={onWeightChange}
+              onBlur={onInputBlur}
               onFocus={onFocus}
             />
           </View>
@@ -208,6 +257,7 @@ const ExerciseSetItem = ({
                 returnKeyType="done"
                 value={repsInput}
                 onChangeText={onRepsChange}
+                onBlur={onInputBlur}
                 onFocus={onFocus}
               />
               <AnimatedColorButton
