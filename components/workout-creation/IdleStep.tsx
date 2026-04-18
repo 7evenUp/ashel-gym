@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
-import { StyleSheet, Text, View } from "react-native"
-
-import Button from "../Button"
+import { Pressable, StyleSheet, Text } from "react-native"
+import { Image } from "expo-image"
 
 import { Workout } from "@/db/schema"
 import {
@@ -9,15 +8,20 @@ import {
   getLatestWorkoutForDay,
 } from "@/db/repositories/workouts"
 
-import { md3Colors } from "@/constants/colors"
-
 import { useWorkoutCreation } from "@/store/useWorkoutCreation"
 
+import { md3Colors } from "@/constants/colors"
+
+import { makeHapticFeedback } from "@/utils/makeHapticFeedback"
+
+const mascot_src = require("@/assets/images/mascots/mascot_start_workout.png")
+
 const IdleStep = () => {
-  const { startWorkout } = useWorkoutCreation()
   const [todayWorkout, setTodayWorkout] = useState<Workout | null>(null)
   const [isChecking, setIsChecking] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const { startWorkout } = useWorkoutCreation()
 
   useEffect(() => {
     let isActive = true
@@ -64,32 +68,22 @@ const IdleStep = () => {
 
   return (
     <>
-      <Text style={styles.title}>Log a workout?</Text>
+      <Image source={mascot_src} style={styles.mascot} />
 
-      <View style={styles.buttonsWrapper}>
-        {isChecking ? (
-          <Button label="Checking today's workout..." isLoading />
-        ) : todayWorkout ? (
-          <>
-            <Button
-              label="Continue existing"
-              onPress={onContinueWorkoutClick}
-              isLoading={isSubmitting}
-            />
-            <Button
-              label="Create new"
-              onPress={onCreateWorkoutClick}
-              isLoading={isSubmitting}
-            />
-          </>
-        ) : (
-          <Button
-            label="Create new"
-            onPress={onCreateWorkoutClick}
-            isLoading={isSubmitting}
-          />
-        )}
-      </View>
+      <Pressable
+        style={styles.button}
+        onPress={() => {
+          makeHapticFeedback()
+          if (todayWorkout) {
+            onContinueWorkoutClick()
+          } else {
+            onCreateWorkoutClick()
+          }
+        }}
+        disabled={isSubmitting || isChecking}
+      >
+        <Text style={styles.buttonText}>GO</Text>
+      </Pressable>
     </>
   )
 }
@@ -97,16 +91,24 @@ const IdleStep = () => {
 export default IdleStep
 
 const styles = StyleSheet.create({
-  title: {
-    color: md3Colors.dark.onSurface,
-    fontSize: 24,
-    fontWeight: "600",
-    marginTop: 20,
+  button: {
+    width: 180,
+    height: 180,
+    backgroundColor: md3Colors.dark.primary,
+    borderRadius: 9999,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 100,
   },
-  buttonsWrapper: {
+  buttonText: {
+    fontSize: 80,
+    color: md3Colors.dark.onPrimary,
+    fontWeight: 800,
+  },
+  mascot: {
     width: "100%",
-    marginTop: "auto",
-    gap: 12,
-    paddingBottom: 16,
+    aspectRatio: 9 / 14,
+    position: "absolute",
+    bottom: -80,
   },
 })
