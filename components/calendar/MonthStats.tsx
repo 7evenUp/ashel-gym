@@ -717,10 +717,10 @@ const styles = StyleSheet.create({
     backgroundColor: md3Colors.dark.surfaceContainerHigh,
   },
   exerciseImage: {
-    width: "100%",
-    aspectRatio: 16 / 14,
+    marginInline: "auto",
+    width: "75%",
+    aspectRatio: 1 / 1,
     borderRadius: 18,
-    backgroundColor: md3Colors.dark.surfaceVariant,
   },
   exerciseImageFallback: {
     borderWidth: 1,

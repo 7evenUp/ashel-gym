@@ -52,11 +52,13 @@ const ExercisesGrid = ({
         ]}
       >
         {isHighlighted && <DoneBadge />}
-        <Image
-          style={[styles.image, isHighlighted && styles.image_highlighted]}
-          source={exerciseImages[muscleGroup.name][item.image]}
-          transition={250}
-        />
+        <View style={styles.image_wrapper}>
+          <Image
+            style={[styles.image, isHighlighted && styles.image_highlighted]}
+            source={exerciseImages[muscleGroup.name][item.image]}
+            transition={250}
+          />
+        </View>
         <Text
           style={[
             styles.exercise_name,
@@ -95,9 +97,15 @@ const styles = StyleSheet.create({
     backgroundColor: md3Colors.dark.surfaceContainerLow,
     borderRadius: 24,
   },
-  image: {
+  image_wrapper: {
     aspectRatio: 1 / 1,
     width: "100%",
+    borderRadius: 24,
+    experimental_backgroundImage: "radial-gradient(circle, #0F0D13, #4A4458)",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
     borderRadius: 24,
   },
   image_highlighted: {

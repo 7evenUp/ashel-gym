@@ -226,6 +226,8 @@ const styles = StyleSheet.create({
     width: "65%",
     marginBottom: 16,
     position: "relative",
+    borderRadius: 28,
+    experimental_backgroundImage: "radial-gradient(circle, #0F0D13, #4A4458)",
   },
   image: {
     width: "100%",
@@ -234,8 +236,8 @@ const styles = StyleSheet.create({
   },
   statsButton: {
     position: "absolute",
-    right: 4,
-    bottom: 4,
+    right: 8,
+    bottom: 8,
     borderRadius: 9999,
     backgroundColor: md3Colors.dark.secondary,
     width: 36,
