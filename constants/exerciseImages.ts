@@ -17,6 +17,7 @@ export const exerciseImages: Record<
     dumbbell_press: require("../assets/images/exercises/chest/dumbbell_press1.png"),
     pec_fly: require("../assets/images/exercises/chest/pec_fly1.png"),
     machine_chest_press: require("../assets/images/exercises/chest/machine_chest_press1.png"),
+    chest_press: require("../assets/images/exercises/chest/chest_press.png"),
   },
   biceps: {
     barbell_curl: require("../assets/images/exercises/biceps/barbell_curl1.png"),
@@ -43,6 +44,7 @@ export const exerciseImages: Record<
     cable_lateral_raise: require("../assets/images/exercises/shoulders/cable_lateral_raise1.png"),
     reverse_pec_dec: require("../assets/images/exercises/shoulders/reverse_pec_dec1.png"),
     rope_face_pull: require("../assets/images/exercises/shoulders/rope_face_pull1.png"),
+    lateral_raise: require("../assets/images/exercises/shoulders/lateral_raise.png"),
   },
   legs: {
     squats: require("../assets/images/exercises/legs/squats1.png"),

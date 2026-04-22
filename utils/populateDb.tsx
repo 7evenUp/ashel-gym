@@ -108,6 +108,11 @@ export const populateDb = async (db: DB, isPopulateNeeded = false) => {
       name: "Machine Chest Press",
       image: "machine_chest_press",
     },
+    {
+      muscle_group_id: chest.id,
+      name: "Chest Press",
+      image: "chest_press",
+    },
   ])
   // Biceps
   await db.insert(exerciseTable).values([
@@ -259,6 +264,11 @@ export const populateDb = async (db: DB, isPopulateNeeded = false) => {
       muscle_group_id: shoulders.id,
       name: "Rope Face Pull",
       image: "rope_face_pull",
+    },
+    {
+      muscle_group_id: shoulders.id,
+      name: "Lateral Raise",
+      image: "lateral_raise",
     },
   ])
 }
