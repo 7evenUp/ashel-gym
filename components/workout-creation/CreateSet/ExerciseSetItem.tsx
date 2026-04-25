@@ -214,12 +214,12 @@ const ExerciseSetItem = ({
         onLayout={onLayout}
       >
         <View style={styles.left}>
-          <Text style={styles.order}>Подход №{order + 1}</Text>
+          <Text style={styles.order}>Set №{order + 1}</Text>
         </View>
 
         <View style={styles.right}>
           <View style={styles.col}>
-            <Text style={styles.col_title}>Вес, кг</Text>
+            <Text style={styles.col_title}>Weight, kg</Text>
             <TextInput
               style={styles.col_input}
               keyboardType="numeric"
@@ -232,7 +232,7 @@ const ExerciseSetItem = ({
             />
           </View>
           <View style={styles.col}>
-            <Text style={styles.col_title}>Повторения</Text>
+            <Text style={styles.col_title}>Sets</Text>
             <View style={styles.counter_wrapper}>
               <AnimatedColorButton
                 style={[
@@ -285,7 +285,7 @@ const ExerciseSetItem = ({
             onPress={onAddPress}
           >
             <PlusIcon color={md3Colors.dark.onSurfaceVariant} />
-            <Text style={styles.button_title}>Добавить ещё</Text>
+            <Text style={styles.button_title}>Add more</Text>
           </Pressable>
         </>
       )}

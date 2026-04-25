@@ -110,7 +110,7 @@ const ProgressChart = ({
     return (
       <View style={styles.card}>
         <Text style={styles.groupTitle}>{title}</Text>
-        <Text style={styles.helperText}>Загрузка истории...</Text>
+        <Text style={styles.helperText}>Loading...</Text>
       </View>
     )
   }
@@ -120,7 +120,7 @@ const ProgressChart = ({
       <View style={styles.card}>
         <Text style={styles.groupTitle}>{title}</Text>
         <Text style={styles.emptyStateText}>
-          Пока что недостаточно данных для отображения графика
+          To see the graph, edit appropriate input field
         </Text>
       </View>
     )
@@ -200,8 +200,8 @@ const ProgressChart = ({
       </View>
 
       <View style={styles.latestEntry}>
-        <Text style={styles.latestEntryLabel}>Последнее изменение</Text>
-        <Text style={styles.latestEntryValue}>{latestItem.value} кг</Text>
+        <Text style={styles.latestEntryLabel}>Last change</Text>
+        <Text style={styles.latestEntryValue}>{latestItem.value} kg</Text>
         <Text style={styles.latestEntryDate}>
           {formatHistoryDate(latestItem.timestamp)}
         </Text>
@@ -261,18 +261,15 @@ const StatsHistoryModal = () => {
       overScrollMode="never"
       scrollEventThrottle={16}
     >
-      <Text style={styles.title}>История изменений</Text>
-      <Text style={styles.description}>
-        Для упражнения {`"${exercise.name}"`}
-      </Text>
+      <Text style={styles.title}>History of changes</Text>
 
       <ProgressChart
-        title="Рабочий вес"
+        title="Working weight"
         history={workStatsHistory}
         isLoading={isLoading}
       />
       <ProgressChart
-        title="Максимальный вес"
+        title="Max weight"
         history={maxStatsHistory}
         isLoading={isLoading}
       />
@@ -295,11 +292,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "500",
     color: md3Colors.dark.onSurface,
-    textAlign: "center",
-  },
-  description: {
-    fontSize: 16,
-    color: md3Colors.dark.onSurfaceVariant,
     textAlign: "center",
     marginBottom: 16,
   },

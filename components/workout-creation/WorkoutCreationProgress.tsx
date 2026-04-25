@@ -73,7 +73,7 @@ const ProgressStep = ({ index, animatedStep }: ProgressStepProps) => {
   return (
     <Animated.View style={[styles.stepCircle, animatedCircleStyle]}>
       <Animated.Text style={[styles.stepText, animatedTextStyle]}>
-        {index === 0 ? "Мышцы" : index === 1 ? "Упражнение" : "Подходы"}
+        {index === 0 ? "Muscle" : index === 1 ? "Exercise" : "Sets"}
       </Animated.Text>
     </Animated.View>
   )

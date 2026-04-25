@@ -184,7 +184,7 @@ const StatsModal = () => {
       </View>
 
       <Button
-        label="Сохранить"
+        label="Save"
         isLoading={isLocked}
         onPress={onSaveClick}
         style={[

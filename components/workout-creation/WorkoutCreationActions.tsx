@@ -40,7 +40,7 @@ const WorkoutCreationActions = () => {
     <SplitButtons style={styles.container}>
       {currentStep === "select-muscle-group" && (
         <SplitButtons.LargeButton
-          label="Завершить тренировку"
+          label="Finish workout"
           Icon={Flag}
           onPress={onFinishWorkout}
         />
@@ -48,7 +48,7 @@ const WorkoutCreationActions = () => {
       {currentStep === "select-exercise" && (
         <>
           <SplitButtons.LeftButton
-            label="Новая группа"
+            label="New muscle group"
             Icon={LayoutGrid}
             onPress={() => {
               makeHapticFeedback()
@@ -61,7 +61,7 @@ const WorkoutCreationActions = () => {
       {currentStep === "create-set" && (
         <>
           <SplitButtons.LeftButton
-            label="Новое упражнение"
+            label="New exercise"
             Icon={Dumbbell}
             onPress={() => {
               makeHapticFeedback()

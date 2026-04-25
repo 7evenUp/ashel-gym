@@ -1,4 +1,4 @@
-export const WEEK_DAY_LABELS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вск"]
+export const WEEK_DAY_LABELS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 
 export const toDayKey = (value: number | Date) => {
   const date = value instanceof Date ? value : new Date(value)
@@ -11,14 +11,14 @@ export const toDayKey = (value: number | Date) => {
 }
 
 export const getMonthLabel = (date: Date) => {
-  return new Intl.DateTimeFormat("ru-RU", {
+  return new Intl.DateTimeFormat("en-US", {
     month: "short",
     year: "numeric",
   }).format(date)
 }
 
 export const getReadableDateLabel = (date: Date) => {
-  return new Intl.DateTimeFormat("ru-RU", {
+  return new Intl.DateTimeFormat("en-US", {
     day: "numeric",
     month: "long",
     year: "numeric",

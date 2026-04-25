@@ -65,9 +65,7 @@ const ExerciseAccordionItem = ({
         <View style={styles.exerciseRow}>
           <View style={styles.exerciseMeta}>
             <Text style={styles.exerciseName}>{exercise.name}</Text>
-            <Text style={styles.exerciseSets}>
-              Подходы: {exercise.setsCount}
-            </Text>
+            <Text style={styles.exerciseSets}>Sets: {exercise.setsCount}</Text>
           </View>
 
           <Animated.View style={chevronAnimatedStyle}>
@@ -85,9 +83,9 @@ const ExerciseAccordionItem = ({
         >
           {exercise.sets.map((set, index) => (
             <View key={set.id} style={styles.setRow}>
-              <Text style={styles.setOrder}>Подход №{index + 1}</Text>
+              <Text style={styles.setOrder}>Set №{index + 1}</Text>
               <Text style={styles.setValue}>
-                {set.weight}кг x {set.reps}
+                {set.weight}kg x {set.reps}
               </Text>
             </View>
           ))}
@@ -223,9 +221,7 @@ const CalendarDayDetailsModal = ({
           {selectedSummary ? (
             <>
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>
-                  Проработанные группы мышц
-                </Text>
+                <Text style={styles.sectionTitle}>Developed muscle groups</Text>
                 <View style={styles.tagList}>
                   {selectedSummary.muscleGroups.map((muscleGroup) => {
                     const isSelected =
@@ -273,9 +269,7 @@ const CalendarDayDetailsModal = ({
                 showsVerticalScrollIndicator={false}
               >
                 <View style={styles.section}>
-                  <Text style={styles.sectionTitle}>
-                    Проделанные упражнения
-                  </Text>
+                  <Text style={styles.sectionTitle}>Completed exercises</Text>
                   {filteredExercises.length > 0 ? (
                     <View style={styles.exerciseList}>
                       {filteredExercises.map((exercise) => (
@@ -300,7 +294,7 @@ const CalendarDayDetailsModal = ({
                 </View>
 
                 <Button
-                  label="Удалить тренировку"
+                  label="Delete workout"
                   Icon={Trash2Icon}
                   variant="error"
                   style={styles.deleteButton}

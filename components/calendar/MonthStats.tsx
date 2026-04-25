@@ -134,22 +134,16 @@ const getLeastWorkedMuscleGroup = (
 }
 
 const formatWorkoutLabel = (count: number) => {
-  return `${count} ${count === 1 ? "тренировка" : "тренировок"}`
+  return `${count} ${count === 1 ? "workout" : "workouts"}`
 }
 
 const formatSetLabel = (count: number) => {
-  return `${count} ${count === 1 ? "подход" : "подходов"}`
+  return `${count} ${count === 1 ? "set" : "sets"}`
 }
 
 const formatDurationLabel = (seconds: number) => {
-  if (seconds < 60) return `${seconds} с`
-
   const minutes = Math.floor(seconds / 60)
-  const remainingSeconds = seconds % 60
-
-  if (remainingSeconds === 0) return `${minutes} м`
-
-  return `${minutes}:${remainingSeconds}`
+  return `${minutes} m`
 }
 
 const getExerciseImageSource = (
@@ -308,15 +302,12 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
     return (
       <View style={[styles.container, styles.containerForEmpty]}>
         <View style={styles.heroCard}>
-          <Text style={styles.heroTitle}>
-            Статистика за {currentMonthLabel}
-          </Text>
+          <Text style={styles.heroTitle}>Stats for {currentMonthLabel}</Text>
 
           <View style={styles.emptyState}>
-            <Text style={styles.emptyStateTitle}>Недостаточно данных</Text>
+            <Text style={styles.emptyStateTitle}>Not enough data</Text>
             <Text style={styles.emptyStateText}>
-              Закончи хотя бы одну тренировку, чтобы увидеть статистику за этот
-              месяц
+              Finish at least one workout to see stats for this month
             </Text>
           </View>
         </View>
@@ -326,22 +317,22 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
   return (
     <View style={styles.container}>
       <View style={styles.heroCard}>
-        <Text style={styles.heroTitle}>Статистика за {currentMonthLabel}</Text>
+        <Text style={styles.heroTitle}>Stats for {currentMonthLabel}</Text>
 
         <View style={styles.heroMetrics}>
           <View style={styles.heroMetricCard}>
             <Text style={styles.heroMetricValue}>{stats.workoutsCount}</Text>
-            <Text style={styles.heroMetricLabel}>Тренировок</Text>
+            <Text style={styles.heroMetricLabel}>Workouts</Text>
           </View>
           <View style={styles.heroMetricCard}>
             <Text style={styles.heroMetricValue}>{stats.setsCount}</Text>
-            <Text style={styles.heroMetricLabel}>Подходов</Text>
+            <Text style={styles.heroMetricLabel}>Sets</Text>
           </View>
           <View style={styles.heroMetricCard}>
             <Text style={styles.heroMetricValue}>
               {formatDurationLabel(stats.spentTimeInSeconds)}
             </Text>
-            <Text style={styles.heroMetricLabel}>Время</Text>
+            <Text style={styles.heroMetricLabel}>Est. time</Text>
           </View>
         </View>
       </View>
@@ -349,9 +340,9 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <View style={styles.cardHeaderInfo}>
-            <Text style={styles.cardLabel}>Любимая группа мышц</Text>
+            <Text style={styles.cardLabel}>Favourite muscle group</Text>
             <Text style={styles.cardValue}>
-              {stats.favoriteMuscleGroup?.label ?? "Нет данных"}
+              {stats.favoriteMuscleGroup?.label ?? "No data"}
             </Text>
           </View>
           <View style={styles.cardIcon}>
@@ -369,8 +360,7 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
         )}
 
         <Text style={styles.cardHint}>
-          Сбалансировано по частоте тренировок и по общему количеству
-          выполненных подходов
+          Balanced by workout frequency and total completed sets
         </Text>
 
         <View style={styles.pillRow}>
@@ -392,9 +382,9 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
       <View style={styles.card}>
         <View style={styles.cardHeader}>
           <View style={styles.cardHeaderInfo}>
-            <Text style={styles.cardLabel}>Любимые упражнения</Text>
+            <Text style={styles.cardLabel}>Favorite exercises</Text>
             <Text style={styles.cardHint}>
-              Определяются по смешанному количеству тренировок и подходов
+              Ranked by a blended count of workouts and sets
             </Text>
           </View>
           <View style={styles.cardIcon}>
@@ -479,10 +469,10 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
         <View style={styles.cardHeader}>
           <View style={styles.cardHeaderInfo}>
             <Text style={[styles.cardLabel, styles.cardLabelAccent]}>
-              Группа мышц для акцента
+              Muscle group to focus on
             </Text>
             <Text style={[styles.cardValue, styles.cardValueAccent]}>
-              {stats.leastWorkedMuscleGroup?.labels.join(", ") ?? "Нет данных"}
+              {stats.leastWorkedMuscleGroup?.labels.join(", ") ?? "No data"}
             </Text>
           </View>
           <View style={[styles.cardIcon, styles.cardIconAccent]}>
@@ -520,7 +510,7 @@ const MonthStats = ({ daySummaries, isLoading, viewDate }: MonthStatsProps) => {
         )}
 
         <Text style={[styles.cardHint, styles.cardHintAccent]}>
-          В этом месяце следует сделать упор на эту группу мышц
+          Prioritize this muscle group this month
         </Text>
 
         {stats.leastWorkedMuscleGroup && (
