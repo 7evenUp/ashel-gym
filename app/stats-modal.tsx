@@ -9,7 +9,11 @@ import {
   Platform,
 } from "react-native"
 import { useRouter } from "expo-router"
-import { HistoryIcon } from "lucide-react-native"
+import {
+  ChartNoAxesColumnIncreasingIcon,
+  CrownIcon,
+  HistoryIcon,
+} from "lucide-react-native"
 
 import { useSelectedExercise } from "@/store/useSelectedExercise"
 import { getExerciseStats, saveExerciseStats } from "@/db/repositories/stats"
@@ -116,9 +120,7 @@ const StatsModal = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>
-          {exercise.name}: {exercise.id}
-        </Text>
+        <Text style={styles.title}>{exercise.name}</Text>
         <Pressable
           style={styles.history}
           onPress={() => router.navigate("/stats-history-modal")}
@@ -126,32 +128,61 @@ const StatsModal = () => {
           <HistoryIcon size={24} color={md3Colors.dark.onSurface} />
         </Pressable>
       </View>
-      <Text style={styles.description}>👇 Прогресс? Запиши 👇</Text>
-      <View style={styles.stats}>
-        <View style={styles.stat}>
-          <Text style={styles.label}>Рабочий</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="0"
-            placeholderTextColor={md3Colors.dark.onSurfaceVariant}
-            keyboardType="numeric"
-            keyboardAppearance="dark"
-            value={workWeight}
-            onChangeText={(text) => setWorkWeight(text)}
+
+      <View style={styles.stat}>
+        <View style={styles.icon_wrapper}>
+          <ChartNoAxesColumnIncreasingIcon
+            width={36}
+            height={36}
+            color={md3Colors.dark.onSecondaryContainer}
+            strokeWidth={4}
           />
         </View>
-        <View style={styles.stat}>
-          <Text style={styles.label}>Максимальный</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="0"
-            placeholderTextColor={md3Colors.dark.onSurfaceVariant}
-            keyboardType="numeric"
-            value={maxWeight}
-            onChangeText={(text) => setMaxWeight(text)}
-          />
+        <View style={styles.stat_right}>
+          <View style={styles.input_wrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder="0"
+              placeholderTextColor={md3Colors.dark.onSurfaceVariant}
+              keyboardType="numeric"
+              keyboardAppearance="dark"
+              value={workWeight}
+              onChangeText={(text) => setWorkWeight(text)}
+            />
+            <Text style={styles.input_kg}>kg</Text>
+          </View>
+          <Text style={styles.input_description}>Work weight</Text>
         </View>
       </View>
+
+      <View style={styles.divider} />
+
+      <View style={styles.stat}>
+        <View style={styles.icon_wrapper}>
+          <CrownIcon
+            width={36}
+            height={36}
+            color={md3Colors.dark.onSecondaryContainer}
+            fill={md3Colors.dark.onSecondaryContainer}
+            strokeWidth={2}
+          />
+        </View>
+        <View style={styles.stat_right}>
+          <View style={styles.input_wrapper}>
+            <TextInput
+              style={styles.input}
+              placeholder="0"
+              placeholderTextColor={md3Colors.dark.onSurfaceVariant}
+              keyboardType="numeric"
+              value={maxWeight}
+              onChangeText={(text) => setMaxWeight(text)}
+            />
+            <Text style={styles.input_kg}>kg</Text>
+          </View>
+          <Text style={styles.input_description}>Max weight</Text>
+        </View>
+      </View>
+
       <Button
         label="Сохранить"
         isLoading={isLocked}
@@ -181,7 +212,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
-    marginBottom: 64,
+    marginBottom: 32,
   },
   title: {
     fontSize: 24,
@@ -200,30 +231,53 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     right: 0,
   },
-  description: {
-    fontSize: 18,
-    color: md3Colors.dark.onSurfaceVariant,
-    marginBottom: 32,
-  },
-  stats: {
-    width: "100%",
+  stat: {
+    alignSelf: "flex-start",
     flexDirection: "row",
-    justifyContent: "center",
+    alignItems: "center",
     gap: 16,
   },
-  stat: {
-    flex: 1,
-    alignItems: "center",
+  divider: {
+    width: "100%",
+    height: 1,
+    backgroundColor: md3Colors.dark.outlineVariant,
+    marginBlock: 20,
   },
-  label: {
-    fontSize: 18,
-    color: md3Colors.dark.onSurface,
+  icon_wrapper: {
+    width: 64,
+    height: 64,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: md3Colors.dark.secondaryContainer,
+  },
+  stat_right: {
+    gap: 4,
+  },
+  input_wrapper: {
+    position: "relative",
   },
   input: {
-    height: 64,
-    width: 100,
-    fontSize: 36,
-    textAlign: "center",
-    color: md3Colors.dark.onSurface,
+    fontSize: 26,
+    fontWeight: 600,
+    color: md3Colors.dark.primary,
+    backgroundColor: md3Colors.dark.surfaceContainer,
+    padding: 4,
+    paddingLeft: 16,
+    paddingRight: 48,
+    height: 40,
+    minWidth: 80,
+    width: "auto",
+    borderRadius: 12,
+  },
+  input_kg: {
+    color: md3Colors.dark.onSurfaceVariant,
+    fontSize: 18,
+    position: "absolute",
+    right: 16,
+    top: 10,
+  },
+  input_description: {
+    color: md3Colors.dark.onSurfaceVariant,
   },
 })
