@@ -1,18 +1,32 @@
 import { useEffect, useMemo, useState } from "react"
-import { ScrollView, StyleSheet, Text, View } from "react-native"
+import { StyleSheet, Text, View } from "react-native"
 import { useFont } from "@shopify/react-native-skia"
 import { Area, CartesianChart, Line, Scatter } from "victory-native"
 
-import { useSelectedExercise } from "@/store/useSelectedExercise"
-import { getExerciseStatsHistory } from "@/db/repositories/stats"
+import { getExerciseStatsHistoryByType } from "@/db/repositories/stats"
 import { StatsHistory } from "@/db/schema"
+
+import { useSelectedExercise } from "@/store/useSelectedExercise"
 
 import { md3Colors } from "@/constants/colors"
 
-const audiowide = require("../assets/fonts/Audiowide-Regular.ttf")
+const audiowide = require("../../assets/fonts/Audiowide-Regular.ttf")
 
 const CHART_HEIGHT = 300
 const WEIGHT_TICK_PADDING = 5
+
+type ChartData = {
+  index: number
+  timestamp: number
+  dateLabel: string
+  value: number
+}
+
+type StatsHistoryModalContentProps = {
+  emptyStateText: string
+  historyType: StatsHistory["type"]
+  title: string
+}
 
 const getNiceWeightStep = (range: number) => {
   if (range <= 10) return 2.5
@@ -41,21 +55,14 @@ const formatHistoryDate = (timestamp: number) => {
   )}`
 }
 
-type ChartData = {
-  index: number
-  timestamp: number
-  dateLabel: string
-  value: number
-}
-
 const ProgressChart = ({
-  title,
   history,
   isLoading,
+  emptyStateText,
 }: {
-  title: string
   history: StatsHistory[] | null
   isLoading: boolean
+  emptyStateText: string
 }) => {
   const font = useFont(audiowide, 12)
 
@@ -75,6 +82,8 @@ const ProgressChart = ({
   }, [chartData])
 
   const yTickValues = useMemo(() => {
+    if (chartData.length === 0) return []
+
     const values = chartData.map((item) => item.value)
     const minValue = Math.min(...values)
     const maxValue = Math.max(...values)
@@ -109,7 +118,6 @@ const ProgressChart = ({
   if (isLoading) {
     return (
       <View style={styles.card}>
-        <Text style={styles.groupTitle}>{title}</Text>
         <Text style={styles.helperText}>Loading...</Text>
       </View>
     )
@@ -118,10 +126,7 @@ const ProgressChart = ({
   if (chartData.length === 0) {
     return (
       <View style={styles.card}>
-        <Text style={styles.groupTitle}>{title}</Text>
-        <Text style={styles.emptyStateText}>
-          To see the graph, edit appropriate input field
-        </Text>
+        <Text style={styles.emptyStateText}>{emptyStateText}</Text>
       </View>
     )
   }
@@ -130,7 +135,6 @@ const ProgressChart = ({
 
   return (
     <View style={styles.card}>
-      <Text style={styles.groupTitle}>{title}</Text>
       <View style={styles.chartContainer}>
         <CartesianChart
           data={chartData}
@@ -210,21 +214,19 @@ const ProgressChart = ({
   )
 }
 
-const StatsHistoryModal = () => {
+const StatsHistoryModalContent = ({
+  emptyStateText,
+  historyType,
+  title,
+}: StatsHistoryModalContentProps) => {
   const exercise = useSelectedExercise((state) => state.exercise)
 
-  const [workStatsHistory, setWorkStatsHistory] = useState<
-    StatsHistory[] | null
-  >(null)
-  const [maxStatsHistory, setMaxStatsHistory] = useState<StatsHistory[] | null>(
-    null,
-  )
+  const [statsHistory, setStatsHistory] = useState<StatsHistory[] | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     if (exercise === null) {
-      setWorkStatsHistory(null)
-      setMaxStatsHistory(null)
+      setStatsHistory(null)
       setIsLoading(false)
       return
     }
@@ -234,12 +236,14 @@ const StatsHistoryModal = () => {
     const getData = async () => {
       setIsLoading(true)
 
-      const statsHistory = await getExerciseStatsHistory(exercise.id)
+      const nextStatsHistory = await getExerciseStatsHistoryByType(
+        exercise.id,
+        historyType,
+      )
 
       if (!isActive) return
 
-      setWorkStatsHistory(statsHistory.filter((item) => item.type === "work"))
-      setMaxStatsHistory(statsHistory.filter((item) => item.type === "max"))
+      setStatsHistory(nextStatsHistory)
       setIsLoading(false)
     }
 
@@ -248,44 +252,29 @@ const StatsHistoryModal = () => {
     return () => {
       isActive = false
     }
-  }, [exercise])
+  }, [exercise, historyType])
 
   if (exercise === null) return null
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-      showsVerticalScrollIndicator={false}
-      nestedScrollEnabled
-      overScrollMode="never"
-      scrollEventThrottle={16}
-    >
-      <Text style={styles.title}>History of changes</Text>
+    <View style={styles.container}>
+      <Text style={styles.title}>{title}</Text>
 
       <ProgressChart
-        title="Working weight"
-        history={workStatsHistory}
+        history={statsHistory}
         isLoading={isLoading}
+        emptyStateText={emptyStateText}
       />
-      <ProgressChart
-        title="Max weight"
-        history={maxStatsHistory}
-        isLoading={isLoading}
-      />
-    </ScrollView>
+    </View>
   )
 }
 
-export default StatsHistoryModal
+export default StatsHistoryModalContent
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  content: {
-    paddingBlock: 24,
-    paddingInline: 4,
+    paddingTop: 24,
     gap: 4,
   },
   title: {
@@ -295,16 +284,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 16,
   },
-  groupTitle: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: md3Colors.dark.onSurface,
-    alignSelf: "center",
-  },
   card: {
+    flex: 1,
     backgroundColor: md3Colors.dark.surfaceContainerLow,
-    borderRadius: 20,
-    padding: 16,
+    borderRadius: 32,
+    paddingHorizontal: 16,
+    paddingTop: 32,
     gap: 16,
   },
   chartContainer: {

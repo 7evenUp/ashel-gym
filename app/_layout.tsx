@@ -48,7 +48,21 @@ const Layout = () => {
           }}
         />
         <Stack.Screen
-          name="stats-history-modal"
+          name="work-weight-history-modal"
+          options={{
+            presentation: "formSheet",
+            sheetAllowedDetents: [0.75],
+            sheetInitialDetentIndex: 0,
+            sheetGrabberVisible: true,
+            headerShown: false,
+            sheetCornerRadius: Platform.OS === "ios" ? undefined : 24,
+            contentStyle: {
+              backgroundColor: md3Colors.dark.surfaceContainerHigh,
+            },
+          }}
+        />
+        <Stack.Screen
+          name="max-weight-history-modal"
           options={{
             presentation: "formSheet",
             sheetAllowedDetents: [0.75],

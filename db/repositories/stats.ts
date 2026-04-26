@@ -1,4 +1,4 @@
-import { asc, eq } from "drizzle-orm"
+import { and, asc, eq } from "drizzle-orm"
 
 import { db } from "@/db/client"
 import { Stats, StatsHistory, statsHistoryTable, statsTable } from "@/db/schema"
@@ -88,12 +88,18 @@ export const saveExerciseStats = async ({
   })
 }
 
-export const getExerciseStatsHistory = async (
+export const getExerciseStatsHistoryByType = async (
   exerciseId: number,
+  type: StatsHistory["type"],
 ): Promise<StatsHistory[]> => {
   return db
     .select()
     .from(statsHistoryTable)
-    .where(eq(statsHistoryTable.exercise_id, exerciseId))
+    .where(
+      and(
+        eq(statsHistoryTable.exercise_id, exerciseId),
+        eq(statsHistoryTable.type, type),
+      ),
+    )
     .orderBy(asc(statsHistoryTable.changed_at))
 }

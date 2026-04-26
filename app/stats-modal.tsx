@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { StyleSheet, Text, View, Pressable, Platform } from "react-native"
+import { StyleSheet, Text, View, Platform } from "react-native"
 import { useRouter } from "expo-router"
 import {
   ChartNoAxesColumnIncreasingIcon,
@@ -111,12 +111,6 @@ const StatsModal = () => {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>{exercise.name}</Text>
-        <Pressable
-          style={styles.history}
-          onPress={() => router.navigate("/stats-history-modal")}
-        >
-          <HistoryIcon size={24} color={md3Colors.dark.onSurface} />
-        </Pressable>
       </View>
 
       <View style={styles.stat}>
@@ -143,7 +137,11 @@ const StatsModal = () => {
               setIsEditWorkModalOpened(true)
             }}
           />
-          <SplitButtons.RightButton Icon={HistoryIcon} />
+          <SplitButtons.RightButton
+            Icon={HistoryIcon}
+            accessibilityLabel="Open work weight history"
+            onPress={() => router.navigate("/work-weight-history-modal")}
+          />
         </SplitButtons>
       </View>
 
@@ -174,7 +172,11 @@ const StatsModal = () => {
               setIsEditMaxModalOpened(true)
             }}
           />
-          <SplitButtons.RightButton Icon={HistoryIcon} />
+          <SplitButtons.RightButton
+            Icon={HistoryIcon}
+            accessibilityLabel="Open max weight history"
+            onPress={() => router.navigate("/max-weight-history-modal")}
+          />
         </SplitButtons>
       </View>
 
@@ -206,7 +208,6 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === "ios" ? 0 : 64,
   },
   header: {
-    position: "relative",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -216,19 +217,9 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "500",
-    width: "80%",
+    width: "100%",
     textAlign: "center",
     color: md3Colors.dark.onSurface,
-  },
-  history: {
-    position: "absolute",
-    width: 40,
-    height: 40,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: md3Colors.dark.surfaceContainerHighest,
-    borderRadius: 12,
-    right: 0,
   },
   stat: {
     alignSelf: "flex-start",
