@@ -38,8 +38,7 @@ const Layout = () => {
           name="stats-modal"
           options={{
             presentation: "formSheet",
-            sheetAllowedDetents: [0.85],
-            sheetInitialDetentIndex: 0,
+            sheetAllowedDetents: "fitToContents",
             sheetGrabberVisible: true,
             headerShown: false,
             sheetCornerRadius: Platform.OS === "ios" ? undefined : 24,

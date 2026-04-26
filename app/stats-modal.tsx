@@ -1,28 +1,20 @@
 import { useEffect, useState } from "react"
-import {
-  StyleSheet,
-  Text,
-  View,
-  TextInput,
-  Keyboard,
-  Pressable,
-  Platform,
-} from "react-native"
+import { StyleSheet, Text, View, Pressable, Platform } from "react-native"
 import { useRouter } from "expo-router"
 import {
   ChartNoAxesColumnIncreasingIcon,
   CrownIcon,
+  EditIcon,
   HistoryIcon,
 } from "lucide-react-native"
 
 import { useSelectedExercise } from "@/store/useSelectedExercise"
 import { getExerciseStats, saveExerciseStats } from "@/db/repositories/stats"
 
-import Button from "@/components/Button"
+import SplitButtons from "@/components/SplitButtons"
+import ChangeStatModal from "@/components/stats/ChangeStatModal"
 
 import { md3Colors } from "@/constants/colors"
-
-import { useKeyboardHeight } from "@/hooks/useKeyboardHeight"
 
 import { logger } from "@/utils/logger"
 
@@ -41,13 +33,14 @@ const StatsModal = () => {
 
   const exercise = useSelectedExercise((state) => state.exercise)
 
-  const { isKeyboardVisible, keyboardHeight } = useKeyboardHeight()
-
   const [isLocked, setIsLocked] = useState(false)
   const [initialWorkWeight, setInitialWorkWeight] = useState("")
   const [initialMaxWeight, setInitialMaxWeight] = useState("")
   const [workWeight, setWorkWeight] = useState("")
   const [maxWeight, setMaxWeight] = useState("")
+
+  const [isEditWorkModalOpened, setIsEditWorkModalOpened] = useState(false)
+  const [isEditMaxModalOpened, setIsEditMaxModalOpened] = useState(false)
 
   useEffect(() => {
     if (exercise === null) return
@@ -107,13 +100,10 @@ const StatsModal = () => {
       if (maxWeightChanged) {
         setInitialMaxWeight(maxWeight)
       }
-
-      router.back()
     } catch (error) {
       logger("Error happened while saving stats: ", error)
     } finally {
       setIsLocked(false)
-      Keyboard.dismiss()
     }
   }
 
@@ -138,21 +128,23 @@ const StatsModal = () => {
             strokeWidth={4}
           />
         </View>
-        <View style={styles.stat_right}>
-          <View style={styles.input_wrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="0"
-              placeholderTextColor={md3Colors.dark.onSurfaceVariant}
-              keyboardType="numeric"
-              keyboardAppearance="dark"
-              value={workWeight}
-              onChangeText={(text) => setWorkWeight(text)}
-            />
-            <Text style={styles.input_kg}>kg</Text>
-          </View>
-          <Text style={styles.input_description}>Work weight</Text>
+        <View style={styles.weight}>
+          <Text style={styles.weight_title}>
+            {workWeight || 0} <Text style={styles.weight_kg}>kg</Text>
+          </Text>
+          <Text style={styles.weight_description}>Work weight</Text>
         </View>
+
+        <SplitButtons style={styles.stat_buttons}>
+          <SplitButtons.LeftButton
+            Icon={EditIcon}
+            label="Edit"
+            onPress={() => {
+              setIsEditWorkModalOpened(true)
+            }}
+          />
+          <SplitButtons.RightButton Icon={HistoryIcon} />
+        </SplitButtons>
       </View>
 
       <View style={styles.divider} />
@@ -167,30 +159,38 @@ const StatsModal = () => {
             strokeWidth={2}
           />
         </View>
-        <View style={styles.stat_right}>
-          <View style={styles.input_wrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="0"
-              placeholderTextColor={md3Colors.dark.onSurfaceVariant}
-              keyboardType="numeric"
-              value={maxWeight}
-              onChangeText={(text) => setMaxWeight(text)}
-            />
-            <Text style={styles.input_kg}>kg</Text>
-          </View>
-          <Text style={styles.input_description}>Max weight</Text>
+        <View style={styles.weight}>
+          <Text style={styles.weight_title}>
+            {maxWeight || 0} <Text style={styles.weight_kg}>kg</Text>
+          </Text>
+          <Text style={styles.weight_description}>Max weight</Text>
         </View>
+
+        <SplitButtons style={styles.stat_buttons}>
+          <SplitButtons.LeftButton
+            Icon={EditIcon}
+            label="Edit"
+            onPress={() => {
+              setIsEditMaxModalOpened(true)
+            }}
+          />
+          <SplitButtons.RightButton Icon={HistoryIcon} />
+        </SplitButtons>
       </View>
 
-      <Button
-        label="Save"
-        isLoading={isLocked}
-        onPress={onSaveClick}
-        style={[
-          { marginTop: "auto" },
-          isKeyboardVisible && { marginBottom: keyboardHeight },
-        ]}
+      <ChangeStatModal
+        isOpened={isEditWorkModalOpened}
+        setIsOpened={setIsEditWorkModalOpened}
+        value={workWeight}
+        setValue={setWorkWeight}
+        onSaveClick={onSaveClick}
+      />
+      <ChangeStatModal
+        isOpened={isEditMaxModalOpened}
+        setIsOpened={setIsEditMaxModalOpened}
+        value={maxWeight}
+        setValue={setMaxWeight}
+        onSaveClick={onSaveClick}
       />
     </View>
   )
@@ -200,11 +200,10 @@ export default StatsModal
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: "center",
     paddingInline: 16,
     paddingTop: 24,
-    paddingBottom: Platform.OS === "ios" ? 0 : 24,
+    paddingBottom: Platform.OS === "ios" ? 0 : 64,
   },
   header: {
     position: "relative",
@@ -236,6 +235,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 16,
+    width: "100%",
   },
   divider: {
     width: "100%",
@@ -251,8 +251,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: md3Colors.dark.secondaryContainer,
   },
-  stat_right: {
+  weight: {
     gap: 4,
+  },
+  weight_title: {
+    color: md3Colors.dark.primary,
+    fontSize: 26,
+    fontWeight: 600,
+  },
+  weight_kg: {
+    color: md3Colors.dark.onSurface,
+    fontSize: 18,
+    fontWeight: 400,
   },
   input_wrapper: {
     position: "relative",
@@ -277,7 +287,10 @@ const styles = StyleSheet.create({
     right: 16,
     top: 10,
   },
-  input_description: {
+  weight_description: {
     color: md3Colors.dark.onSurfaceVariant,
+  },
+  stat_buttons: {
+    marginLeft: "auto",
   },
 })
