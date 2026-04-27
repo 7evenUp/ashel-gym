@@ -232,7 +232,7 @@ const ExerciseSetItem = ({
             />
           </View>
           <View style={styles.col}>
-            <Text style={styles.col_title}>Sets</Text>
+            <Text style={styles.col_title}>Reps</Text>
             <View style={styles.counter_wrapper}>
               <AnimatedColorButton
                 style={[
