@@ -13,26 +13,34 @@ const integerPart = [...Array(201).keys()].map((index) => ({
 }))
 const fractionalPart = [
   { value: 0, label: "00" },
-  { value: 5, label: "05" },
-  { value: 10, label: "10" },
-  { value: 15, label: "15" },
-  { value: 20, label: "20" },
-  { value: 25, label: "25" },
-  { value: 30, label: "30" },
-  { value: 35, label: "35" },
-  { value: 40, label: "40" },
-  { value: 45, label: "45" },
-  { value: 50, label: "50" },
-  { value: 55, label: "55" },
-  { value: 60, label: "60" },
-  { value: 65, label: "65" },
-  { value: 70, label: "70" },
-  { value: 75, label: "75" },
-  { value: 80, label: "80" },
-  { value: 85, label: "85" },
-  { value: 90, label: "90" },
-  { value: 95, label: "95" },
+  { value: 0.05, label: "05" },
+  { value: 0.1, label: "10" },
+  { value: 0.15, label: "15" },
+  { value: 0.2, label: "20" },
+  { value: 0.25, label: "25" },
+  { value: 0.3, label: "30" },
+  { value: 0.35, label: "35" },
+  { value: 0.4, label: "40" },
+  { value: 0.45, label: "45" },
+  { value: 0.5, label: "50" },
+  { value: 0.55, label: "55" },
+  { value: 0.6, label: "60" },
+  { value: 0.65, label: "65" },
+  { value: 0.7, label: "70" },
+  { value: 0.75, label: "75" },
+  { value: 0.8, label: "80" },
+  { value: 0.85, label: "85" },
+  { value: 0.9, label: "90" },
+  { value: 0.95, label: "95" },
 ]
+
+// В value приходит значение вида "50.45"
+// Разбиваем его на целую и дробную часть
+// integer становится "50"
+// fraction становится "0.45"
+// так сделано, чтобы оба WheelPicker по отдельности получали свои значения
+// далее собираем вместе полное значение из integer и fraction
+// таким путём: ${integer}.${fraction.split(".")[1]}
 
 const ChangeStatModal = ({
   isOpened,
@@ -57,8 +65,32 @@ const ChangeStatModal = ({
   useEffect(() => {
     const [int, frac] = value.replace(",", ".").split(".")
     if (int) setInteger(parseInt(int))
-    if (frac) setFraction(parseInt(frac))
+    if (frac) setFraction(parseFloat(`0.${frac}`))
   }, [value])
+
+  const onIntChange = (value: number) => {
+    // Устанавливаем значение для WheelPicker
+    setInteger(value)
+
+    // Устанавливаем значение для общего значения веса
+    if (fraction) {
+      const [, trueFrac] = fraction.toString().split(".")
+      setValue(`${value}.${trueFrac}`)
+    } else {
+      setValue(`${value}`)
+    }
+  }
+
+  const onFracChange = (value: number) => {
+    // Устанавливаем значение для WheelPicker
+    setFraction(value)
+
+    // Устанавливаем значение для общего значения веса
+    const [, frac] = value.toString().split(".")
+
+    if (frac) setValue(`${integer}.${frac}`)
+    else setValue(`${integer}`)
+  }
 
   return (
     <Modal
@@ -82,10 +114,7 @@ const ChangeStatModal = ({
             <WheelPicker
               data={integerPart}
               value={integer}
-              onValueChanged={({ item: { value } }) => {
-                setInteger(value)
-                setValue(`${value}.${fraction}`)
-              }}
+              onValueChanged={({ item: { value } }) => onIntChange(value)}
               enableScrollByTapOnItem={true}
               style={{ flex: 1 }}
               itemTextStyle={{
@@ -109,10 +138,7 @@ const ChangeStatModal = ({
             <WheelPicker
               data={fractionalPart}
               value={fraction}
-              onValueChanged={({ item: { value } }) => {
-                setFraction(value)
-                setValue(`${integer}.${value}`)
-              }}
+              onValueChanged={({ item: { value } }) => onFracChange(value)}
               enableScrollByTapOnItem={true}
               style={{ flex: 1 }}
               itemTextStyle={{
