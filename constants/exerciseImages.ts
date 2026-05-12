@@ -10,6 +10,7 @@ export const exerciseImages: Record<
     neutral_grip_lat_pulldown: require("../assets/images/exercises/back/neutral_grip_lat_pulldown1.png"),
     one_arm_dumbbell_row: require("../assets/images/exercises/back/one_arm_dumbbell_row1.png"),
     wide_grip_lat_pulldown: require("../assets/images/exercises/back/wide_grip_lat_pulldown1.png"),
+    seated_row: require("../assets/images/exercises/back/seated_row.png"),
   },
   chest: {
     bench_press: require("../assets/images/exercises/chest/bench_press1.png"),
@@ -55,5 +56,8 @@ export const exerciseImages: Record<
     seated_leg_curl: require("../assets/images/exercises/legs/seated_leg_curl1.png"),
     hip_adductions: require("../assets/images/exercises/legs/hip_adductions1.png"),
     hip_abductions: require("../assets/images/exercises/legs/hip_abductions1.png"),
+    barbell_hip_thrust: require("../assets/images/exercises/legs/barbell_hip_thrust.png"),
+    machine_squats: require("../assets/images/exercises/legs/machine_squats.png"),
+    prone_leg_curl: require("../assets/images/exercises/legs/prone_leg_curl.png"),
   },
 }

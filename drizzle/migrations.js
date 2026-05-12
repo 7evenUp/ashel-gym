@@ -4,6 +4,7 @@ import m0001 from "./0001_light_master_chief.sql"
 import m0002 from "./0002_first_ben_grimm.sql"
 import m0003 from "./0003_add_new_exercises.sql"
 import m0004 from "./0004_rename_exercise_names.sql"
+import m0005 from "./0005_add_new_exercise.sql"
 
 export default {
   journal,
@@ -13,5 +14,6 @@ export default {
     m0002,
     m0003,
     m0004,
+    m0005,
   },
 }

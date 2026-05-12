@@ -80,6 +80,11 @@ export const populateDb = async (db: DB, isPopulateNeeded = false) => {
       name: "Lat Pullover",
       image: "lat_pullover",
     },
+    {
+      muscle_group_id: back.id,
+      name: "Seated Row",
+      image: "seated_row",
+    },
   ])
   // Chest
   await db.insert(exerciseTable).values([
@@ -221,6 +226,21 @@ export const populateDb = async (db: DB, isPopulateNeeded = false) => {
       muscle_group_id: legs.id,
       name: "Hip Abductions",
       image: "hip_abductions",
+    },
+    {
+      muscle_group_id: legs.id,
+      name: "Barbell Hip Thrust",
+      image: "barbell_hip_thrust",
+    },
+    {
+      muscle_group_id: legs.id,
+      name: "Machine Squats",
+      image: "machine_squats",
+    },
+    {
+      muscle_group_id: legs.id,
+      name: "Prone Leg Curl",
+      image: "prone_leg_curl",
     },
   ])
   // Shoulders
